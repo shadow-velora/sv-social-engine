@@ -1,0 +1,82 @@
+{
+  "scenes": [
+    {
+      "id": "studio-sable",
+      "weight": 3,
+      "text": "a professional photo studio with a warm sand-taupe seamless backdrop, soft directional light, minimal and clean"
+    },
+    {
+      "id": "studio-creme",
+      "weight": 3,
+      "text": "a bright studio with a cream textured plaster wall, soft window light falling from the left, minimal"
+    },
+    {
+      "id": "townhouse-londonien",
+      "weight": 2,
+      "text": "an elegant London townhouse interior with cream panelled walls, herringbone parquet floor, tall window with soft daylight"
+    },
+    {
+      "id": "escalier-pierre",
+      "weight": 2,
+      "text": "an old stone staircase in a historic building, warm golden-hour light, cream and beige stone tones"
+    },
+    {
+      "id": "interieur-soir",
+      "weight": 2,
+      "text": "a refined evening interior lit by warm lamps, espresso and cream tones, quiet after-dark atmosphere"
+    },
+    {
+      "id": "miroir-ancien",
+      "weight": 1,
+      "text": "a dressing corner with an antique full-length mirror and warm cream walls, getting-ready moment, soft warm light"
+    }
+  ],
+  "poses": [
+    "standing tall, one hand gently holding the fabric of her skirt, the other relaxed at her side, gaze calm toward the camera",
+    "seated with a straight elegant posture, hands resting softly on her thigh, chin slightly lifted",
+    "walking mid-step toward the camera, one hand touching her earring, serene expression",
+    "standing in three-quarter view, adjusting a delicate bracelet on her wrist, looking away from the camera",
+    "leaning lightly against the wall, one hand at her collarbone, calm composed gaze",
+    "standing with her back partly turned, looking over her shoulder toward the camera, one hand holding the skirt fabric"
+  ],
+  "rules": "Warm desaturated palette only (sand, cream, taupe, espresso). NEVER cold grey, never loud colors. Full dress visible. Headroom above her head. No smile (composed, serene). No text, no logos, no other people.",
+  "imperfections": {
+    "face": [
+      "one small emerging blemish on her jawline",
+      "a few tiny healing breakouts near her temple",
+      "faint bluish under-eye circles",
+      "subtle post-acne dark marks on her cheeks",
+      "scattered natural freckles, denser across the nose",
+      "mild natural redness around the nostrils and cheeks",
+      "slightly chapped lips with fine vertical lines",
+      "fine peach fuzz catching the light along her jaw",
+      "a few stray eyebrow hairs left ungroomed",
+      "visible pores and a hint of natural shine on the T-zone",
+      "one or two small beauty marks placed asymmetrically"
+    ],
+    "arms": [
+      "light keratosis pilaris dots on the backs of her arms",
+      "fine fair arm hair catching the light",
+      "faint greenish veins visible on the backs of her hands and forearms",
+      "short natural nails of slightly uneven length",
+      "slightly darker, textured skin on her elbows",
+      "a faint pink watch-strap mark on her wrist",
+      "a thin pale old scar on her forearm",
+      "subtle goosebumps raising the fine hairs on her forearms"
+    ],
+    "body": [
+      "soft pink strap indentations on her shoulders",
+      "faint silvery stretch marks on her hips",
+      "a subtle tan line along her shoulder straps",
+      "a small cafe-au-lait birthmark on her side",
+      "a thin pale childhood scar on her knee",
+      "natural soft skin folds at her waist when seated",
+      "a few small healing blemishes across her upper back and shoulders"
+    ],
+    "rare_solo": [
+      "a few small healing blemishes across her upper back and shoulders",
+      "one or two faded yellowish bruises on her shins",
+      "a touch of natural cellulite on the backs of her thighs"
+    ]
+  }
+}

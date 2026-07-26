@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SV Cockpit</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#141414;color:#eee;font-family:Helvetica,Arial,sans-serif;padding:26px 20px}
+h1{font-weight:300;letter-spacing:5px;font-size:19px;text-align:center;color:#eee}
+.sub{text-align:center;color:#a8977f;font-size:11px;letter-spacing:2px;margin:6px 0 22px}
+.bar{display:flex;justify-content:center;gap:10px;margin-bottom:26px;flex-wrap:wrap}
+.tab{background:#1d1b1a;border:1px solid #322e2c;color:#bbb;padding:9px 18px;border-radius:20px;font-size:12px;letter-spacing:1px;cursor:pointer}
+.tab.on{background:#4B3E3C;color:#FFF9E8;border-color:#4B3E3C}
+.gen{background:#2e4b3a;border:1px solid #3a5c48;color:#dff0e5;padding:9px 18px;border-radius:20px;font-size:12px;letter-spacing:1px;cursor:pointer}
+.gen[disabled]{opacity:.5;cursor:wait}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px;max-width:1350px;margin:auto}
+.card{background:#1d1b1a;border:1px solid #322e2c;border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
+.k{font-size:10px;letter-spacing:2px;color:#a8977f;padding:10px 14px 6px;display:flex;justify-content:space-between}
+img,video{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:top;display:block;background:#000}
+video{aspect-ratio:9/16;max-height:430px}
+.caro{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}
+.caro img{flex:0 0 100%;scroll-snap-align:start}
+textarea{width:100%;background:#141312;border:1px solid #322e2c;border-radius:6px;color:#eee;
+  font-family:Georgia,serif;font-size:13px;line-height:1.5;padding:9px 10px;resize:vertical;min-height:64px}
+.body{padding:10px 12px 14px;display:flex;flex-direction:column;gap:8px;flex:1}
+.row{display:flex;gap:8px}
+button{border:0;border-radius:5px;padding:9px 0;font-size:11.5px;letter-spacing:1.2px;cursor:pointer;flex:1}
+.ok{background:#2e4b3a;color:#dff0e5}
+.no{background:#4a2626;color:#f2dcdc}
+.sv{background:#3a3532;color:#e8d8c0}
+.empty{text-align:center;color:#777;padding:60px 0;font-size:13px;grid-column:1/-1}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#4B3E3C;color:#FFF9E8;
+  padding:11px 22px;border-radius:24px;font-size:12.5px;letter-spacing:1px;opacity:0;transition:opacity .3s}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<h1>SV COCKPIT</h1>
+<div class="sub">MODE VETO ~ TOUT SE PUBLIE TOUT SEUL · CE QUE TU REJETTES NE PART JAMAIS</div>
+<div class="bar">
+  <button class="tab on" data-t="pending">EN ATTENTE <span id="n-pending"></span></button>
+  <button class="tab" data-t="approved">PRÊTS À PUBLIER <span id="n-approved"></span></button>
+  <button class="tab" data-t="published">PUBLIÉS <span id="n-published"></span></button>
+  <button class="gen" id="gen">⚙ LOT PHOTOS BOUTIQUE</button>
+  <button class="gen" id="genai">✨ LOT IA (NOUVELLES IMAGES)</button>
+</div>
+<div class="grid" id="grid"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+let DATA = {pending: [], approved: [], published: []};
+let TAB = "pending";
+
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 2200);
+}
+
+async function load(){
+  const r = await fetch("/api/queue");
+  const j = await r.json();
+  DATA = j;
+  for (const s of ["pending","approved","published"])
+    document.getElementById("n-"+s).textContent = "· " + j[s].length;
+  document.getElementById("gen").disabled = j.generating; document.getElementById("genai").disabled = j.generating;
+  document.getElementById("gen").textContent = j.generating ? "⚙ GÉNÉRATION EN COURS…" : "⚙ LOT PHOTOS BOUTIQUE";
+  render();
+}
+
+function mediaHtml(it){
+  if (it.type === "reel") return `<video src="${it.media[0]}" controls muted loop playsinline></video>`;
+  if (it.media.length > 1) return `<div class="caro">` + it.media.map(m => `<img src="${m}">`).join("") + `</div>`;
+  return `<img src="${it.media[0]}">`;
+}
+
+function render(){
+  const g = document.getElementById("grid");
+  const items = DATA[TAB];
+  if (!items.length){
+    const msg = {pending: "Rien en attente — clique sur « Générer un lot » ou attends le lot du lundi. Sans action de ta part, tout ce qui arrive ici se publie automatiquement.",
+                 approved: "File vide.", published: "Rien de publié pour l'instant."}[TAB];
+    g.innerHTML = `<div class="empty">${msg}</div>`;
+    return;
+  }
+  g.innerHTML = items.map((it, i) => `
+    <div class="card">
+      <div class="k"><span>${it.type.toUpperCase()}</span><span>${it.media.length > 1 ? it.media.length + " slides" : ""}</span></div>
+      ${mediaHtml(it)}
+      <div class="body">
+        <textarea id="cap-${TAB}-${i}">${it.caption}</textarea>
+        ${TAB === "pending" ? `
+        <div class="row">
+          <button class="ok" onclick="act('${it.state}','${it.id}','approve')">✓ VALIDER</button>
+          <button class="no" onclick="act('${it.state}','${it.id}','reject')">✗ REJETER</button>
+        </div>` : ""}
+        ${TAB === "approved" ? `
+        <div class="row">
+          <button class="no" onclick="act('${it.state}','${it.id}','reject')">✗ RETIRER DE LA FILE</button>
+        </div>` : ""}
+        ${TAB !== "published" ? `
+        <div class="row"><button class="sv" onclick="saveCap('${it.state}','${it.id}','cap-${TAB}-${i}')">💾 ENREGISTRER LA LÉGENDE</button></div>` : ""}
+      </div>
+    </div>`).join("");
+}
+
+async function act(state, id, action){
+  await fetch("/api/action", {method: "POST", body: JSON.stringify({state, id, action})});
+  toast(action === "approve" ? "Validé → prêt à publier" : "Retiré");
+  load();
+}
+
+async function saveCap(state, id, capId){
+  const caption = document.getElementById(capId).value;
+  await fetch("/api/action", {method: "POST", body: JSON.stringify({state, id, action: "save", caption})});
+  toast("Légende enregistrée");
+}
+
+document.querySelectorAll(".tab").forEach(b => b.onclick = () => {
+  document.querySelectorAll(".tab").forEach(x => x.classList.remove("on"));
+  b.classList.add("on"); TAB = b.dataset.t; render();
+});
+document.getElementById("gen").onclick = async () => {
+  await fetch("/api/generate", {method: "POST", body: "{}"});
+  toast("Génération lancée — les contenus arrivent dans 1 à 3 min");
+  setTimeout(load, 3000);
+};
+document.getElementById("genai").onclick = async () => {
+  await fetch("/api/generate_ai", {method: "POST", body: "{}"});
+  toast("Lot IA lancé — nouvelles images dans 3 à 6 min (~0,50 €)");
+  setTimeout(load, 3000);
+};
+
+load();
+setInterval(load, 8000);
+</script>
+</body>
+</html>

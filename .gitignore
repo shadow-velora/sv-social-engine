@@ -1,0 +1,7 @@
+.env
+queue/rejected/
+__pycache__/
+.github-token
+bin/
+test-recette/
+apercu.html
