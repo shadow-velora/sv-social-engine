@@ -38,7 +38,7 @@ def list_state(state):
             "id": it, "state": state, "type": meta.get("type", "?"),
             "caption": meta.get("caption", ""),
             "alerte_da": meta.get("alerte_da"),
-            "media": [f"/queue/{state}/{it}/{m}" for m in media],
+            "media": [f"/queue/{state}/{it}/{m}?v={int(os.path.getmtime(os.path.join(d, m)))}" for m in media],
         })
     return out
 

@@ -205,6 +205,28 @@ def health_check(img_path, key):
         return {"face_clean": True, "issues": []}
 
 
+def clean_noise(media_path, threshold=1.2):
+    """Débruitage sélectif automatique : zones plates lissées, contours préservés."""
+    from PIL import Image as _I, ImageFilter as _F
+    import numpy as _np
+    img = _I.open(media_path).convert("RGB")
+    g = _np.array(img.convert("L"), dtype=_np.float32)
+    gb = _np.array(img.convert("L").filter(_F.GaussianBlur(2)), dtype=_np.float32)
+    noise = float(_np.abs((g - gb)[40:260, 40:260]).mean())
+    if noise <= threshold:
+        return False
+    a = _np.array(img, dtype=_np.float32)
+    gb15 = _np.array(img.convert("L").filter(_F.GaussianBlur(1.5)), dtype=_np.float32)
+    edges = _np.abs(g - gb15)
+    edges = _np.array(_I.fromarray(_np.clip(edges * 8, 0, 255).astype(_np.uint8)).filter(_F.GaussianBlur(3)), dtype=_np.float32) / 255.0
+    edges = _np.clip(edges, 0, 1)[..., None]
+    den = _np.array(img.filter(_F.MedianFilter(5)).filter(_F.GaussianBlur(1.1)), dtype=_np.float32)
+    out = _I.fromarray(_np.clip(a * edges + den * (1 - edges), 0, 255).astype(_np.uint8))
+    out = out.filter(_F.UnsharpMask(radius=1.6, percent=35, threshold=4))
+    out.save(media_path, quality=93)
+    return True
+
+
 def magnific_finalize(media_path, key):
     """Passe humanité Magnific + inspection anti-artefact. 2 essais max."""
     from PIL import Image as _I
@@ -221,6 +243,8 @@ def magnific_finalize(media_path, key):
             img = _I.open(tmp).convert("RGB")
             core.cover(img, 1080, 1350).save(media_path, quality=93)
             os.remove(tmp)
+            if clean_noise(media_path):
+                print("  bruit détecté → nettoyage sélectif appliqué")
             return True
         print("  artefact détecté:", v.get("issues"))
         os.remove(tmp)
