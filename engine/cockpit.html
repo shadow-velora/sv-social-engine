@@ -41,6 +41,28 @@ button{border:0;border-radius:5px;padding:9px 0;font-size:11.5px;letter-spacing:
 .reason{background:#2a2725;border:1px solid #3a3532;color:#ddd;padding:8px 12px;border-radius:16px;font-size:12px;cursor:pointer}
 .reason.on{background:#4a2626;border-color:#6a3636;color:#f2dcdc}
 .modal textarea{min-height:52px;margin-bottom:12px}
+
+.zoom-bg{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;z-index:60;overflow:auto}
+.zoom-bg.open{display:block}
+.zoom-wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:20px}
+.zoom-wrap img{max-width:92vw;max-height:92vh;width:auto;height:auto;cursor:zoom-in;aspect-ratio:auto;object-fit:contain}
+.zoom-bg.big .zoom-wrap img{max-width:none;max-height:none;cursor:zoom-out}
+.zoom-close{position:fixed;top:14px;right:20px;font-size:30px;color:#fff;cursor:pointer;z-index:61;
+  background:rgba(75,62,60,.8);border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center}
+.zoom-hint{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);color:#a8977f;font-size:11px;letter-spacing:2px;z-index:61}
+
+.genbar{display:none;max-width:1350px;margin:0 auto 18px;background:#1d2b22;border:1px solid #2e4b3a;border-radius:8px;padding:12px 18px;color:#dff0e5;font-size:12px;letter-spacing:1.5px;text-align:center}
+.genbar.on{display:block}
+.genbar .track{height:3px;background:#233529;border-radius:2px;margin-top:9px;overflow:hidden}
+.genbar .fill{height:100%;width:30%;background:#7fc79a;border-radius:2px;animation:slide 1.6s ease-in-out infinite}
+@keyframes slide{0%{margin-left:-30%}100%{margin-left:100%}}
+.ig{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;max-width:520px;margin:0 auto;background:#000}
+.ig .cell{position:relative;aspect-ratio:3/4;overflow:hidden}
+.ig img,.ig video{width:100%;height:100%;object-fit:cover;object-position:top;aspect-ratio:auto;max-height:none}
+.ig .num{position:absolute;top:6px;left:6px;background:rgba(0,0,0,.65);color:#fff;font-size:10px;padding:2px 7px;border-radius:9px}
+.ig .mv{position:absolute;bottom:6px;right:6px;display:flex;gap:4px}
+.ig .mv span{background:rgba(75,62,60,.9);color:#FFF9E8;width:24px;height:24px;border-radius:5px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px}
+.ig-note{max-width:520px;margin:0 auto 14px;color:#999;font-size:11.5px;line-height:1.7;text-align:center}
 </style>
 </head>
 <body>
@@ -50,11 +72,20 @@ button{border:0;border-radius:5px;padding:9px 0;font-size:11.5px;letter-spacing:
   <button class="tab on" data-t="pending">EN ATTENTE <span id="n-pending"></span></button>
   <button class="tab" data-t="approved">PRÊTS À PUBLIER <span id="n-approved"></span></button>
   <button class="tab" data-t="published">PUBLIÉS <span id="n-published"></span></button>
+  <button class="tab" data-t="preview">📱 APERÇU INSTA</button>
+  <button class="tab" data-t="equipe">🧑‍💼 ÉQUIPE</button>
   <button class="gen" id="gen">⚙ LOT PHOTOS BOUTIQUE</button>
   <button class="gen" id="genai">✨ LOT IA (NOUVELLES IMAGES)</button>
+  <button class="gen" id="reunion">🧑‍💼 RÉUNION D'ÉQUIPE</button>
 </div>
+<div class="genbar" id="genbar">✨ GÉNÉRATION EN COURS — LES CONTENUS ARRIVENT DANS QUELQUES MINUTES<div class="track"><div class="fill"></div></div></div>
 <div class="grid" id="grid"></div>
 <div class="toast" id="toast"></div>
+<div class="zoom-bg" id="zoombg" onclick="if(event.target===this||event.target.classList.contains('zoom-wrap'))closeZoom()">
+  <span class="zoom-close" onclick="closeZoom()">✕</span>
+  <div class="zoom-wrap"><img id="zoomimg" onclick="document.getElementById('zoombg').classList.toggle('big')"></div>
+  <div class="zoom-hint">CLIC SUR L'IMAGE = ZOOM 100% · CLIC À CÔTÉ = FERMER</div>
+</div>
 <div class="modal-bg" id="mbg">
   <div class="modal">
     <h3>POURQUOI TU REJETTES ? (ça m'apprend)</h3>
@@ -92,17 +123,63 @@ async function load(){
     document.getElementById("n-"+s).textContent = "· " + j[s].length;
   document.getElementById("gen").disabled = j.generating; document.getElementById("genai").disabled = j.generating;
   document.getElementById("gen").textContent = j.generating ? "⚙ GÉNÉRATION EN COURS…" : "⚙ LOT PHOTOS BOUTIQUE";
+  document.getElementById("genbar").classList.toggle("on", j.generating);
   render();
 }
 
 function mediaHtml(it){
   if (it.type === "reel") return `<video src="${it.media[0]}" controls muted loop playsinline></video>`;
-  if (it.media.length > 1) return `<div class="caro">` + it.media.map(m => `<img src="${m}">`).join("") + `</div>`;
-  return `<img src="${it.media[0]}">`;
+  if (it.media.length > 1) return `<div class="caro">` + it.media.map(m => `<img src="${m}" onclick="openZoom('${m}')" style="cursor:zoom-in">`).join("") + `</div>`;
+  return `<img src="${it.media[0]}" onclick="openZoom('${it.media[0]}')" style="cursor:zoom-in">`;
 }
+function openZoom(src){
+  document.getElementById("zoomimg").src = src;
+  document.getElementById("zoombg").classList.remove("big");
+  document.getElementById("zoombg").classList.add("open");
+}
+function closeZoom(){ document.getElementById("zoombg").classList.remove("open"); }
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeZoom(); });
 
+function publishOrder(){
+  // ordre de publication réel : validés d'abord (plus ancien → plus récent), puis en attente
+  return [...DATA.approved, ...DATA.pending];
+}
 function render(){
   const g = document.getElementById("grid");
+  if (TAB === "preview"){
+    const order = publishOrder();
+    const grid = [...order].reverse(); // le dernier publié apparaît en haut à gauche, comme sur Insta
+    g.innerHTML = `<div class="ig-note">Ta grille telle qu'elle apparaîtra sur Instagram (le n°1 part en premier, donc finit en bas).<br>Flèches = échanger l'ordre de publication.</div>
+      <div class="ig">` + grid.map(it => {
+        const idx = order.indexOf(it);
+        const med = it.type === "reel" ? `<video src="${it.media[0]}" muted></video>` : `<img src="${it.media[0]}">`;
+        const up = idx > 0 ? `<span onclick="swapItems(${idx},${idx-1})" title="publier plus tôt">◀</span>` : "";
+        const down = idx < order.length-1 ? `<span onclick="swapItems(${idx},${idx+1})" title="publier plus tard">▶</span>` : "";
+        return `<div class="cell" draggable="true" ondragstart="dragFrom=${idx}" ondragover="event.preventDefault()" ondrop="swapItems(dragFrom,${idx})">${med}<span class="num">${idx+1}</span><div class="mv">${up}${down}</div></div>`;
+      }).join("") + `</div>`;
+    return;
+  }
+  if (TAB === "equipe"){
+    fetch("/api/rapport").then(r => r.json()).then(rp => {
+      if (rp.vide){ g.innerHTML = `<div class="empty">Aucune réunion pour l'instant — clique sur 🧑‍💼 RÉUNION D'ÉQUIPE.</div>`; return; }
+      const da = rp.directrice_artistique || {};
+      const cu = rp.curatrice_grille || {};
+      const ma = rp.responsable_marque || {};
+      const bu = rp.controleuse_budget || {};
+      const verdicts = (da.verdicts || []).map(v => `<li>Post ${v.numero} : ${v.da_ok ? "✅" : "⚠️"} ${v.note || ""}</li>`).join("");
+      const legs = (ma.legendes_a_revoir || []).map(l => `<li>Post ${l.numero} → <em>${l.suggestion}</em></li>`).join("");
+      g.innerHTML = `<div style="grid-column:1/-1;max-width:760px;margin:0 auto;background:#1d1b1a;border:1px solid #322e2c;border-radius:10px;padding:24px 28px;font-size:13.5px;line-height:1.8">
+        <div style="color:#a8977f;letter-spacing:2px;font-size:11px;margin-bottom:14px">COMPTE-RENDU DE RÉUNION · ${rp.date || ""} · ${rp.nb_posts} posts au planning</div>
+        <p><b style="color:#e8d8c0">🎨 Directrice artistique :</b> ${da.avis_global || "—"}</p>
+        <ul style="margin:8px 0 16px 18px;color:#ccc">${verdicts}</ul>
+        <p><b style="color:#e8d8c0">🗂 Curatrice de grille :</b> ${cu.raison || "—"} ${rp.ordre_applique ? "<br><span style='color:#7fc79a'>→ Elle a réordonné la file (vois l'Aperçu Insta).</span>" : ""}</p>
+        <p style="margin-top:14px"><b style="color:#e8d8c0">🏷 Responsable marque :</b> ${ma.histoire_ok ? "Le récit de marque tient." : "Le récit est incomplet."} ${ma.manque || ""}</p>
+        ${legs ? `<ul style="margin:8px 0 16px 18px;color:#ccc">${legs}</ul>` : ""}
+        <p style="margin-top:14px"><b style="color:#e8d8c0">💰 Contrôleuse budget :</b> Images Gemini : ${bu.images_gemini_ce_mois || "—"} (${bu.estimation_gemini || ""}). ${bu.note || ""}</p>
+      </div>`;
+    });
+    return;
+  }
   const items = DATA[TAB];
   if (!items.length){
     const msg = {pending: "Rien en attente — clique sur « Générer un lot » ou attends le lot du lundi. Sans action de ta part, tout ce qui arrive ici se publie automatiquement.",
@@ -132,6 +209,7 @@ function render(){
 }
 
 let REJECT_TARGET = null;
+let dragFrom = null;
 async function act(state, id, action){
   if (action === "reject"){
     REJECT_TARGET = {state, id};
@@ -171,14 +249,26 @@ document.getElementById("gen").onclick = async () => {
   toast("Génération lancée — les contenus arrivent dans 1 à 3 min");
   setTimeout(load, 3000);
 };
+document.getElementById("reunion").onclick = async () => {
+  await fetch("/api/committee", {method: "POST", body: "{}"});
+  document.getElementById("genbar").classList.add("on");
+  toast("L'équipe se réunit — compte-rendu dans ~1 min (onglet ÉQUIPE)");
+};
 document.getElementById("genai").onclick = async () => {
   await fetch("/api/generate_ai", {method: "POST", body: "{}"});
+  document.getElementById("genbar").classList.add("on");
   toast("Lot IA lancé — nouvelles images dans 3 à 6 min (~0,50 €)");
-  setTimeout(load, 3000);
+  setTimeout(load, 2000);
 };
+async function swapItems(i, j){
+  const order = publishOrder();
+  const A = order[i], B = order[j];
+  await fetch("/api/swap", {method: "POST", body: JSON.stringify({a: A.id, stateA: A.state, b: B.id, stateB: B.state})});
+  load();
+}
 
 load();
-setInterval(load, 8000);
+setInterval(load, 5000);
 </script>
 </body>
 </html>

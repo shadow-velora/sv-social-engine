@@ -59,6 +59,9 @@ def run_generate():
         script = "generate_ai_lot.py" if getattr(run_generate, "ai_mode", False) else "generate.py"
         subprocess.run(["python3", os.path.join(ENGINE, script)],
                        env=env, cwd=ROOT, timeout=3600)
+        # l'équipe se réunit automatiquement après chaque lot
+        subprocess.run(["python3", os.path.join(ENGINE, "committee.py")],
+                       env=env, cwd=ROOT, timeout=600)
     finally:
         _gen_running = False
 
@@ -66,6 +69,12 @@ def run_generate():
 class Handler(SimpleHTTPRequestHandler):
     def __init__(self, *a, **kw):
         super().__init__(*a, directory=ROOT, **kw)
+
+    def end_headers(self):
+        # jamais de cache : Laurie doit toujours voir la dernière version du Cockpit
+        self.send_header("Cache-Control", "no-store, must-revalidate")
+        self.send_header("Expires", "0")
+        super().end_headers()
 
     def log_message(self, *a):
         pass
@@ -82,6 +91,12 @@ class Handler(SimpleHTTPRequestHandler):
         if self.path == "/" or self.path.startswith("/index"):
             self.path = "/engine/cockpit.html"
             return super().do_GET()
+        if self.path == "/api/rapport":
+            rp = os.path.join(ENGINE, "rapport-equipe.json")
+            if os.path.exists(rp):
+                return self._json(json.load(open(rp)))
+            return self._json({"vide": True})
+
         if self.path == "/api/queue":
             return self._json({
                 "generating": _gen_running,
@@ -103,6 +118,34 @@ class Handler(SimpleHTTPRequestHandler):
         if self.path == "/api/generate_ai":
             run_generate.ai_mode = True
             threading.Thread(target=run_generate, daemon=True).start()
+            return self._json({"ok": True})
+
+        if self.path == "/api/committee":
+            def _run():
+                global _gen_running
+                with _gen_lock:
+                    if _gen_running:
+                        return
+                    _gen_running = True
+                try:
+                    subprocess.run(["python3", os.path.join(ENGINE, "committee.py")],
+                                   cwd=ROOT, timeout=600)
+                finally:
+                    _gen_running = False
+            threading.Thread(target=_run, daemon=True).start()
+            return self._json({"ok": True})
+
+        if self.path == "/api/swap":
+            a, sa, b, sb = data.get("a"), data.get("stateA"), data.get("b"), data.get("stateB")
+            pa, pb = os.path.join(Q(sa), a), os.path.join(Q(sb), b)
+            if not (os.path.isdir(pa) and os.path.isdir(pb)):
+                return self._json({"error": "introuvable"}, 404)
+            prefa, resta = a.split("_", 2)[0] + "_" + a.split("_", 2)[1], a.split("_", 2)[2]
+            prefb, restb = b.split("_", 2)[0] + "_" + b.split("_", 2)[1], b.split("_", 2)[2]
+            tmp = os.path.join(Q(sa), "__swap_tmp")
+            os.rename(pa, tmp)
+            os.rename(pb, os.path.join(Q(sb), prefa + "_" + restb))
+            os.rename(tmp, os.path.join(Q(sa), prefb + "_" + resta))
             return self._json({"ok": True})
 
         if self.path == "/api/action":

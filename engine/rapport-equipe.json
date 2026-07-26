@@ -1,0 +1,66 @@
+{
+  "date": "2026-07-26T19:44+00:00",
+  "nb_posts": 4,
+  "directrice_artistique": {
+    "verdicts": [
+      {
+        "numero": 1,
+        "da_ok": true,
+        "note": "Révélation de logo minimaliste et raffinée sur fond crème, parfaitement conforme à notre charte."
+      },
+      {
+        "numero": 2,
+        "da_ok": true,
+        "note": "Visuel de citation épuré dans les teintes sable et espresso, apportant une respiration éditoriale."
+      },
+      {
+        "numero": 3,
+        "da_ok": true,
+        "note": "Robe sculpturale mise en valeur par une lumière naturelle chaude, un décor authentique et un mannequin au rendu naturel."
+      },
+      {
+        "numero": 4,
+        "da_ok": true,
+        "note": "Manifeste élégant sur fond espresso profond qui équilibre harmonieusement la palette de la grille."
+      }
+    ],
+    "avis_global": "Cette première séquence respecte à la perfection la direction artistique de Shadow Velora grâce à une palette espresso/crème maîtrisée et un rendu très haut de gamme. Le rythme entre cartes éditoriales et photo portée installe immédiatement un positionnement luxe discret crédible."
+  },
+  "curatrice_grille": {
+    "ordre_ideal": [
+      1,
+      4,
+      2,
+      3
+    ],
+    "raison": "Publier d'abord le logo (1) et le manifeste (4) installe immédiatement l'identité et les fondations de la marque. Cet ordre positionne la photo du mannequin (3) au-dessus du logo (1), créant une alternance parfaite entre visuel photo et blocs de texte clair et sombre."
+  },
+  "responsable_marque": {
+    "histoire_ok": false,
+    "manque": "La séquence manque de cohérence narrative et ne met pas en valeur les matières ni le savoir-faire de la marque. Le manifeste intervient après le produit et la citation ne possède pas de vraie légende.",
+    "legendes_a_revoir": [
+      {
+        "numero": 1,
+        "suggestion": "A new chapter begins. ~"
+      },
+      {
+        "numero": 2,
+        "suggestion": "Wear something beautiful today, for no reason at all. ~"
+      },
+      {
+        "numero": 3,
+        "suggestion": "Sculpted, not styled. Aurelia. ~"
+      },
+      {
+        "numero": 4,
+        "suggestion": "Designed in London, worn for the moments that matter. ~"
+      }
+    ]
+  },
+  "controleuse_budget": {
+    "images_gemini_ce_mois": "2/45",
+    "estimation_gemini": "~0.08 EUR",
+    "note": "Plafond dur actif : la machine s'arrete seule au plafond. Passes Magnific ~0,10 EUR/image en credits separes."
+  },
+  "ordre_applique": true
+}

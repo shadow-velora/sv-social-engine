@@ -18,15 +18,20 @@
     "{name} ~ designed for the last hour of golden light.",
     "{name} ~ nothing to prove, everything to remember.",
     "One silhouette ~ every shade of evening. {name}.",
-    "She did not follow the season. The season followed her."
+    "She did not follow the season. The season followed her.",
+    "Worn once, remembered longer. {name}.",
+    "{name} ~ draped like candlelight.",
+    "{name} ~ closer, then closer again.",
+    "Some women light the room. Others dim everything else."
   ],
   "used_products": [
     "mira-sculpted-mini-muse-dress",
-    "selena-the-parisian-flow-dress",
-    "rosalia-the-ombre-mermaid-midi-dress",
-    "nerina-sculpted-romance-gown",
     "estella-floral-embroidered-hourglass-gown",
-    "alba-draped-corset-gown"
+    "nerina-sculpted-romance-gown",
+    "bianca-draped-lace-corset-gown",
+    "amara-liquid-satin-gown"
   ],
-  "last_scene": "studio-creme"
+  "last_scene": "studio-creme",
+  "gen_month": "2026-07",
+  "gen_calls": 2
 }
