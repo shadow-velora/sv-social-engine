@@ -168,6 +168,7 @@ function render(){
   if (TAB === "equipe"){
     fetch("/api/rapport").then(r => r.json()).then(rp => {
       if (rp.vide){ g.innerHTML = `<div class="empty">Aucune réunion pour l'instant — clique sur 🧑‍💼 RÉUNION D'ÉQUIPE.</div>`; return; }
+      const sm = rp.social_media_manager || {};
       const da = rp.directrice_artistique || {};
       const cu = rp.curatrice_grille || {};
       const ma = rp.responsable_marque || {};
@@ -176,7 +177,8 @@ function render(){
       const legs = (ma.legendes_a_revoir || []).map(l => `<li>Post ${l.numero} → <em>${l.suggestion}</em></li>`).join("");
       g.innerHTML = `<div style="grid-column:1/-1;max-width:760px;margin:0 auto;background:#1d1b1a;border:1px solid #322e2c;border-radius:10px;padding:24px 28px;font-size:13.5px;line-height:1.8">
         <div style="color:#a8977f;letter-spacing:2px;font-size:11px;margin-bottom:14px">COMPTE-RENDU DE RÉUNION · ${rp.date || ""} · ${rp.nb_posts} posts au planning</div>
-        <p><b style="color:#e8d8c0">🎨 Directrice artistique :</b> ${da.avis_global || "—"}</p>
+        <p><b style="color:#e8d8c0">📋 Social Media Manager :</b> ${sm.strategie || "—"}${sm.plan_prochain_lot ? "<br><span style='color:#7fc79a'>Plan du prochain lot : " + sm.plan_prochain_lot.map(b => b.robe + " (" + b.format + ")").join(" · ") + "</span>" : ""}</p>
+        <p style="margin-top:12px"><b style="color:#e8d8c0">🎨 Directrice artistique :</b> ${da.avis_global || "—"}</p>
         <ul style="margin:8px 0 16px 18px;color:#ccc">${verdicts}</ul>
         <p><b style="color:#e8d8c0">🗂 Curatrice de grille :</b> ${cu.raison || "—"} ${rp.ordre_applique ? "<br><span style='color:#7fc79a'>→ Elle a réordonné la file (vois l'Aperçu Insta).</span>" : ""}</p>
         <p style="margin-top:14px"><b style="color:#e8d8c0">🏷 Responsable marque :</b> ${ma.histoire_ok ? "Le récit de marque tient." : "Le récit est incomplet."} ${ma.manque || ""}</p>

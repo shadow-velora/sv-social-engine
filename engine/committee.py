@@ -81,6 +81,21 @@ def reunion():
     listing = "\n".join(f"{i+1}. [{it['id']}] {it['caption'].splitlines()[0][:80]}"
                         for i, it in enumerate(items))
 
+    # leçons récentes du journal de Laurie
+    fb_path = os.path.join(ENGINE, "feedback.jsonl")
+    lecons = ""
+    if os.path.exists(fb_path):
+        lines = open(fb_path).read().strip().splitlines()[-6:]
+        lecons = "\n".join("- " + json.loads(l).get("raison", "") for l in lines)
+    robes = ", ".join(sorted({core.first_name(x["title"]) for x in core.fetch_products() if x.get("images")}))
+
+    smm = ask(f"""Tu es le Social Media Manager de Shadow Velora (robes luxe discret type Manière De Voir, "Designed in London"). Tu définis la stratégie et le calendrier. Catalogue disponible : {robes}.
+LEÇONS RÉCENTES DE LA FONDATRICE (à respecter absolument) :
+{lecons}
+L'image jointe = la grille actuelle. Décide le PLAN DU PROCHAIN LOT (2 contenus max, budget serré) : quelles robes mettre en avant (varie par rapport à la grille), quel format (mannequin_pipeline ou buste_produit), quelle ambiance.
+Réponds UNIQUEMENT en JSON: {{"strategie": "2 phrases max", "plan_prochain_lot": [{{"robe": "nom exact du catalogue", "format": "mannequin_pipeline ou buste_produit", "ambiance": "1 phrase de brief shooting"}}], "ton_legendes": "1 phrase"}}""",
+              montage, listing, key)
+
     da = ask("""Tu es la directrice artistique de Shadow Velora, marque de robes "luxe discret" inspirée de Manière De Voir. DA verrouillée : palette sable/crème/taupe/espresso, jamais de gris froid ni couleurs criardes, mannequins naturelles (jamais poupée lisse), décors vécus élégants, zéro texte sur les photos (sauf bandes éditoriales assumées). L'image jointe est la grille Instagram prévue.
 Réponds UNIQUEMENT en JSON: {"verdicts": [{"numero": n, "da_ok": true/false, "note": "1 phrase"}], "avis_global": "2 phrases max"}""",
              montage, listing, key)
@@ -105,6 +120,7 @@ Réponds UNIQUEMENT en JSON: {"histoire_ok": true/false, "manque": "ce qui manqu
     rapport = {
         "date": datetime.now(timezone.utc).isoformat(timespec="minutes"),
         "nb_posts": len(items),
+        "social_media_manager": smm,
         "directrice_artistique": da,
         "curatrice_grille": cura,
         "responsable_marque": marque,
@@ -128,6 +144,9 @@ Réponds UNIQUEMENT en JSON: {"histoire_ok": true/false, "manque": "ce qui manqu
                 continue
         rapport["ordre_applique"] = True
 
+    if isinstance(smm.get("plan_prochain_lot"), list) and smm["plan_prochain_lot"]:
+        json.dump(smm["plan_prochain_lot"], open(os.path.join(ENGINE, "plan-semaine.json"), "w"),
+                  indent=2, ensure_ascii=False)
     json.dump(rapport, open(RAPPORT, "w"), indent=2, ensure_ascii=False)
     os.remove(montage)
     print("réunion terminée — rapport écrit", "| ordre appliqué" if rapport["ordre_applique"] else "")
