@@ -124,6 +124,12 @@ async function load(){
   document.getElementById("gen").disabled = j.generating; document.getElementById("genai").disabled = j.generating;
   document.getElementById("gen").textContent = j.generating ? "⚙ GÉNÉRATION EN COURS…" : "⚙ LOT PHOTOS BOUTIQUE";
   document.getElementById("genbar").classList.toggle("on", j.generating);
+  if (wasGenerating && !j.generating && afterGen){
+    TAB = afterGen; afterGen = null;
+    document.querySelectorAll(".tab").forEach(x => x.classList.toggle("on", x.dataset.t === TAB));
+    toast("Compte-rendu de réunion prêt 🧑‍💼");
+  }
+  wasGenerating = j.generating;
   render();
 }
 
@@ -210,6 +216,8 @@ function render(){
 
 let REJECT_TARGET = null;
 let dragFrom = null;
+let wasGenerating = false;
+let afterGen = null;
 async function act(state, id, action){
   if (action === "reject"){
     REJECT_TARGET = {state, id};
@@ -252,7 +260,8 @@ document.getElementById("gen").onclick = async () => {
 document.getElementById("reunion").onclick = async () => {
   await fetch("/api/committee", {method: "POST", body: "{}"});
   document.getElementById("genbar").classList.add("on");
-  toast("L'équipe se réunit — compte-rendu dans ~1 min (onglet ÉQUIPE)");
+  afterGen = "equipe"; wasGenerating = true;
+  toast("L'équipe se réunit — le compte-rendu s'ouvrira tout seul");
 };
 document.getElementById("genai").onclick = async () => {
   await fetch("/api/generate_ai", {method: "POST", body: "{}"});

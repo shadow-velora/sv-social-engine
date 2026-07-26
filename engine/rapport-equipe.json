@@ -1,59 +1,51 @@
 {
-  "date": "2026-07-26T19:44+00:00",
+  "date": "2026-07-26T19:48+00:00",
   "nb_posts": 4,
   "directrice_artistique": {
     "verdicts": [
       {
         "numero": 1,
         "da_ok": true,
-        "note": "Révélation de logo minimaliste et raffinée sur fond crème, parfaitement conforme à notre charte."
+        "note": "Carte d'ouverture minimaliste sur fond crème et typographie espresso parfaitement alignée avec l'univers de marque."
       },
       {
         "numero": 2,
         "da_ok": true,
-        "note": "Visuel de citation épuré dans les teintes sable et espresso, apportant une respiration éditoriale."
+        "note": "Teinte espresso profonde et mise en page éditoriale élégante qui respectent scrupuleusement la charte."
       },
       {
         "numero": 3,
         "da_ok": true,
-        "note": "Robe sculpturale mise en valeur par une lumière naturelle chaude, un décor authentique et un mannequin au rendu naturel."
+        "note": "Excellente photo produit mettant en scène une mannequin au rendu naturel dans un décor parisien/londonien authentique et baigné de lumière sable."
       },
       {
         "numero": 4,
         "da_ok": true,
-        "note": "Manifeste élégant sur fond espresso profond qui équilibre harmonieusement la palette de la grille."
+        "note": "Visuel de citation éditorial sobre et raffiné conservant la palette neutre chaude."
       }
     ],
-    "avis_global": "Cette première séquence respecte à la perfection la direction artistique de Shadow Velora grâce à une palette espresso/crème maîtrisée et un rendu très haut de gamme. Le rythme entre cartes éditoriales et photo portée installe immédiatement un positionnement luxe discret crédible."
+    "avis_global": "Cette grille d'ouverture respecte parfaitement la direction artistique verrouillée, alternant cartes éditoriales et visuel produit dans une palette neutre chaude très cohérente. L'équilibre entre les tons crème, taupe et espresso apporte un rendu luxe discret immédiatement identifiable."
   },
   "curatrice_grille": {
     "ordre_ideal": [
       1,
-      4,
       2,
+      4,
       3
     ],
-    "raison": "Publier d'abord le logo (1) et le manifeste (4) installe immédiatement l'identité et les fondations de la marque. Cet ordre positionne la photo du mannequin (3) au-dessus du logo (1), créant une alternance parfaite entre visuel photo et blocs de texte clair et sombre."
+    "raison": "Publier le logo (1) puis le manifeste (2) pose immédiatement les bases de la marque en bas de grille. Placer le visuel mannequin (3) en dernier permet de casser l'alignement vertical des fonds clairs tout en alternant parfaitement texte sombre, texte clair et photo."
   },
   "responsable_marque": {
     "histoire_ok": false,
-    "manque": "La séquence manque de cohérence narrative et ne met pas en valeur les matières ni le savoir-faire de la marque. Le manifeste intervient après le produit et la citation ne possède pas de vraie légende.",
+    "manque": "La séquence manque d'un temps fort dédié aux matières et aux détails d'atelier avant de présenter le produit fini. Le récit passe directement du manifeste au produit sans faire ressentir le savoir-faire ni la vision globale de la femme Shadow Velora.",
     "legendes_a_revoir": [
       {
-        "numero": 1,
-        "suggestion": "A new chapter begins. ~"
-      },
-      {
-        "numero": 2,
-        "suggestion": "Wear something beautiful today, for no reason at all. ~"
-      },
-      {
         "numero": 3,
-        "suggestion": "Sculpted, not styled. Aurelia. ~"
+        "suggestion": "Sculpted, not styled. Aurelia ~"
       },
       {
         "numero": 4,
-        "suggestion": "Designed in London, worn for the moments that matter. ~"
+        "suggestion": "Wear something beautiful today, you do not need a reason ~"
       }
     ]
   },

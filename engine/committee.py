@@ -116,12 +116,16 @@ Réponds UNIQUEMENT en JSON: {"histoire_ok": true/false, "manque": "ce qui manqu
     ordre = cura.get("ordre_ideal")
     if (isinstance(ordre, list) and sorted(ordre) == list(range(1, len(items) + 1))):
         base_names = [items[n - 1] for n in ordre]
+        stamp_base = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H")
         for i, it in enumerate(base_names, start=1):
             rest = it["id"].split("_", 2)[2] if it["id"].count("_") >= 2 else it["id"]
-            new = f"2026-07-26_21{i:02d}00_{rest}"
+            new = f"{stamp_base}{i:02d}00_{rest}"
             newp = os.path.join(os.path.dirname(it["dir"]), new)
-            if it["dir"] != newp and not os.path.exists(newp):
-                os.rename(it["dir"], newp)
+            try:
+                if os.path.isdir(it["dir"]) and it["dir"] != newp and not os.path.exists(newp):
+                    os.rename(it["dir"], newp)
+            except OSError:
+                continue
         rapport["ordre_applique"] = True
 
     json.dump(rapport, open(RAPPORT, "w"), indent=2, ensure_ascii=False)
