@@ -115,6 +115,18 @@ class Handler(SimpleHTTPRequestHandler):
             if action == "approve":
                 shutil.move(src, os.path.join(Q("approved"), item))
             elif action == "reject":
+                reason = (data.get("reason") or "").strip()
+                mp = os.path.join(src, "meta.json")
+                if os.path.exists(mp):
+                    meta = json.load(open(mp))
+                    meta["rejet"] = reason or "sans raison donnée"
+                    json.dump(meta, open(mp, "w"), indent=2, ensure_ascii=False)
+                import datetime
+                with open(os.path.join(ROOT, "engine", "feedback.jsonl"), "a") as fb:
+                    fb.write(json.dumps({
+                        "date": datetime.datetime.now().isoformat(timespec="minutes"),
+                        "item": item, "raison": reason or "sans raison donnée",
+                    }, ensure_ascii=False) + "\n")
                 shutil.move(src, os.path.join(Q("rejected"), item))
             elif action == "save":
                 mp = os.path.join(src, "meta.json")

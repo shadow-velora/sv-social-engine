@@ -3,43 +3,44 @@
     {
       "id": "studio-sable",
       "weight": 3,
-      "text": "a professional photo studio with a warm sand-taupe seamless backdrop, soft directional light, minimal and clean"
+      "text": "a real working photo studio: warm sand seamless paper backdrop with a soft wrinkle and slight colour unevenness, the edge of the paper roll just visible on one side, one or two faint tape marks on the concrete floor"
     },
     {
       "id": "studio-creme",
       "weight": 3,
-      "text": "a bright studio with a cream textured plaster wall, soft window light falling from the left, minimal"
+      "text": "a daylight studio with a cream lime-plaster wall showing natural trowel unevenness and a hairline crack, worn wooden floorboards with scuffs and gaps, soft window light from the left"
     },
     {
       "id": "townhouse-londonien",
       "weight": 2,
-      "text": "an elegant London townhouse interior with cream panelled walls, herringbone parquet floor, tall window with soft daylight"
+      "text": "a lived-in London townhouse room: herringbone parquet with visible wear near the door, slightly scuffed cream panelled walls, an old radiator under the sash window, faint dust motes in the window light"
     },
     {
       "id": "escalier-pierre",
       "weight": 2,
-      "text": "an old stone staircase in a historic building, warm golden-hour light, cream and beige stone tones"
+      "text": "an old stone staircase with worn hollowed steps, chipped edges, uneven warm patina on the stone, a simple iron handrail with small paint losses"
     },
     {
       "id": "interieur-soir",
       "weight": 2,
-      "text": "a refined evening interior lit by warm lamps, espresso and cream tones, quiet after-dark atmosphere"
+      "text": "a real evening living room: a warm table lamp with its cord visible, a small stack of books slightly askew, honest soft shadows on an espresso-toned wall, lived-in atmosphere"
     },
     {
-      "id": "miroir-ancien",
+      "id": "backstage-shooting",
       "weight": 1,
-      "text": "a dressing corner with an antique full-length mirror and warm cream walls, getting-ready moment, soft warm light"
+      "text": "the honest backstage of a fashion shoot: a clothes rail with a few garment bags softly out of focus behind her, a garment steamer in the corner, cardboard boxes near the wall, real working-space clutter"
     }
   ],
   "poses": [
-    "standing tall, one hand gently holding the fabric of her skirt, the other relaxed at her side, gaze calm toward the camera",
-    "seated with a straight elegant posture, hands resting softly on her thigh, chin slightly lifted",
-    "walking mid-step toward the camera, one hand touching her earring, serene expression",
-    "standing in three-quarter view, adjusting a delicate bracelet on her wrist, looking away from the camera",
-    "leaning lightly against the wall, one hand at her collarbone, calm composed gaze",
-    "standing with her back partly turned, looking over her shoulder toward the camera, one hand holding the skirt fabric"
+    "caught mid-turn toward the camera, chin slightly lifted, the skirt of the dress still swinging from the movement",
+    "in the act of sitting down gracefully, back long and straight, one hand smoothing the dress under her",
+    "walking past the window mid-stride, posture tall and open, one arm in natural swing",
+    "standing tall while fastening an earring, elbows lifted, gaze calm past the camera",
+    "rising from a seated position with a long straight back, weight on one leg, the dress settling around her",
+    "looking back over her shoulder toward the camera, spine elegant, one hand gathering her hair off her neck",
+    "leaning her shoulder blades back against the wall, one knee bent, chin level, arms relaxed"
   ],
-  "rules": "Warm desaturated palette only (sand, cream, taupe, espresso). NEVER cold grey, never loud colors. Full dress visible. Headroom above her head. No smile (composed, serene). No text, no logos, no other people.",
+  "rules": "Warm desaturated palette only (sand, cream, taupe, espresso). NEVER cold grey, never loud colors. The location is REAL and lived-in: honest imperfections in the set, background rendered with true optical depth of field from a 50mm lens, never painted-looking blur. No mirrors. No smile (composed, serene). No text, no logos, no other people.",
   "imperfections": {
     "face": [
       "one small emerging blemish on her jawline",
@@ -78,5 +79,11 @@
       "one or two faded yellowish bruises on her shins",
       "a touch of natural cellulite on the backs of her thighs"
     ]
-  }
+  },
+  "framings": [
+    "Full-length composition, the entire dress visible from neckline to hem, generous headroom above her head.",
+    "Full-length composition, the entire dress visible from neckline to hem, generous headroom above her head.",
+    "Editorial crop framed from her lips down to below the hem of the dress, the upper face out of frame — the dress is the hero, in the manner of quiet luxury lookbooks.",
+    "Back view, full length, her face turned away from the camera, the entire back of the dress visible."
+  ]
 }

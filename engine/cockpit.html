@@ -33,6 +33,14 @@ button{border:0;border-radius:5px;padding:9px 0;font-size:11.5px;letter-spacing:
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#4B3E3C;color:#FFF9E8;
   padding:11px 22px;border-radius:24px;font-size:12.5px;letter-spacing:1px;opacity:0;transition:opacity .3s}
 .toast.show{opacity:1}
+
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:50}
+.modal{background:#1d1b1a;border:1px solid #4B3E3C;border-radius:12px;padding:22px;max-width:420px;width:92%}
+.modal h3{font-weight:300;letter-spacing:2px;font-size:14px;color:#e8d8c0;margin-bottom:14px}
+.reasons{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.reason{background:#2a2725;border:1px solid #3a3532;color:#ddd;padding:8px 12px;border-radius:16px;font-size:12px;cursor:pointer}
+.reason.on{background:#4a2626;border-color:#6a3636;color:#f2dcdc}
+.modal textarea{min-height:52px;margin-bottom:12px}
 </style>
 </head>
 <body>
@@ -47,6 +55,24 @@ button{border:0;border-radius:5px;padding:9px 0;font-size:11.5px;letter-spacing:
 </div>
 <div class="grid" id="grid"></div>
 <div class="toast" id="toast"></div>
+<div class="modal-bg" id="mbg">
+  <div class="modal">
+    <h3>POURQUOI TU REJETTES ? (ça m'apprend)</h3>
+    <div class="reasons" id="reasons">
+      <span class="reason">Peau trop lisse / fake</span>
+      <span class="reason">Robe pas fidèle</span>
+      <span class="reason">Décor fake</span>
+      <span class="reason">Pose / cadrage</span>
+      <span class="reason">Visage raté</span>
+      <span class="reason">Pas DA Shadow</span>
+    </div>
+    <textarea id="mtext" placeholder="Précision (optionnel)…"></textarea>
+    <div class="row">
+      <button class="no" onclick="confirmReject()">✗ REJETER</button>
+      <button class="sv" onclick="closeModal()">ANNULER</button>
+    </div>
+  </div>
+</div>
 
 <script>
 let DATA = {pending: [], approved: [], published: []};
@@ -105,11 +131,30 @@ function render(){
     </div>`).join("");
 }
 
+let REJECT_TARGET = null;
 async function act(state, id, action){
+  if (action === "reject"){
+    REJECT_TARGET = {state, id};
+    document.querySelectorAll(".reason").forEach(r => r.classList.remove("on"));
+    document.getElementById("mtext").value = "";
+    document.getElementById("mbg").style.display = "flex";
+    return;
+  }
   await fetch("/api/action", {method: "POST", body: JSON.stringify({state, id, action})});
-  toast(action === "approve" ? "Validé → prêt à publier" : "Retiré");
+  toast("Validé → prêt à publier");
   load();
 }
+function closeModal(){ document.getElementById("mbg").style.display = "none"; }
+async function confirmReject(){
+  const picked = [...document.querySelectorAll(".reason.on")].map(r => r.textContent);
+  const txt = document.getElementById("mtext").value.trim();
+  const reason = [...picked, txt].filter(Boolean).join(" · ");
+  await fetch("/api/action", {method: "POST", body: JSON.stringify({...REJECT_TARGET, action: "reject", reason})});
+  closeModal(); toast("Rejeté — leçon enregistrée 📝"); load();
+}
+document.addEventListener("click", e => {
+  if (e.target.classList && e.target.classList.contains("reason")) e.target.classList.toggle("on");
+});
 
 async function saveCap(state, id, capId){
   const caption = document.getElementById(capId).value;
