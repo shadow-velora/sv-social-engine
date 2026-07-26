@@ -1,75 +1,77 @@
 {
-  "date": "2026-07-26T19:53+00:00",
+  "date": "2026-07-26T20:00+00:00",
   "nb_posts": 4,
   "social_media_manager": {
-    "strategie": "Stopper immédiatement les visuels texte pour recentrer le feed sur le produit et l'élégance tangible des coupes. Varier les pièces en alternant un portage mannequin naturel sans retouche artificielle et un focus produit épuré valorisant les matières.",
+    "strategie": "Remplacer le contenu statique et les citations par des visuels immersifs à fort potentiel de sauvegarde, axés sur la matière et l'atmosphère londonienne. On mise sur la précision des coupes avec un rendu de peau 100% naturel et une lumière cinématographique.",
     "plan_prochain_lot": [
       {
-        "robe": "Bianca",
+        "robe": "Nerina",
         "format": "mannequin_pipeline",
-        "ambiance": "Lumière naturelle douce dans un intérieur londonien aux tons neutres, posture fluide et naturelle mettant en valeur la coupe sans attitude surjouée ni lissage de peau."
+        "concept": "L'heure dorée",
+        "ambiance": "Pénombre raffinée dans un townhouse londonien où une source de lumière rasante vient sculpter les drapes de Nerina. Mouvement capturé sur le vif et texture de peau brute, sans retouche artificielle."
       },
       {
         "robe": "Calista",
         "format": "buste_produit",
-        "ambiance": "Cadrage serré et structuré sur le bustier et les textures du tissu, éclairage d'atelier sobre révélant le travail de précision du vêtement."
+        "concept": "Diptyque matière/silhouette",
+        "ambiance": "Juxtaposition d'un gros plan ultra-précis sur le grain du tissu et les finitions de Calista avec la structure globale du buste dans une lumière naturelle filtrée."
       }
     ],
-    "ton_legendes": "Minimaliste, confident et sophistiqué, incarnant le luxe discret londonien en très peu de mots."
+    "ton_legendes": "Épuré, poétique et éditorial en anglais, évoquant une élégance confidentielle sans jamais survendre."
   },
   "directrice_artistique": {
     "verdicts": [
       {
         "numero": 1,
-        "da_ok": true,
-        "note": "Le fond espresso chaleureux et la typographie minimale respectent parfaitement l'élégance discrète de la marque."
+        "da_ok": false,
+        "note": "Un aplat espresso avec typo centrée manque totalement de texture, de lumière directionnelle et de tension visuelle."
       },
       {
         "numero": 2,
-        "da_ok": true,
-        "note": "Révélation de logo très épurée sur fond crème, parfaitement alignée avec la charte graphique."
+        "da_ok": false,
+        "note": "Logo centré et plat sans aucun travail de matière ni d'ombre portée, le rendu est trop institutionnel."
       },
       {
         "numero": 3,
         "da_ok": true,
-        "note": "Sublime visuel porté avec un mannequin au rendu naturel, une lumière chaude et un décor haussmannien/londonien habité."
+        "note": "Superbe lumière traversante et texture de robe palpable articulées autour de l'idée d'ombre, malgré un cadrage un peu conventionnel."
       },
       {
         "numero": 4,
-        "da_ok": true,
-        "note": "Post citation en tons crème et taupe qui renforce idéalement la dimension éditoriale de la grille."
+        "da_ok": false,
+        "note": "Citation générique sur fond crème sans relief ni concept, refusée pour manque d'audace."
       }
     ],
-    "avis_global": "Cette première grille d'ouverture incarne à la perfection le luxe discret de Shadow Velora grâce à une harmonie chromatique zéro défaut entre espresso et crème. Le dosage entre citations éditoriales et visuel studio crée un lancement haut de gamme captivant."
+    "avis_global": "La grille est trop frileuse et noyée sous des visuels textuels plats qui affaiblissent l'univers de marque. Seule la photo de silhouette respecte la promesse éditoriale, imposant de retravailler les typographies avec de la matière, des ombres et de la tension."
   },
   "curatrice_grille": {
     "ordre_ideal": [
-      1,
       2,
+      1,
       3,
       4
     ],
-    "raison": "L'ordre [1, 2, 3, 4] est idéal car il introduit d'abord la marque avec le manifeste et le logo avant les produits. Sur la grille, le visuel mannequin au centre sépare parfaitement les deux cartes claires du haut, tandis que le manifeste sombre crée un contraste vertical très harmonieux."
+    "raison": "En introduisant d'abord le logo (2) puis le manifeste (1) et la création (3), la première rangée fonde l'identité de marque avec un rythme visuel harmonieux alternant respiration claire, contraste sombre et photo portée. La citation (4) amorce le chapitre suivant sur la rangée supérieure."
   },
   "responsable_marque": {
     "histoire_ok": false,
-    "manque": "Il manque un focus sur la matière/le savoir-faire et sur l'incarnation de la femme Shadow Velora. La séquence enchaîne des visuels de marque sans construire de fil conducteur sensoriel ou narratif complet.",
+    "manque": "La séquence manque d'une mise en valeur de la matière (savoir-faire, drapé, détails du tissu) et d'une véritable incarnation de la femme Shadow Velora. L'enchaînement accumule trop de visuels graphiques textuels sans progression narrative fluide.",
     "legendes_a_revoir": [
       {
         "numero": 1,
-        "suggestion": "Designed in London, worn for the moments that matter. ~"
+        "suggestion": "Designed in London, crafted for the moments that matter. ~"
       },
       {
         "numero": 2,
-        "suggestion": "Shadow Velora, a new chapter begins. ~"
+        "suggestion": "A new chapter begins. ~"
       },
       {
         "numero": 3,
-        "suggestion": "Sculpted, not styled. Aurelia. ~"
+        "suggestion": "Sculpted, not styled — the Aurelia gown. ~"
       },
       {
         "numero": 4,
-        "suggestion": "Wear something beautiful today, you do not need a reason. ~"
+        "suggestion": "Wear something beautiful today, without needing a reason. ~"
       }
     ]
   },

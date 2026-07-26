@@ -72,6 +72,7 @@ def ask(role_prompt, montage_path, listing, key):
 
 def reunion():
     key = gai.api_key()
+    pb = json.load(open(os.path.join(ENGINE, "playbooks.json")))
     items = publish_order()
     if len(items) < 2:
         print("pas assez de contenus pour une réunion")
@@ -89,18 +90,21 @@ def reunion():
         lecons = "\n".join("- " + json.loads(l).get("raison", "") for l in lines)
     robes = ", ".join(sorted({core.first_name(x["title"]) for x in core.fetch_products() if x.get("images")}))
 
-    smm = ask(f"""Tu es le Social Media Manager de Shadow Velora (robes luxe discret type Manière De Voir, "Designed in London"). Tu définis la stratégie et le calendrier. Catalogue disponible : {robes}.
+    smm = ask(f"""Tu es le Social Media Manager de Shadow Velora (robes luxe discret type Manière De Voir, "Designed in London"). {pb["smm"]}
+Séries signature possibles : {"; ".join(pb["series_types"][:4])}.
+Concepts créatifs disponibles pour les briefs (choisis-en, jamais 'mannequin en studio' brut) : {"; ".join(pb["concepts"][:8])}.
+Catalogue disponible : {robes}.
 LEÇONS RÉCENTES DE LA FONDATRICE (à respecter absolument) :
 {lecons}
 L'image jointe = la grille actuelle. Décide le PLAN DU PROCHAIN LOT (2 contenus max, budget serré) : quelles robes mettre en avant (varie par rapport à la grille), quel format (mannequin_pipeline ou buste_produit), quelle ambiance.
-Réponds UNIQUEMENT en JSON: {{"strategie": "2 phrases max", "plan_prochain_lot": [{{"robe": "nom exact du catalogue", "format": "mannequin_pipeline ou buste_produit", "ambiance": "1 phrase de brief shooting"}}], "ton_legendes": "1 phrase"}}""",
+Réponds UNIQUEMENT en JSON: {{"strategie": "2 phrases max", "plan_prochain_lot": [{{"robe": "nom exact du catalogue", "format": "mannequin_pipeline ou buste_produit", "concept": "nom du concept créatif choisi", "ambiance": "brief shooting en 1-2 phrases (lieu, lumière, idée forte)"}}], "ton_legendes": "1 phrase"}}""",
               montage, listing, key)
 
-    da = ask("""Tu es la directrice artistique de Shadow Velora, marque de robes "luxe discret" inspirée de Manière De Voir. DA verrouillée : palette sable/crème/taupe/espresso, jamais de gris froid ni couleurs criardes, mannequins naturelles (jamais poupée lisse), décors vécus élégants, zéro texte sur les photos (sauf bandes éditoriales assumées). L'image jointe est la grille Instagram prévue.
+    da = ask("Tu es la directrice artistique de Shadow Velora, marque de robes luxe discret inspirée de Manière De Voir. " + pb["da"] + """ DA verrouillée : palette sable/crème/taupe/espresso, jamais de gris froid, mannequins naturelles. L'image jointe est la grille Instagram prévue.
 Réponds UNIQUEMENT en JSON: {"verdicts": [{"numero": n, "da_ok": true/false, "note": "1 phrase"}], "avis_global": "2 phrases max"}""",
              montage, listing, key)
 
-    cura = ask("""Tu es la curatrice de grille Instagram de Shadow Velora (luxe discret type Manière De Voir). Règles d'une belle grille : jamais deux posts visuellement similaires côte à côte (deux mannequins plein pied, deux bandes texte...), alterner les échelles (plein pied / détail / produit / texte), rythme de couleurs harmonieux, la marque doit se présenter en premier (logo/manifeste publiés d'abord). L'image jointe = la grille prévue (3 colonnes, le dernier publié en haut à gauche).
+    cura = ask("Tu es la curatrice de grille Instagram de Shadow Velora (luxe discret type Manière De Voir). " + pb["curatrice"] + """ L'image jointe = la grille prévue (3 colonnes, le dernier publié en haut à gauche).
 Réponds UNIQUEMENT en JSON: {"ordre_ideal": [liste des numéros actuels dans le NOUVEL ordre de publication souhaité, ex [1,3,2,4,5,6]], "raison": "2 phrases max"}""",
               montage, listing, key)
 

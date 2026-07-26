@@ -483,3 +483,54 @@ def make_no_face(kind, product, captions, state, key):
                     random.choice(captions["hashtags"]))
     print(f"✅ {kind} {name}")
     return d
+
+
+def make_model_post(product, captions, state, key, scene_text=None, concept=""):
+    """Plein-pied mannequin pipeline complet, avec brief d'ambiance de la Creative Producer."""
+    from PIL import Image as _I
+    cfg = json.load(open(os.path.join(ENGINE, "scenes.json")))
+    name = core.first_name(product["title"])
+    scene = scene_text or pick_scene(cfg["scenes"], state.get("last_scene"))["text"]
+    pose = random.choice(cfg["poses"])
+    stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%S")
+    d = os.path.join(PENDING, f"{stamp}_ai-studio_{product['handle']}")
+    os.makedirs(d, exist_ok=True)
+    ref = os.path.join(d, "reference.jpg")
+    core.fetch_image(product["images"][0]["src"], 1200).save(ref, quality=92)
+    verdicts, kept = [], None
+    for attempt in range(1, 4):
+        imps = sample_imperfections(cfg)
+        try:
+            raw = generate_candidate(ref, scene, pose, cfg["rules"], key, imps)
+        except RuntimeError as e:
+            verdicts.append({"error": str(e)[:100]})
+            continue
+        cp = os.path.join(d, f"cand-{attempt}.jpg")
+        save_jpeg(raw, cp)
+        try:
+            save_jpeg(texture_pass(cp, key), cp)
+        except RuntimeError:
+            pass
+        v = check_candidate(ref, cp, key)
+        verdicts.append(v)
+        if v.get("verdict") == "pass":
+            kept = cp
+            break
+    with open(os.path.join(d, "controle.json"), "w") as f:
+        json.dump(verdicts, f, indent=2, ensure_ascii=False)
+    if not kept:
+        import shutil
+        shutil.move(d, os.path.join(ROOT, "queue", "rejected", os.path.basename(d)))
+        print(f"❌ {name} — brief '{concept}' jamais validé")
+        return None
+    img = _I.open(kept).convert("RGB")
+    mp = os.path.join(d, "media.jpg")
+    core.cover(img, 1080, 1350).save(mp, quality=92)
+    os.remove(kept)
+    os.remove(ref)
+    magnific_finalize(mp, key)
+    cap = core.pick_caption(captions, "studio", state, name)
+    core.write_meta(d, "studio", cap, f"{name} dress, editorial photograph. Concept: {concept or 'editorial'}.",
+                    random.choice(captions["hashtags"]))
+    print(f"✅ {name} — concept: {concept or 'libre'}")
+    return d

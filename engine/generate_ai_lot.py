@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Creative Producer : exécute le plan de la semaine décidé par le Social Media Manager."""
+"""Creative Producer : exécute le plan du Social Media Manager (concepts créatifs inclus)."""
 import sys, os, json
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import generate_ai as g
@@ -29,16 +29,16 @@ for brief in plan[:2]:
     if brief.get("format") == "buste_produit":
         g.make_no_face("bust", p, captions, state, key)
     else:
-        # mannequin pipeline complet — brief d'ambiance de la productrice en scène
-        g.main(1)
+        g.make_model_post(p, captions, state, key,
+                          scene_text=brief.get("ambiance"), concept=brief.get("concept", ""))
     executed += 1
 
-if executed == 0:  # pas de plan → rotation classique
-    g.main(1)
-    chosen = core.pick_products(products, state, 1)
-    g.make_no_face("bust", chosen[0], captions, state, key)
+if executed == 0:
+    chosen = core.pick_products(products, state, 2)
+    g.make_model_post(chosen[0], captions, state, key)
+    g.make_no_face("bust", chosen[1], captions, state, key)
 
 core.save_state(state)
 if os.path.exists(plan_path):
-    os.remove(plan_path)  # plan consommé
-print(f"lot produit selon le plan ({executed} briefs exécutés)")
+    os.remove(plan_path)
+print(f"lot produit ({executed} briefs du plan exécutés)")

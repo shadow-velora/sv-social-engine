@@ -1,12 +1,14 @@
 [
   {
-    "robe": "Bianca",
+    "robe": "Nerina",
     "format": "mannequin_pipeline",
-    "ambiance": "Lumière naturelle douce dans un intérieur londonien aux tons neutres, posture fluide et naturelle mettant en valeur la coupe sans attitude surjouée ni lissage de peau."
+    "concept": "L'heure dorée",
+    "ambiance": "Pénombre raffinée dans un townhouse londonien où une source de lumière rasante vient sculpter les drapes de Nerina. Mouvement capturé sur le vif et texture de peau brute, sans retouche artificielle."
   },
   {
     "robe": "Calista",
     "format": "buste_produit",
-    "ambiance": "Cadrage serré et structuré sur le bustier et les textures du tissu, éclairage d'atelier sobre révélant le travail de précision du vêtement."
+    "concept": "Diptyque matière/silhouette",
+    "ambiance": "Juxtaposition d'un gros plan ultra-précis sur le grain du tissu et les finitions de Calista avec la structure globale du buste dans une lumière naturelle filtrée."
   }
 ]
