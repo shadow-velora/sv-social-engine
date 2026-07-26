@@ -148,6 +148,34 @@ Réponds UNIQUEMENT en JSON: {"histoire_ok": true/false, "manque": "ce qui manqu
                 continue
         rapport["ordre_applique"] = True
 
+    # décisions APPLIQUÉES visiblement :
+    # 1. légendes corrigées par la responsable marque
+    for corr in (marque.get("legendes_a_revoir") or []):
+        try:
+            it = items[int(corr["numero"]) - 1]
+            mp = os.path.join(it["dir"], "meta.json")
+            if os.path.exists(mp) and corr.get("suggestion"):
+                meta = json.load(open(mp))
+                tags = meta.get("caption", "").split("\n\n")[-1] if "#" in meta.get("caption", "") else ""
+                meta["caption"] = corr["suggestion"].strip() + ("\n\n" + tags if tags else "")
+                json.dump(meta, open(mp, "w"), indent=2, ensure_ascii=False)
+        except Exception:
+            continue
+    # 2. alertes DA posées sur les cartes (badge visible, Laurie tranche)
+    for v in (da.get("verdicts") or []):
+        try:
+            it = items[int(v["numero"]) - 1]
+            mp = os.path.join(it["dir"], "meta.json")
+            if os.path.exists(mp):
+                meta = json.load(open(mp))
+                if v.get("da_ok"):
+                    meta.pop("alerte_da", None)
+                else:
+                    meta["alerte_da"] = v.get("note", "hors DA")
+                json.dump(meta, open(mp, "w"), indent=2, ensure_ascii=False)
+        except Exception:
+            continue
+
     if isinstance(smm.get("plan_prochain_lot"), list) and smm["plan_prochain_lot"]:
         json.dump(smm["plan_prochain_lot"], open(os.path.join(ENGINE, "plan-semaine.json"), "w"),
                   indent=2, ensure_ascii=False)

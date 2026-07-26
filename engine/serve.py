@@ -37,6 +37,7 @@ def list_state(state):
         out.append({
             "id": it, "state": state, "type": meta.get("type", "?"),
             "caption": meta.get("caption", ""),
+            "alerte_da": meta.get("alerte_da"),
             "media": [f"/queue/{state}/{it}/{m}" for m in media],
         })
     return out
@@ -130,6 +131,11 @@ class Handler(SimpleHTTPRequestHandler):
                 try:
                     subprocess.run(["python3", os.path.join(ENGINE, "committee.py")],
                                    cwd=ROOT, timeout=600)
+                    # l'équipe exécute immédiatement son plan (production)
+                    subprocess.run(["python3", os.path.join(ENGINE, "generate_ai_lot.py")],
+                                   cwd=ROOT, timeout=3600)
+                    subprocess.run(["python3", os.path.join(ENGINE, "committee.py")],
+                                   cwd=ROOT, timeout=600)  # re-curation avec les nouveautés
                 finally:
                     _gen_running = False
             threading.Thread(target=_run, daemon=True).start()

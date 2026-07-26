@@ -76,7 +76,7 @@ button{border:0;border-radius:5px;padding:9px 0;font-size:11.5px;letter-spacing:
   <button class="tab" data-t="equipe">🧑‍💼 ÉQUIPE</button>
   <button class="gen" id="gen">⚙ LOT PHOTOS BOUTIQUE</button>
   <button class="gen" id="genai">✨ LOT IA (NOUVELLES IMAGES)</button>
-  <button class="gen" id="reunion">🧑‍💼 RÉUNION D'ÉQUIPE</button>
+  <button class="gen" id="reunion">🧑‍💼 RÉUNION + PRODUCTION</button>
 </div>
 <div class="genbar" id="genbar">✨ GÉNÉRATION EN COURS — LES CONTENUS ARRIVENT DANS QUELQUES MINUTES<div class="track"><div class="fill"></div></div></div>
 <div class="grid" id="grid"></div>
@@ -197,7 +197,8 @@ function render(){
   }
   g.innerHTML = items.map((it, i) => `
     <div class="card">
-      <div class="k"><span>${it.type.toUpperCase()}</span><span>${it.media.length > 1 ? it.media.length + " slides" : ""}</span></div>
+      <div class="k"><span>${it.type.toUpperCase()}</span><span>${it.alerte_da ? "⚠️ DA" : (it.media.length > 1 ? it.media.length + " slides" : "")}</span></div>
+      ${it.alerte_da ? `<div style="background:#4a3a26;color:#f0dfc0;font-size:11px;padding:6px 12px">⚠️ ${it.alerte_da}</div>` : ""}
       ${mediaHtml(it)}
       <div class="body">
         <textarea id="cap-${TAB}-${i}">${it.caption}</textarea>
@@ -263,7 +264,7 @@ document.getElementById("reunion").onclick = async () => {
   await fetch("/api/committee", {method: "POST", body: "{}"});
   document.getElementById("genbar").classList.add("on");
   afterGen = "equipe"; wasGenerating = true;
-  toast("L'équipe se réunit — le compte-rendu s'ouvrira tout seul");
+  toast("Réunion + production lancées (~5-8 min, ~0,50 €) — les décisions et nouvelles images vont apparaître");
 };
 document.getElementById("genai").onclick = async () => {
   await fetch("/api/generate_ai", {method: "POST", body: "{}"});
