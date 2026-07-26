@@ -76,7 +76,7 @@ button{border:0;border-radius:5px;padding:9px 0;font-size:11.5px;letter-spacing:
   <button class="tab" data-t="equipe">🧑‍💼 ÉQUIPE</button>
   <button class="gen" id="gen">⚙ LOT PHOTOS BOUTIQUE</button>
   <button class="gen" id="genai">✨ LOT IA (NOUVELLES IMAGES)</button>
-  <button class="gen" id="reunion">🧑‍💼 RÉUNION + PRODUCTION</button>
+  <button class="gen" id="reunion">🧑‍💼 RÉUNION D'ÉQUIPE (GRATUIT)</button>
 </div>
 <div class="genbar" id="genbar">✨ GÉNÉRATION EN COURS — LES CONTENUS ARRIVENT DANS QUELQUES MINUTES<div class="track"><div class="fill"></div></div></div>
 <div class="grid" id="grid"></div>
@@ -118,6 +118,8 @@ function toast(msg){
 async function load(){
   const r = await fetch("/api/queue");
   const j = await r.json();
+  const allIds = [...j.pending, ...j.approved, ...j.published].map(x => x.id);
+  if (knownIds === null) knownIds = new Set(allIds);
   DATA = j;
   for (const s of ["pending","approved","published"])
     document.getElementById("n-"+s).textContent = "· " + j[s].length;
@@ -127,7 +129,7 @@ async function load(){
   if (wasGenerating && !j.generating && afterGen){
     TAB = afterGen; afterGen = null;
     document.querySelectorAll(".tab").forEach(x => x.classList.toggle("on", x.dataset.t === TAB));
-    toast("Compte-rendu de réunion prêt 🧑‍💼");
+    toast("Travail terminé — voici les nouveautés ✨ (compte-rendu dans l'onglet ÉQUIPE)");
   }
   wasGenerating = j.generating;
   render();
@@ -197,7 +199,7 @@ function render(){
   }
   g.innerHTML = items.map((it, i) => `
     <div class="card">
-      <div class="k"><span>${it.type.toUpperCase()}</span><span>${it.alerte_da ? "⚠️ DA" : (it.media.length > 1 ? it.media.length + " slides" : "")}</span></div>
+      <div class="k"><span>${!knownIds.has(it.id) ? "✨ NOUVEAU · " : ""}${it.type.toUpperCase()}</span><span>${it.alerte_da ? "⚠️ DA" : (it.media.length > 1 ? it.media.length + " slides" : "")}</span></div>
       ${it.alerte_da ? `<div style="background:#4a3a26;color:#f0dfc0;font-size:11px;padding:6px 12px">⚠️ ${it.alerte_da}</div>` : ""}
       ${mediaHtml(it)}
       <div class="body">
@@ -219,6 +221,7 @@ function render(){
 
 let REJECT_TARGET = null;
 let dragFrom = null;
+let knownIds = null;
 let wasGenerating = false;
 let afterGen = null;
 async function act(state, id, action){
@@ -263,8 +266,8 @@ document.getElementById("gen").onclick = async () => {
 document.getElementById("reunion").onclick = async () => {
   await fetch("/api/committee", {method: "POST", body: "{}"});
   document.getElementById("genbar").classList.add("on");
-  afterGen = "equipe"; wasGenerating = true;
-  toast("Réunion + production lancées (~5-8 min, ~0,50 €) — les décisions et nouvelles images vont apparaître");
+  afterGen = "pending"; wasGenerating = true;
+  toast("Réunion lancée (gratuit, ~1 min) — ordre, légendes et badges vont bouger");
 };
 document.getElementById("genai").onclick = async () => {
   await fetch("/api/generate_ai", {method: "POST", body: "{}"});

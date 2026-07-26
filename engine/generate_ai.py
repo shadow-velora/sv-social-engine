@@ -190,7 +190,7 @@ def check_candidate(ref_path, gen_path, key):
 
 
 HEALTH_CHECK = """Inspect this fashion photograph closely. Answer ONLY with JSON:
-{"face_clean": true/false, "issues": ["list any bruise-like blue or purple discoloration on the face or body, black-eye shading, wound-like marks, sickly grey patches, anatomical glitches (extra fingers, warped hands), or an awkward distressed-looking posture (hunched over, head hanging, looks sick or in pain)"]}
+{"face_clean": true/false, "issues": ["list any bruise-like blue or purple discoloration on the face or body, black-eye shading, wound-like marks, sickly grey patches, anatomical glitches (extra fingers, warped hands), an awkward distressed-looking posture (hunched over, head hanging, looks sick or in pain), or visible grain/noise/speckling over the image — the image must be clean and crisp"]}
 Natural freckles, moles and healthy redness are fine. Bruise-colored patches anywhere on the face = face_clean false."""
 
 

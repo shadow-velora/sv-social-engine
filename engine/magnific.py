@@ -13,8 +13,8 @@ import time
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 API = "https://api.magnific.com/v1/ai/image-upscaler"
 
-SKIN_PROMPT = ("natural unretouched photograph, real human skin, film photography look, "
-               "healthy natural face with even healthy lip color, real fabric texture")
+SKIN_PROMPT = ("clean crisp professional photograph, completely noise-free, real human skin texture, "
+               "healthy natural face with even healthy lip color, real fabric detail, smooth clean background")
 
 
 def api_key():
