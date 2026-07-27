@@ -74,6 +74,7 @@ button{border:0;border-radius:5px;padding:9px 0;font-size:11.5px;letter-spacing:
   <button class="tab" data-t="published">PUBLIÉS <span id="n-published"></span></button>
   <button class="tab" data-t="preview">📱 APERÇU INSTA</button>
   <button class="tab" data-t="library">🖼 BIBLIOTHÈQUE</button>
+  <button class="tab" data-t="story">📖 STORY</button>
   <button class="tab" data-t="equipe">🧑‍💼 ÉQUIPE</button>
   <button class="gen" id="gen">⚙ LOT PHOTOS BOUTIQUE</button>
   <button class="gen" id="genai">✨ LOT IA (NOUVELLES IMAGES)</button>
@@ -227,6 +228,23 @@ function render(){
         const down = idx < order.length-1 ? `<span onclick="swapItems(${idx},${idx+1})" title="publier plus tard">▶</span>` : "";
         return `<div class="cell" draggable="true" ondragstart="dragFrom=${idx}" ondragover="event.preventDefault()" ondrop="swapItems(dragFrom,${idx})">${med}<span class="num">${gi+1}</span><div class="mv">${up}${down}</div></div>`;
       }).join("") + `</div>`;
+    return;
+  }
+  if (TAB === "story"){
+    fetch("/api/stories").then(r => r.json()).then(res => {
+      if (!res.kits.length){ g.innerHTML = `<div class="empty">Pas encore de kit — il arrive chaque dimanche 9h. La machine choisit l'image, toi tu postes avec le texte et le sondage proposés.</div>`; return; }
+      g.innerHTML = res.kits.map(k => `
+        <div class="card"><img src="${k.media}" style="aspect-ratio:9/16;max-height:520px" onclick="openZoom('${k.media}')">
+          <div class="body">
+            <div style="font-size:11px;color:#a8977f;letter-spacing:1px">KIT DU ${k.id.split("_")[0]}</div>
+            <div style="font-size:13px;line-height:1.7"><b>✍️ Texte à écrire :</b> « ${k.text_overlay || "—"} »<br>
+            <b>📊 Sondage :</b> « ${k.poll_question || "—"} »<br>
+            <b>Réponses :</b> ${(k.poll_options || []).map(o => "« " + o + " »").join(" / ")}<br>
+            <b>📍 Placement :</b> ${k.placement_tip || "—"}</div>
+            <div class="actions" style="margin-top:8px">
+              <a class="btn" href="${k.media.split("?")[0]}" download style="text-decoration:none;text-align:center">⬇ Télécharger l'image</a>
+            </div></div></div>`).join("");
+    });
     return;
   }
   if (TAB === "library"){

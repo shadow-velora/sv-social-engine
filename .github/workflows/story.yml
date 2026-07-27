@@ -1,14 +1,14 @@
-name: Story Instagram
+name: Kit Story du dimanche
 on:
   schedule:
-    - cron: "30 17 * * 2,4,6"   # mardi/jeudi/samedi 17:30 UTC (19:30 Paris)
+    - cron: "0 7 * * 0"   # dimanche 07:00 UTC (9h Paris) — Laurie poste le soir
   workflow_dispatch: {}
 
 permissions:
   contents: write
 
 jobs:
-  story:
+  kit:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,6 +18,4 @@ jobs:
       - run: pip install --quiet pillow
       - run: python engine/story.py
         env:
-          IG_USER_ID: ${{ secrets.IG_USER_ID }}
-          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
-          ASSET_BASE_URL: https://raw.githubusercontent.com/${{ github.repository }}/main
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

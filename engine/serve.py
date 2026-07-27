@@ -98,6 +98,20 @@ class Handler(SimpleHTTPRequestHandler):
                 return self._json(json.load(open(rp)))
             return self._json({"vide": True})
 
+        if self.path == "/api/stories":
+            base = os.path.join(ROOT, "queue", "stories")
+            os.makedirs(base, exist_ok=True)
+            kits = []
+            for it in sorted(os.listdir(base), reverse=True):
+                d = os.path.join(base, it)
+                kp, mp2 = os.path.join(d, "kit.json"), os.path.join(d, "media.jpg")
+                if os.path.isdir(d) and os.path.exists(mp2):
+                    kit = json.load(open(kp)) if os.path.exists(kp) else {}
+                    kits.append({"id": it,
+                                 "media": f"/queue/stories/{urllib.parse.quote(it)}/media.jpg?v={int(os.path.getmtime(mp2))}",
+                                 **kit})
+            return self._json({"kits": kits})
+
         if self.path == "/api/library":
             base = os.path.join(ROOT, "queue", "bibliotheque")
             os.makedirs(base, exist_ok=True)
@@ -263,6 +277,7 @@ class Handler(SimpleHTTPRequestHandler):
 
 
 if __name__ == "__main__":
+    subprocess.run(["git", "pull", "--rebase", "--autostash"], cwd=ROOT, timeout=60, capture_output=True)
     print(f"SV Cockpit → http://localhost:{PORT}")
     subprocess.Popen(["open", f"http://localhost:{PORT}"])
     HTTPServer(("127.0.0.1", PORT), Handler).serve_forever()
