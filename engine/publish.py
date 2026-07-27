@@ -20,7 +20,7 @@ import urllib.request
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 APPROVED = os.path.join(ROOT, "queue", "approved")
 PUBLISHED = os.path.join(ROOT, "queue", "published")
-GRAPH = "https://graph.facebook.com/v21.0"
+GRAPH = "https://graph.instagram.com/v21.0"  # API Instagram Login (jamais graph.facebook.com avec ce token)
 
 IG_USER = os.environ["IG_USER_ID"]
 TOKEN = os.environ["IG_ACCESS_TOKEN"]
@@ -95,25 +95,42 @@ def publish_item(folder):
 
 
 def refresh_token():
-    """Prolonge le jeton longue durée (60 j) — appelé à chaque run.
-    Nécessite APP_ID / APP_SECRET en secrets pour un vrai refresh ;
-    sinon on ne fait rien (le jeton actuel reste valable)."""
-    app_id = os.environ.get("META_APP_ID")
-    app_secret = os.environ.get("META_APP_SECRET")
-    if not (app_id and app_secret):
-        return
+    """Prolonge le jeton Instagram Login (60 j glissants) à chaque run,
+    et met à jour le secret GitHub si GH_PAT est fourni."""
     try:
-        r = api("oauth/access_token", {
-            "grant_type": "fb_exchange_token",
-            "client_id": app_id,
-            "client_secret": app_secret,
-            "fb_exchange_token": TOKEN,
-        }, "GET")
-        if "access_token" in r:
-            print("::add-mask::" + r["access_token"])
-            print("nouveau jeton obtenu (à mettre à jour dans les Secrets si rotation)")
+        r = api("refresh_access_token",
+                {"grant_type": "ig_refresh_token"}, "GET")
     except Exception as e:
         print("refresh token: ignoré,", e)
+        return
+    new_tok = r.get("access_token")
+    if not new_tok:
+        return
+    print("::add-mask::" + new_tok)
+    print(f"jeton prolongé ({r.get('expires_in', 0) // 86400} jours)")
+    pat, repo = os.environ.get("GH_PAT"), os.environ.get("GITHUB_REPOSITORY")
+    if not (pat and repo) or new_tok == TOKEN:
+        return
+    try:
+        import base64
+        from nacl import encoding, public
+        def gh(method, path, payload=None):
+            req = urllib.request.Request(
+                f"https://api.github.com{path}",
+                data=json.dumps(payload).encode() if payload else None,
+                method=method,
+                headers={"Authorization": f"Bearer {pat}",
+                         "Accept": "application/vnd.github+json"})
+            body = urllib.request.urlopen(req, timeout=30).read()
+            return json.loads(body) if body else {}
+        pk = gh("GET", f"/repos/{repo}/actions/secrets/public-key")
+        box = public.SealedBox(public.PublicKey(pk["key"].encode(), encoding.Base64Encoder()))
+        enc = base64.b64encode(box.encrypt(new_tok.encode())).decode()
+        gh("PUT", f"/repos/{repo}/actions/secrets/IG_ACCESS_TOKEN",
+           {"encrypted_value": enc, "key_id": pk["key_id"]})
+        print("secret IG_ACCESS_TOKEN mis à jour — rotation automatique OK")
+    except Exception as e:
+        print("rotation secret: ignorée,", e)
 
 
 def main():
