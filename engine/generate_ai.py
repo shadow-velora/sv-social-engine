@@ -453,7 +453,7 @@ def make_ai_set(key=None, ffmpeg=None):
 
 # ---------- FORMATS SANS VISAGE (grille finale, verdict Laurie 26/07) ----------
 
-CHAISE_PROMPT = """Editorial still-life photograph for a quiet-luxury fashion brand. The EXACT dress from the reference image — same color, same fabric, same details, nothing invented — is draped gracefully over an antique carved wooden armchair with faded floral upholstery and gilded frame, in a grand old château interior: herringbone oak parquet with visible wear, an aged painted screen or panelled wall softly out of focus behind. Natural window light from one side, warm and soft, gentle shadows. The dress is arranged with elegant intention, bodice resting against the chair back, skirt flowing over the seat toward the floor. Shot from a slight high angle like a candid backstage moment. Real textures everywhere: worn wood grain, patinated gilding, creased fabric, dust-soft light. No person, no text, no logo. Clean, crisp, high resolution photograph."""
+CHAISE_PROMPT = """Product photograph: this exact dress, empty (no one wearing it), gracefully draped over an antique gilded armchair in a château room with herringbone parquet, warm window light. Reproduce the dress exactly as in the reference: same color, same fabric, same neckline. The empty fabric lies limp with soft natural folds, and the room has a lived-in patina: rubbed gilding, worn parquet, faded upholstery."""
 
 BUST_PROMPT = """Professional e-commerce product photograph. The EXACT dress from the reference image — same color, same fabric, same neckline, same straps, same construction, same sheen, every detail from the reference only — displayed on a cream linen tailor's dress form (a sewing mannequin bust, NO person, no head, no limbs).
 
@@ -477,7 +477,7 @@ def make_no_face(kind, product, captions, state, key):
     core.fetch_image(product["images"][0]["src"], 1200).save(ref, quality=92)
     prompt = {"bust": BUST_PROMPT, "chaise": CHAISE_PROMPT}.get(kind, FLATLAY_PROMPT)
     kept, verdicts = None, []
-    for attempt in (1, 2, 3):
+    for attempt in range(1, 6 if kind == "chaise" else 4):
         _budget_guard()
         parts = [{"text": prompt},
                  {"inline_data": {"mime_type": "image/jpeg", "data": b64_of(ref)}}]
