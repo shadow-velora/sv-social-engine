@@ -1,7 +1,7 @@
 name: Générer le lot hebdo
 on:
   schedule:
-    - cron: "0 6 * * 1"   # lundi 06:00 UTC
+    - cron: "0 6 * * 1,4"   # lundi + jeudi 06:00 UTC (2 lots/semaine)
   workflow_dispatch: {}
 
 permissions:
