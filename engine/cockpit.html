@@ -72,7 +72,6 @@ button{border:0;border-radius:5px;padding:9px 0;font-size:11.5px;letter-spacing:
   <button class="tab" data-t="programme">📅 PROGRAMME</button>
   <button class="tab on" data-t="pending">EN ATTENTE <span id="n-pending"></span></button>
   <button class="tab" data-t="approved">PRÊTS À PUBLIER <span id="n-approved"></span></button>
-  <button class="tab" data-t="published">PUBLIÉS <span id="n-published"></span></button>
   <button class="tab" data-t="preview">📱 APERÇU INSTA</button>
   <button class="tab" data-t="library">🖼 BIBLIOTHÈQUE</button>
   <button class="tab" data-t="story">📖 À POSTER (STORY & RÉEL)</button>
@@ -128,7 +127,7 @@ async function load(){
   const allIds = [...j.pending, ...j.approved, ...j.published].map(x => x.id);
   if (knownIds === null) knownIds = new Set(allIds);
   DATA = j;
-  for (const s of ["pending","approved","published"])
+  for (const s of ["pending","approved"])
     document.getElementById("n-"+s).textContent = "· " + j[s].length;
   document.getElementById("genai").disabled = j.generating;
   document.getElementById("genbar").classList.toggle("on", j.generating);
