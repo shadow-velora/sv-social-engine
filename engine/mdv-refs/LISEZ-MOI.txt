@@ -1,0 +1,8 @@
+DÉPOSE ICI TES SCREENSHOTS DE PUBS / POSTS MANIÈRE DE VOIR
+(2 secondes : capture d'écran quand tu tombes sur une pub → glisse le fichier ici)
+
+Ensuite dis à Claude : "analyse les refs MDV"
+→ Claude regarde chaque image, en tire des règles concrètes
+  (cadrage, lumière, décor, pose, palette) et les grave dans
+  scenes.json + playbooks.json. La machine copie alors CE QUE TU VOIS,
+  pas une idée abstraite de MDV.

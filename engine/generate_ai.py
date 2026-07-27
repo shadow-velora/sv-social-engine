@@ -205,24 +205,23 @@ def health_check(img_path, key):
         return {"face_clean": True, "issues": []}
 
 
-def clean_noise(media_path, threshold=1.2):
-    """Débruitage sélectif automatique : zones plates lissées, contours préservés."""
-    from PIL import Image as _I, ImageFilter as _F
-    import numpy as _np
+def clean_noise(media_path, threshold=0.9):
+    """Débruitage sélectif : masque de contours calculé sur image réduite
+    (le vrai dessin survit, le grain fin disparaît), lissage fort des zones plates."""
+    from PIL import Image as _I, ImageFilter as _F, ImageChops as _C, ImageStat as _S
     img = _I.open(media_path).convert("RGB")
-    g = _np.array(img.convert("L"), dtype=_np.float32)
-    gb = _np.array(img.convert("L").filter(_F.GaussianBlur(2)), dtype=_np.float32)
-    noise = float(_np.abs((g - gb)[40:260, 40:260]).mean())
+    g = img.convert("L")
+    noise = _S.Stat(_C.difference(g, g.filter(_F.GaussianBlur(1.2)))).mean[0]
     if noise <= threshold:
         return False
-    a = _np.array(img, dtype=_np.float32)
-    gb15 = _np.array(img.convert("L").filter(_F.GaussianBlur(1.5)), dtype=_np.float32)
-    edges = _np.abs(g - gb15)
-    edges = _np.array(_I.fromarray(_np.clip(edges * 8, 0, 255).astype(_np.uint8)).filter(_F.GaussianBlur(3)), dtype=_np.float32) / 255.0
-    edges = _np.clip(edges, 0, 1)[..., None]
-    den = _np.array(img.filter(_F.MedianFilter(5)).filter(_F.GaussianBlur(1.1)), dtype=_np.float32)
-    out = _I.fromarray(_np.clip(a * edges + den * (1 - edges), 0, 255).astype(_np.uint8))
-    out = out.filter(_F.UnsharpMask(radius=1.6, percent=35, threshold=4))
+    w, h = img.size
+    small = g.resize((w // 4, h // 4), _I.LANCZOS)
+    edges = small.filter(_F.FIND_EDGES).resize((w, h), _I.LANCZOS)
+    edges = (edges.point(lambda v: 255 if v > 22 else 0)
+                  .filter(_F.MaxFilter(15)).filter(_F.GaussianBlur(6)))
+    smooth = img.filter(_F.MedianFilter(7)).filter(_F.GaussianBlur(2.6))
+    out = _I.composite(img, smooth, edges)
+    out = out.filter(_F.UnsharpMask(radius=1.8, percent=38, threshold=4))
     out.save(media_path, quality=93)
     return True
 
