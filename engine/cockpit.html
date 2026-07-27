@@ -148,6 +148,22 @@ function openZoom(src){
 function closeZoom(){ document.getElementById("zoombg").classList.remove("open"); }
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeZoom(); });
 
+function curate(){
+  const b = document.getElementById("curbtn");
+  b.disabled = true; b.textContent = "🔀 La curatrice réfléchit…";
+  fetch("/api/curate", {method:"POST", body:"{}"}).then(r => r.json()).then(res => {
+    document.getElementById("curnote").textContent = res.raison || "";
+    load().then(() => {
+      const note = document.getElementById("curnote");
+      if (note && res.raison) note.textContent = "🗂 " + res.raison;
+    });
+  }).finally(() => { const b2 = document.getElementById("curbtn"); if (b2){ b2.disabled = false; b2.textContent = "🔀 Nouvelle proposition de la curatrice"; } });
+}
+function archiveOld(){
+  fetch("/api/archive", {method:"POST", body:"{}"}).then(r => r.json()).then(res => {
+    alert(res.archives + " anciens posts archivés (queue/archive/)"); load();
+  });
+}
 function publishOrder(){
   // ordre de publication réel : validés d'abord (plus ancien → plus récent), puis en attente
   return [...DATA.approved, ...DATA.pending];
@@ -155,15 +171,24 @@ function publishOrder(){
 function render(){
   const g = document.getElementById("grid");
   if (TAB === "preview"){
-    const order = publishOrder();
-    const grid = [...order].reverse(); // le dernier publié apparaît en haut à gauche, comme sur Insta
-    g.innerHTML = `<div class="ig-note">Ta grille telle qu'elle apparaîtra sur Instagram (le n°1 part en premier, donc finit en bas).<br>Flèches = échanger l'ordre de publication.</div>
+    const pub = DATA.published || [];          // déjà en ligne : figés
+    const order = publishOrder();              // pas encore publiés : modifiables
+    const all = [...pub, ...order];
+    const grid = [...all].reverse();           // le dernier apparaît en haut à gauche, comme sur Insta
+    const archBtn = pub.length > 30 ? `<button class="genbtn" onclick="archiveOld()">🗃 Archiver les anciens (${pub.length - 30})</button>` : "";
+    g.innerHTML = `<div class="ig-note">Ta grille telle qu'elle apparaîtra sur Instagram (le n°1 part en premier, donc finit en bas).<br>
+      ✓ = déjà publié sur le vrai compte, figé. Flèches / glisser = réorganiser ce qui n'est pas encore parti.<br>
+      <button class="genbtn" id="curbtn" onclick="curate()">🔀 Nouvelle proposition de la curatrice</button> ${archBtn}
+      <div id="curnote" style="color:#a8977f;margin-top:8px;font-size:12px"></div></div>
       <div class="ig">` + grid.map(it => {
-        const idx = order.indexOf(it);
+        const gi = all.indexOf(it);
         const med = it.type === "reel" ? `<video src="${it.media[0]}" muted></video>` : `<img src="${it.media[0]}">`;
+        if (gi < pub.length)
+          return `<div class="cell" style="opacity:.92">${med}<span class="num">${gi+1}</span><span class="num" style="left:auto;right:6px;background:#2e5c3f">✓ PUBLIÉ</span></div>`;
+        const idx = gi - pub.length;
         const up = idx > 0 ? `<span onclick="swapItems(${idx},${idx-1})" title="publier plus tôt">◀</span>` : "";
         const down = idx < order.length-1 ? `<span onclick="swapItems(${idx},${idx+1})" title="publier plus tard">▶</span>` : "";
-        return `<div class="cell" draggable="true" ondragstart="dragFrom=${idx}" ondragover="event.preventDefault()" ondrop="swapItems(dragFrom,${idx})">${med}<span class="num">${idx+1}</span><div class="mv">${up}${down}</div></div>`;
+        return `<div class="cell" draggable="true" ondragstart="dragFrom=${idx}" ondragover="event.preventDefault()" ondrop="swapItems(dragFrom,${idx})">${med}<span class="num">${gi+1}</span><div class="mv">${up}${down}</div></div>`;
       }).join("") + `</div>`;
     return;
   }

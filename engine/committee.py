@@ -185,5 +185,58 @@ Réponds UNIQUEMENT en JSON: {"histoire_ok": true/false, "manque": "ce qui manqu
     return rapport
 
 
+def curate_only():
+    """Simulation de placement par la curatrice : seuls les posts NON publiés bougent."""
+    import random
+    key = gai.api_key()
+    pb = json.load(open(os.path.join(ENGINE, "playbooks.json")))
+    frozen = []
+    base = os.path.join(ROOT, "queue", "published")
+    if os.path.isdir(base):
+        for it in sorted(os.listdir(base)):
+            d = os.path.join(base, it)
+            if os.path.isdir(d) and os.path.exists(os.path.join(d, "meta.json")):
+                media = os.path.join(d, "media.jpg")
+                if not os.path.exists(media):
+                    sl = sorted(f for f in os.listdir(d) if f.startswith("slide"))
+                    media = os.path.join(d, sl[0]) if sl else None
+                frozen.append({"id": it, "media": media, "caption": ""})
+    movable = publish_order()
+    if len(movable) < 2:
+        print(json.dumps({"raison": "pas assez de posts non publiés à réorganiser"}))
+        return
+    items = frozen + movable
+    montage = os.path.join(ROOT, "queue", "__grille_sim.jpg")
+    grid_montage(items, montage)
+    listing = "\n".join(
+        f"{i+1}. [{'PUBLIÉ - FIGÉ' if i < len(frozen) else 'libre'}] {it['id']}"
+        for i, it in enumerate(items))
+    seed = random.randint(1000, 9999)
+    cura = ask("Tu es la curatrice de grille Instagram de Shadow Velora (luxe discret type Manière De Voir). " + pb["curatrice"] + f""" L'image jointe = la grille prévue (3 colonnes, dernier publié en haut à gauche). Les posts marqués PUBLIÉ - FIGÉ sont déjà en ligne : ils ne bougent JAMAIS. Propose un NOUVEL agencement UNIQUEMENT pour les posts 'libres'. Variation créative n°{seed} : propose un parti pris DIFFÉRENT des propositions précédentes (autre rythme, autre logique de respiration), tout en respectant l'alternance types/couleurs.
+Réponds UNIQUEMENT en JSON: {{"ordre_libres": [numéros actuels des posts libres dans le NOUVEL ordre de publication, ex [{len(frozen)+2}, {len(frozen)+1}]], "raison": "2 phrases max"}}""",
+               montage, listing, key)
+    os.remove(montage)
+    ordre = cura.get("ordre_libres")
+    attendu = list(range(len(frozen) + 1, len(items) + 1))
+    if isinstance(ordre, list) and sorted(ordre) == attendu:
+        chosen = [items[n - 1] for n in ordre]
+        stamp_base = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H")
+        for i, it in enumerate(chosen, start=1):
+            rest = it["id"].split("_", 2)[2] if it["id"].count("_") >= 2 else it["id"]
+            new = f"{stamp_base}{i:02d}00_{rest}"
+            newp = os.path.join(os.path.dirname(it["dir"]), new)
+            try:
+                if os.path.isdir(it["dir"]) and it["dir"] != newp and not os.path.exists(newp):
+                    os.rename(it["dir"], newp)
+            except OSError:
+                continue
+        cura["applique"] = True
+    json.dump(cura, open(os.path.join(ENGINE, "curate-note.json"), "w"), indent=2, ensure_ascii=False)
+    print(json.dumps(cura, ensure_ascii=False))
+
+
 if __name__ == "__main__":
-    reunion()
+    if "curate" in sys.argv:
+        curate_only()
+    else:
+        reunion()

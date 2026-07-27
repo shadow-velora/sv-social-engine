@@ -136,6 +136,25 @@ class Handler(SimpleHTTPRequestHandler):
             threading.Thread(target=_run, daemon=True).start()
             return self._json({"ok": True})
 
+        if self.path == "/api/curate":
+            r = subprocess.run(["python3", os.path.join(ENGINE, "committee.py"), "curate"],
+                               cwd=ROOT, capture_output=True, timeout=180)
+            try:
+                out = r.stdout.decode().strip().splitlines()[-1]
+                return self._json(json.loads(out))
+            except Exception:
+                return self._json({"raison": "la curatrice n'a pas répondu", "applique": False})
+
+        if self.path == "/api/archive":
+            base = Q("published")
+            os.makedirs(os.path.join(ROOT, "queue", "archive"), exist_ok=True)
+            items = sorted(it for it in os.listdir(base) if os.path.isdir(os.path.join(base, it)))
+            moved = 0
+            for it in items[:-30]:
+                shutil.move(os.path.join(base, it), os.path.join(ROOT, "queue", "archive", it))
+                moved += 1
+            return self._json({"ok": True, "archives": moved})
+
         if self.path == "/api/swap":
             a, sa, b, sb = data.get("a"), data.get("stateA"), data.get("b"), data.get("stateB")
             pa, pb = os.path.join(Q(sa), a), os.path.join(Q(sb), b)
