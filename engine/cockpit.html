@@ -187,7 +187,7 @@ function render(){
       <div id="curnote" style="color:#a8977f;margin-top:8px;font-size:12px"></div></div>
       <div class="ig">` + grid.map(it => {
         const gi = all.indexOf(it);
-        const med = it.type === "reel" ? `<video src="${it.media[0]}" muted></video>` : `<img src="${it.media[0]}">`;
+        const med = it.type === "reel" ? `<video src="${it.media[0]}" muted onclick="openZoom(this.src)" style="cursor:zoom-in"></video>` : `<img src="${it.media[0]}" onclick="openZoom(this.src)" style="cursor:zoom-in">`;
         if (gi < pub.length)
           return `<div class="cell" style="opacity:.92">${med}<span class="num">${gi+1}</span><span class="num" style="left:auto;right:6px;background:#2e5c3f">✓ PUBLIÉ</span></div>`;
         const idx = gi - pub.length;
