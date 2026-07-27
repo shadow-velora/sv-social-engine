@@ -108,15 +108,15 @@ skin_natural = false ONLY if the skin is clearly artificial: waxy, plastic, pore
 
 def _budget_guard():
     from datetime import datetime, timezone
-    state = core.load_state()
+    bp = os.path.join(ENGINE, "budget.json")
+    b = json.load(open(bp)) if os.path.exists(bp) else {}
     month = datetime.now(timezone.utc).strftime("%Y-%m")
-    if state.get("gen_month") != month:
-        state["gen_month"] = month
-        state["gen_calls"] = 0
-    if state.get("gen_calls", 0) >= MAX_GEN_PER_MONTH:
+    if b.get("gen_month") != month:
+        b = {"gen_month": month, "gen_calls": 0}
+    if b.get("gen_calls", 0) >= MAX_GEN_PER_MONTH:
         raise SystemExit(f"PLAFOND BUDGET ATTEINT ({MAX_GEN_PER_MONTH} generations ce mois) — rien ne sera facture de plus.")
-    state["gen_calls"] = state.get("gen_calls", 0) + 1
-    core.save_state(state)
+    b["gen_calls"] = b.get("gen_calls", 0) + 1
+    json.dump(b, open(bp, "w"))
 
 
 def _skin_ref():

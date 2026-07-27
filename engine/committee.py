@@ -113,8 +113,8 @@ Réponds UNIQUEMENT en JSON: {"histoire_ok": true/false, "manque": "ce qui manqu
                montage, listing, key)
 
     # budget : calcul local, pas d'IA
-    state = core.load_state()
-    gen = state.get("gen_calls", 0)
+    bp = os.path.join(ENGINE, "budget.json")
+    gen = (json.load(open(bp)) if os.path.exists(bp) else {}).get("gen_calls", 0)
     budget = {
         "images_gemini_ce_mois": f"{gen}/{gai.MAX_GEN_PER_MONTH}",
         "estimation_gemini": f"~{gen * 0.04:.2f} EUR",
