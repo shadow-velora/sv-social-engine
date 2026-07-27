@@ -41,18 +41,47 @@ def cadre(img_path, phrase):
     return img
 
 
-def build(out_path, phrase, images, ffmpeg=None):
+def crops(img_path, phrase):
+    """1 image → 3 plans différents (large, zoom haut, zoom serré) = rythme ×3 sans coût."""
+    img = Image.open(img_path).convert("RGB")
+    outs = [cadre(img_path, phrase)]
+    for zoom, focus_y in ((1.6, 0.30), (2.2, 0.45)):
+        w, h = img.width, img.height
+        cw, ch = int(w / zoom), int(h / zoom)
+        x = (w - cw) // 2
+        y = max(0, min(h - ch, int(h * focus_y - ch / 2)))
+        z = img.crop((x, y, x + cw, y + ch))
+        tmpf = os.path.join(tempfile.gettempdir(), "_zoom_sv.jpg")
+        z.save(tmpf, quality=93)
+        outs.append(cadre(tmpf, ""))
+    return outs
+
+
+def build(out_path, phrase, images, music=None, ffmpeg=None):
     ffmpeg = ffmpeg or os.environ.get("FFMPEG") or os.path.join(ROOT, "bin", "ffmpeg")
     if not os.path.exists(ffmpeg):
         ffmpeg = "ffmpeg"
+    frames = []
+    for im in images:
+        frames.extend(crops(im, phrase))
+    # alternance large/zoom pour le rythme : large1, zoomA2, large3, zoomB1...
+    ordre = frames[0::3] + []
+    mix = []
+    n = len(images)
+    for i in range(n):
+        mix.append(frames[i * 3])          # plan large
+        mix.append(frames[((i + 1) % n) * 3 + 1])  # zoom d'une AUTRE image
+        mix.append(frames[i * 3 + 2])      # zoom serré de la même
     with tempfile.TemporaryDirectory() as tmp:
-        for i, im in enumerate(images):
-            cadre(im, phrase).save(os.path.join(tmp, f"f{i:03d}.jpg"), quality=93)
-        subprocess.run([ffmpeg, "-y", "-framerate", str(1 / DUREE_PLAN),
-                        "-i", os.path.join(tmp, "f%03d.jpg"),
-                        "-vf", "fps=30,format=yuv420p", "-c:v", "libx264",
-                        "-preset", "medium", "-crf", "20", out_path],
-                       check=True, capture_output=True)
+        for i, fr in enumerate(mix):
+            fr.save(os.path.join(tmp, f"f{i:03d}.jpg"), quality=93)
+        cmd = [ffmpeg, "-y", "-framerate", str(1 / DUREE_PLAN),
+               "-i", os.path.join(tmp, "f%03d.jpg")]
+        if music and os.path.exists(music):
+            cmd += ["-i", music, "-shortest", "-c:a", "aac", "-b:a", "128k"]
+        cmd += ["-vf", "fps=30,format=yuv420p", "-c:v", "libx264",
+                "-preset", "medium", "-crf", "20", out_path]
+        subprocess.run(cmd, check=True, capture_output=True)
     return out_path
 
 
