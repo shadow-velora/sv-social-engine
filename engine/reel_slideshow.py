@@ -16,7 +16,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FONT = "/System/Library/Fonts/Supplemental/Didot.ttc"
-DUREE_PLAN = 0.8      # secondes par photo (cuts rapides comme les refs)
+DUREE_PLAN = 0.45     # cuts TRÈS rapides (règle Laurie : trop vite pour tout voir → on rerergarde → l'algo pousse)
 TW, TH = 1080, 1920
 
 
