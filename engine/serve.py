@@ -161,6 +161,36 @@ class Handler(SimpleHTTPRequestHandler):
             except Exception:
                 return self._json({"raison": "la curatrice n'a pas répondu", "applique": False})
 
+        if self.path == "/api/order_undo":
+            import datetime as _dt
+            hp = os.path.join(ENGINE, "ordre-historique.json")
+            hist = json.load(open(hp)) if os.path.exists(hp) else []
+            if not hist:
+                return self._json({"error": "aucune version précédente"}, 404)
+            snap = hist.pop()
+            rest_map, current = {}, []
+            for state in ("approved", "pending"):
+                base = Q(state)
+                for it in sorted(os.listdir(base)):
+                    d = os.path.join(base, it)
+                    if os.path.isdir(d) and os.path.exists(os.path.join(d, "meta.json")):
+                        rest = it.split("_", 2)[2] if it.count("_") >= 2 else it
+                        rest_map[rest] = (state, it)
+                        current.append(rest)
+            ordered = [r for r in snap["order"] if r in rest_map] + [r for r in current if r not in snap["order"]]
+            stamp = _dt.datetime.utcnow().strftime("%Y-%m-%d_%H")
+            for i, rest in enumerate(ordered, start=1):
+                state, it = rest_map[rest]
+                new = f"{stamp}{i:02d}00_{rest}"
+                src, dst = os.path.join(Q(state), it), os.path.join(Q(state), new)
+                try:
+                    if src != dst and not os.path.exists(dst):
+                        os.rename(src, dst)
+                except OSError:
+                    continue
+            json.dump(hist, open(hp, "w"), indent=2, ensure_ascii=False)
+            return self._json({"ok": True, "restaure": snap.get("date", ""), "restantes": len(hist)})
+
         if self.path == "/api/archive":
             base = Q("published")
             os.makedirs(os.path.join(ROOT, "queue", "archive"), exist_ok=True)

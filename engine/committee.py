@@ -39,6 +39,17 @@ def publish_order():
     return items
 
 
+def snapshot_order():
+    """Sauvegarde l'ordre actuel des posts non publiés (pile de 10 versions max)."""
+    hp = os.path.join(ENGINE, "ordre-historique.json")
+    hist = json.load(open(hp)) if os.path.exists(hp) else []
+    order = [it["id"].split("_", 2)[2] if it["id"].count("_") >= 2 else it["id"]
+             for it in publish_order()]
+    if order and (not hist or hist[-1]["order"] != order):
+        hist.append({"date": datetime.now(timezone.utc).isoformat(timespec="minutes"), "order": order})
+        json.dump(hist[-10:], open(hp, "w"), indent=2, ensure_ascii=False)
+
+
 def grid_montage(items, out_path):
     """La grille telle qu'elle apparaîtra sur Insta (3 col, dernier publié en haut)."""
     grid = list(reversed(items))
@@ -135,6 +146,7 @@ Réponds UNIQUEMENT en JSON: {"histoire_ok": true/false, "manque": "ce qui manqu
     # la curatrice applique son ordre (renommage des préfixes) si valide
     ordre = cura.get("ordre_ideal")
     if (isinstance(ordre, list) and sorted(ordre) == list(range(1, len(items) + 1))):
+        snapshot_order()
         base_names = [items[n - 1] for n in ordre]
         stamp_base = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H")
         for i, it in enumerate(base_names, start=1):
@@ -219,6 +231,7 @@ Réponds UNIQUEMENT en JSON: {{"ordre_libres": [numéros actuels des posts libre
     ordre = cura.get("ordre_libres")
     attendu = list(range(len(frozen) + 1, len(items) + 1))
     if isinstance(ordre, list) and sorted(ordre) == attendu:
+        snapshot_order()
         chosen = [items[n - 1] for n in ordre]
         stamp_base = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H")
         for i, it in enumerate(chosen, start=1):

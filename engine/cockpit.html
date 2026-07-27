@@ -153,6 +153,14 @@ function libDelete(name){
   if (!confirm("Supprimer définitivement « " + name + " » ?")) return;
   fetch("/api/library_delete", {method:"POST", body: JSON.stringify({name})}).then(() => render());
 }
+function orderUndo(){
+  fetch("/api/order_undo", {method:"POST", body:"{}"}).then(r => r.json()).then(res => {
+    const note = document.getElementById("curnote");
+    if (res.error){ if (note) note.textContent = "↩ " + res.error; return; }
+    load().then(() => { const n = document.getElementById("curnote");
+      if (n) n.textContent = "↩ Version du " + (res.restaure || "?") + " restaurée (" + res.restantes + " retours encore possibles)"; });
+  });
+}
 function curate(){
   const b = document.getElementById("curbtn");
   b.disabled = true; b.textContent = "🔀 La curatrice réfléchit…";
@@ -183,7 +191,7 @@ function render(){
     const archBtn = pub.length > 30 ? `<button class="genbtn" onclick="archiveOld()">🗃 Archiver les anciens (${pub.length - 30})</button>` : "";
     g.innerHTML = `<div class="ig-note">Ta grille telle qu'elle apparaîtra sur Instagram (le n°1 part en premier, donc finit en bas).<br>
       ✓ = déjà publié sur le vrai compte, figé. Flèches / glisser = réorganiser ce qui n'est pas encore parti.<br>
-      <button class="genbtn" id="curbtn" onclick="curate()">🔀 Nouvelle proposition de la curatrice</button> ${archBtn}
+      <button class="genbtn" id="curbtn" onclick="curate()">🔀 Nouvelle proposition de la curatrice</button> <button class="genbtn" onclick="orderUndo()">↩ Version précédente</button> ${archBtn}
       <div id="curnote" style="color:#a8977f;margin-top:8px;font-size:12px"></div></div>
       <div class="ig">` + grid.map(it => {
         const gi = all.indexOf(it);
