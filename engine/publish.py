@@ -190,14 +190,8 @@ def main():
     candidates = ([(APPROVED, it, False) for it in approved]
                   or [(pending, it, True) for it in sorted(os.listdir(pending))
                       if os.path.isdir(os.path.join(pending, it))])
-    # samedi = jour du réel : les réels passent devant ; les autres jours, ils attendent samedi
-    from datetime import datetime as _dt
-    est_reel = lambda c: "_reel_" in c[1]
-    if _dt.utcnow().weekday() == 5:
-        candidates.sort(key=lambda c: not est_reel(c))
-    else:
-        non_reels = [c for c in candidates if not est_reel(c)]
-        candidates = non_reels or candidates
+    # les réels sont des kits manuels (Laurie les poste avec un son tendance) : jamais auto-publiés
+    candidates = [c for c in candidates if "_reel_" not in c[1]]
     if not candidates:
         print("File vide — rien à publier.")
         sys.exit(0)

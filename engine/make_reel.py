@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
-RÉEL HEBDO — génère 6-8 images NEUVES (jamais postées), les monte en slideshow
-ultra-rapide (0,25 s/plan, multi-crops) avec musique, et met le réel en file veto.
-Publié le samedi 19h. Musique : fichiers mp3 dans engine/music/ (rotation).
+KIT RÉEL HEBDO — génère 6-8 images NEUVES (jamais postées), les monte en slideshow
+ultra-rapide (0,25 s/plan, multi-crops), SANS musique : Laurie télécharge la vidéo
+et la poste elle-même dans l'appli avec un son tendance Instagram.
+Le kit (vidéo + légende + hashtags) apparaît dans l'onglet 📖 À POSTER du Cockpit.
 """
 import glob
 import json
@@ -28,10 +29,6 @@ PHRASES = [
 
 
 def main():
-    musiques = sorted(glob.glob(os.path.join(ENGINE, "music", "*.mp3")))
-    if not musiques:
-        print("⚠️ aucun mp3 dans engine/music/ — réel non généré (ajoute 1-2 morceaux libres de droits)")
-        return
     key = gai.api_key()
     state = core.load_state()
     cfg = json.load(open(os.path.join(ENGINE, "scenes.json")))
@@ -39,7 +36,7 @@ def main():
     duo = core.pick_products(products, state, 2)
 
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%S")
-    d = os.path.join(ROOT, "queue", "pending", f"{stamp}_reel_{'-'.join(core.first_name(p['title']).lower() for p in duo)}")
+    d = os.path.join(ROOT, "queue", "stories", f"{stamp}_reel_{'-'.join(core.first_name(p['title']).lower() for p in duo)}")
     os.makedirs(d, exist_ok=True)
     framings = [
         "Full-length composition, the entire dress visible, generous headroom.",
@@ -79,15 +76,18 @@ def main():
         print(f"❌ réel : seulement {len(keepers)} images validées — abandonné")
         return
     phrase = random.choice(PHRASES)
-    musique = musiques[state.get("reel_count", 0) % len(musiques)]
-    reel_slideshow.build(os.path.join(d, "media.mp4"), phrase, keepers, music=musique)
+    reel_slideshow.build(os.path.join(d, "media.mp4"), phrase, keepers)
     names = " & ".join(core.first_name(p["title"]) for p in duo)
-    core.write_meta(d, "reel", f"Blink and you miss it. {names}. ~",
-                    f"Fast-cut slideshow reel, {len(keepers)} fresh images of {names}.",
-                    "#shadowvelora #quietluxury #eveningdress #fashionreels")
+    json.dump({
+        "type": "reel",
+        "legende": f"Blink and you miss it. {names}, designed in London. ~",
+        "hashtags": "#shadowvelora #quietluxury #eveningdress #fashionreels #dressinspo #oldmoneystyle",
+        "consigne_musique": "Poste avec un son TENDANCE Instagram (onglet sons > tendances, style mode/élégant, rythme rapide).",
+        "images": len(keepers),
+    }, open(os.path.join(d, "kit.json"), "w"), indent=2, ensure_ascii=False)
     state["reel_count"] = state.get("reel_count", 0) + 1
     core.save_state(state)
-    print(f"✅ réel prêt : {names} — {len(keepers)} images neuves, musique {os.path.basename(musique)}")
+    print(f"✅ kit réel prêt : {names} — {len(keepers)} images neuves")
 
 
 if __name__ == "__main__":
