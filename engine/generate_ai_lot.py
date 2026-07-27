@@ -28,6 +28,8 @@ for brief in plan[:2]:
         continue
     if brief.get("format") == "buste_produit":
         g.make_no_face("bust", p, captions, state, key)
+    elif brief.get("format") == "robe_posee":
+        g.make_no_face("chaise", p, captions, state, key)
     else:
         g.make_model_post(p, captions, state, key,
                           scene_text=brief.get("ambiance"), concept=brief.get("concept", ""))

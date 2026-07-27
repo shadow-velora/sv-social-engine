@@ -447,6 +447,8 @@ def make_ai_set(key=None, ffmpeg=None):
 
 # ---------- FORMATS SANS VISAGE (grille finale, verdict Laurie 26/07) ----------
 
+CHAISE_PROMPT = """Editorial still-life photograph for a quiet-luxury fashion brand. The EXACT dress from the reference image — same color, same fabric, same details, nothing invented — is draped gracefully over an antique carved wooden armchair with faded floral upholstery and gilded frame, in a grand old château interior: herringbone oak parquet with visible wear, an aged painted screen or panelled wall softly out of focus behind. Natural window light from one side, warm and soft, gentle shadows. The dress is arranged with elegant intention, bodice resting against the chair back, skirt flowing over the seat toward the floor. Shot from a slight high angle like a candid backstage moment. Real textures everywhere: worn wood grain, patinated gilding, creased fabric, dust-soft light. No person, no text, no logo. Clean, crisp, high resolution photograph."""
+
 BUST_PROMPT = """Professional e-commerce product photograph. The EXACT dress from the reference image — same color, same fabric, same neckline, same straps, same construction, same sheen, every detail from the reference only — displayed on a cream linen tailor's dress form (a sewing mannequin bust, NO person, no head, no limbs).
 
 Setting: a real working studio — warm sand seamless paper backdrop with a soft wrinkle, the dress form standing on a worn wooden floor, soft window light from the left casting honest shadows. The dress shows natural fabric behaviour: gentle creases from handling, the hem falling naturally. Real-world subtlety: the backdrop slightly uneven in tone, one faint tape mark on the floor.
@@ -459,7 +461,7 @@ Soft daylight from one side casting honest shadows in the fabric folds. The line
 
 
 def make_no_face(kind, product, captions, state, key):
-    """kind: 'bust' ou 'flatlay' — formats produit sans humain."""
+    """kind: 'bust', 'flatlay' ou 'chaise' — formats produit sans humain."""
     from PIL import Image as _I
     name = core.first_name(product["title"])
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%S")
@@ -467,7 +469,7 @@ def make_no_face(kind, product, captions, state, key):
     os.makedirs(d, exist_ok=True)
     ref = os.path.join(d, "reference.jpg")
     core.fetch_image(product["images"][0]["src"], 1200).save(ref, quality=92)
-    prompt = BUST_PROMPT if kind == "bust" else FLATLAY_PROMPT
+    prompt = {"bust": BUST_PROMPT, "chaise": CHAISE_PROMPT}.get(kind, FLATLAY_PROMPT)
     kept, verdicts = None, []
     for attempt in (1, 2, 3):
         _budget_guard()
