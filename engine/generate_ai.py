@@ -132,15 +132,17 @@ def _skin_ref():
 
 def generate_candidate(ref_path, scene, pose, rules, key, imperfections="", framing=None):
     _budget_guard()
+    refs = ref_path if isinstance(ref_path, (list, tuple)) else [ref_path]
     if framing is None:
         cfg_f = json.load(open(os.path.join(ENGINE, "scenes.json"))).get("framings")
         framing = random.choice(cfg_f) if cfg_f else "Full-length composition, the entire dress visible, generous headroom above her head."
     prompt = PROMPT_TEMPLATE.format(pose=pose, scene=scene, rules=rules, framing=framing,
                                     imperfections=imperfections or "visible pores and natural uneven skin tone")
-    prompt += "\n\nThe SECOND reference photograph shows REAL unretouched human skin. This is the exact standard her skin must meet everywhere it is visible: knees and elbows slightly darker with fine creases, visible pores with natural sebum shine in places, patchy tonal variation, faint veins, real joint creases, natural marks. Study it and replicate THIS level of skin realism on her — never smoother than this real photograph."
-    parts = [
-        {"text": prompt},
-        {"inline_data": {"mime_type": "image/jpeg", "data": b64_of(ref_path)}},
+    if len(refs) > 1:
+        prompt += f"\n\nThe first {len(refs)} reference photographs show the SAME dress from different angles (front and back). Reproduce its construction faithfully from EVERY angle: the back of the dress (straps, zip, lacing, neckline depth, seams) must match the back-view reference exactly — never invent the back."
+    prompt += "\n\nThe FINAL reference photograph shows REAL unretouched human skin. This is the exact standard her skin must meet everywhere it is visible: knees and elbows slightly darker with fine creases, visible pores with natural sebum shine in places, patchy tonal variation, faint veins, real joint creases, natural marks. Study it and replicate THIS level of skin realism on her — never smoother than this real photograph."
+    parts = [{"text": prompt}] + [
+        {"inline_data": {"mime_type": "image/jpeg", "data": b64_of(r)}} for r in refs
     ]
     sk = _skin_ref()
     if sk:
@@ -175,11 +177,15 @@ def texture_pass(img_path, key):
 
 
 def check_candidate(ref_path, gen_path, key):
-    parts = [
-        {"text": CHECKER_PROMPT},
-        {"inline_data": {"mime_type": "image/jpeg", "data": b64_of(ref_path)}},
-        {"inline_data": {"mime_type": "image/jpeg", "data": b64_of(gen_path)}},
-    ]
+    refs = ref_path if isinstance(ref_path, (list, tuple)) else [ref_path]
+    header = CHECKER_PROMPT
+    if len(refs) > 1:
+        header = (f"NOTE: the first {len(refs)} images are REFERENCE product photos of the SAME dress "
+                  "from different angles (front and back); the LAST image is the marketing image to judge. "
+                  "If the marketing image shows the back of the dress, judge it against the back-view reference. ") + CHECKER_PROMPT
+    parts = ([{"text": header}]
+             + [{"inline_data": {"mime_type": "image/jpeg", "data": b64_of(r)}} for r in refs]
+             + [{"inline_data": {"mime_type": "image/jpeg", "data": b64_of(gen_path)}}])
     resp = gemini(CHECK_MODEL, parts, key)
     try:
         txt = resp["candidates"][0]["content"]["parts"][0]["text"]
@@ -520,8 +526,22 @@ def make_model_post(product, captions, state, key, scene_text=None, concept="", 
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%S")
     d = os.path.join(PENDING, f"{stamp}_ai-studio_{product['handle']}")
     os.makedirs(d, exist_ok=True)
-    ref = os.path.join(d, "reference.jpg")
-    core.fetch_image(product["images"][0]["src"], 1200).save(ref, quality=92)
+    imgs = product["images"]
+    picks = [imgs[0]]
+    for im in imgs[1:]:
+        blob = (str(im.get("alt") or "") + " " + im.get("src", "")).lower()
+        if any(k in blob for k in ("back", "dos", "rear")) and im not in picks:
+            picks.append(im)
+    for im in imgs[1:]:
+        if len(picks) >= 3:
+            break
+        if im not in picks:
+            picks.append(im)
+    ref = []
+    for i, im in enumerate(picks):
+        rp = os.path.join(d, "reference.jpg" if i == 0 else f"reference-{i+1}.jpg")
+        core.fetch_image(im["src"], 1200).save(rp, quality=92)
+        ref.append(rp)
     verdicts, kept = [], None
     for attempt in range(1, 4):
         imps = sample_imperfections(cfg)
@@ -552,7 +572,8 @@ def make_model_post(product, captions, state, key, scene_text=None, concept="", 
     mp = os.path.join(d, "media.jpg")
     core.cover(img, 1080, 1350).save(mp, quality=92)
     os.remove(kept)
-    os.remove(ref)
+    for rp in ref:
+        os.remove(rp)
     magnific_finalize(mp, key)
     cap = core.pick_caption(captions, "studio", state, name)
     core.write_meta(d, "studio", cap, f"{name} dress, editorial photograph. Concept: {concept or 'editorial'}.",
