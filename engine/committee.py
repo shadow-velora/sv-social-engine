@@ -107,7 +107,7 @@ Concepts créatifs disponibles pour les briefs (choisis-en, jamais 'mannequin en
 Catalogue disponible : {robes}.
 LEÇONS RÉCENTES DE LA FONDATRICE (à respecter absolument) :
 {lecons}
-L'image jointe = la grille actuelle. Décide le PLAN DU PROCHAIN LOT (2 contenus max, budget serré) : quelles robes mettre en avant (varie par rapport à la grille), quel format (mannequin_pipeline, buste_produit ou robe_posee — robe_posee = respiration sans mannequin), quelle ambiance.
+L'image jointe = la grille actuelle. Décide le PROGRAMME DE LA SEMAINE (4 contenus : lundi, mercredi, vendredi, dimanche — varie robes, formats et couleurs selon le flux de la grille) : quelles robes mettre en avant (varie par rapport à la grille), quel format (mannequin_pipeline, buste_produit ou robe_posee — robe_posee = respiration sans mannequin), quelle ambiance.
 Réponds UNIQUEMENT en JSON: {{"strategie": "2 phrases max", "plan_prochain_lot": [{{"robe": "nom exact du catalogue", "format": "mannequin_pipeline, buste_produit ou robe_posee", "concept": "nom du concept créatif choisi", "ambiance": "brief shooting en 1-2 phrases (lieu, lumière, idée forte)"}}], "ton_legendes": "1 phrase"}}""",
               montage, listing, key)
 

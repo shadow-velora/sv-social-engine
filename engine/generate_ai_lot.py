@@ -22,7 +22,7 @@ def find_product(nom):
     return None
 
 executed = 0
-for brief in plan[:2]:
+for brief in plan[:4]:
     p = find_product(brief.get("robe", ""))
     if not p:
         continue

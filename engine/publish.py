@@ -138,28 +138,89 @@ def refresh_token():
         print("rotation secret: ignorée,", e)
 
 
+def final_check(folder):
+    """Garde-fou : contrôle qualité IA avant de publier un contenu NON validé par Laurie.
+    Ne bloque que les défauts graves. En cas de doute ou d'indisponibilité : laisse passer."""
+    key = os.environ.get("GEMINI_API_KEY")
+    if not key:
+        return True, "pas de clé, contrôle sauté"
+    media = os.path.join(folder, "media.jpg")
+    if not os.path.exists(media):
+        slides = sorted(f for f in os.listdir(folder) if f.startswith("slide"))
+        if not slides:
+            return False, "aucun média dans le dossier"
+        media = os.path.join(folder, slides[0])
+    import base64
+    img = base64.b64encode(open(media, "rb").read()).decode()
+    prompt = ("Tu es le contrôle qualité FINAL de Shadow Velora (robes luxe discret, palette sable/crème/"
+              "taupe/espresso). Cette image va être publiée sur Instagram SANS validation humaine. "
+              "Bloque UNIQUEMENT en cas de défaut grave : rendu peinture/illustration/3D évident, peau "
+              "plastique de poupée, anomalie anatomique (mains, membres), gros texte plaqué au centre de "
+              "l'image, image floue ou granuleuse, robe visiblement déformée ou incohérente. Un style "
+              "éditorial propre, un packshot studio ou un lettrage de marque sur un objet (sac, boîte) "
+              "sont NORMAUX et publiables. Réponds UNIQUEMENT en JSON : "
+              '{"publiable": true/false, "raison": "1 phrase"}')
+    body = json.dumps({"contents": [{"parts": [
+        {"text": prompt},
+        {"inline_data": {"mime_type": "image/jpeg", "data": img}}]}]}).encode()
+    req = urllib.request.Request(
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" + key,
+        data=body, headers={"Content-Type": "application/json"})
+    try:
+        r = json.loads(urllib.request.urlopen(req, timeout=90).read())
+        txt = r["candidates"][0]["content"]["parts"][0]["text"]
+        v = json.loads(txt[txt.find("{"):txt.rfind("}") + 1])
+        return bool(v.get("publiable", True)), v.get("raison", "")
+    except Exception as e:
+        return True, f"contrôle indisponible ({e}), publication par défaut"
+
+
 def main():
     os.makedirs(PUBLISHED, exist_ok=True)
-    # Modèle VETO : on publie d'abord ce que Laurie a validé ; si rien de
-    # validé, on publie le plus ancien contenu en attente (non rejeté).
-    # Seul le dossier rejected/ ne part jamais.
+    # Modèle VETO : les posts validés par Laurie partent tels quels.
+    # Un post NON validé passe d'abord le contrôle qualité IA (garde-fou) ;
+    # s'il est bloqué, il part en rejected avec la raison et on essaie le suivant.
     pending = os.path.join(ROOT, "queue", "pending")
+    rejected = os.path.join(ROOT, "queue", "rejected")
     os.makedirs(pending, exist_ok=True)
-    source = APPROVED
-    items = sorted(d for d in os.listdir(APPROVED)
-                   if os.path.isdir(os.path.join(APPROVED, d)))
-    if not items:
-        source = pending
-        items = sorted(d for d in os.listdir(pending)
-                       if os.path.isdir(os.path.join(pending, d)))
-    if not items:
+    os.makedirs(rejected, exist_ok=True)
+
+    approved = sorted(d for d in os.listdir(APPROVED)
+                      if os.path.isdir(os.path.join(APPROVED, d)))
+    candidates = ([(APPROVED, it, False) for it in approved]
+                  or [(pending, it, True) for it in sorted(os.listdir(pending))
+                      if os.path.isdir(os.path.join(pending, it))])
+    if not candidates:
         print("File vide — rien à publier.")
         sys.exit(0)
-    folder = os.path.join(source, items[0])
-    print("Publication de", items[0], "(source:", os.path.basename(source) + ")")
-    res = publish_item(folder)
-    print("OK, media id:", res.get("id"))
-    shutil.move(folder, os.path.join(PUBLISHED, items[0]))
+
+    for source, item, needs_check in candidates:
+        folder = os.path.join(source, item)
+        if needs_check:
+            ok, why = final_check(folder)
+            if not ok:
+                print(f"⛔ garde-fou : {item} bloqué — {why}")
+                mp = os.path.join(folder, "meta.json")
+                try:
+                    meta = json.load(open(mp))
+                    meta["rejet"] = f"Garde-fou automatique : {why}"
+                    json.dump(meta, open(mp, "w"), indent=2, ensure_ascii=False)
+                    with open(os.path.join(ROOT, "engine", "feedback.jsonl"), "a") as fb:
+                        fb.write(json.dumps({"item": item,
+                                             "raison": f"Garde-fou auto : {why}"},
+                                            ensure_ascii=False) + "\n")
+                except Exception:
+                    pass
+                shutil.move(folder, os.path.join(rejected, item))
+                continue
+            print(f"✅ garde-fou : ok — {why}")
+        print("Publication de", item, "(source:", os.path.basename(source) + ")")
+        res = publish_item(folder)
+        print("OK, media id:", res.get("id"))
+        shutil.move(folder, os.path.join(PUBLISHED, item))
+        break
+    else:
+        print("Aucun contenu publiable aujourd'hui (tout bloqué par le garde-fou).")
     refresh_token()
 
 
