@@ -73,6 +73,7 @@ button{border:0;border-radius:5px;padding:9px 0;font-size:11.5px;letter-spacing:
   <button class="tab" data-t="approved">PRÊTS À PUBLIER <span id="n-approved"></span></button>
   <button class="tab" data-t="published">PUBLIÉS <span id="n-published"></span></button>
   <button class="tab" data-t="preview">📱 APERÇU INSTA</button>
+  <button class="tab" data-t="library">🖼 BIBLIOTHÈQUE</button>
   <button class="tab" data-t="equipe">🧑‍💼 ÉQUIPE</button>
   <button class="gen" id="gen">⚙ LOT PHOTOS BOUTIQUE</button>
   <button class="gen" id="genai">✨ LOT IA (NOUVELLES IMAGES)</button>
@@ -148,6 +149,10 @@ function openZoom(src){
 function closeZoom(){ document.getElementById("zoombg").classList.remove("open"); }
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeZoom(); });
 
+function libDelete(name){
+  if (!confirm("Supprimer définitivement « " + name + " » ?")) return;
+  fetch("/api/library_delete", {method:"POST", body: JSON.stringify({name})}).then(() => render());
+}
 function curate(){
   const b = document.getElementById("curbtn");
   b.disabled = true; b.textContent = "🔀 La curatrice réfléchit…";
@@ -190,6 +195,20 @@ function render(){
         const down = idx < order.length-1 ? `<span onclick="swapItems(${idx},${idx+1})" title="publier plus tard">▶</span>` : "";
         return `<div class="cell" draggable="true" ondragstart="dragFrom=${idx}" ondragover="event.preventDefault()" ondrop="swapItems(dragFrom,${idx})">${med}<span class="num">${gi+1}</span><div class="mv">${up}${down}</div></div>`;
       }).join("") + `</div>`;
+    return;
+  }
+  if (TAB === "library"){
+    fetch("/api/library").then(r => r.json()).then(res => {
+      if (!res.files.length){ g.innerHTML = `<div class="empty">Bibliothèque vide — toutes les images générées remplacées ou retirées seront conservées ici.</div>`; return; }
+      g.innerHTML = `<div class="ig-note" style="grid-column:1/-1">Toutes tes images générées, conservées pour toujours. Seule toi peux les supprimer.</div>` +
+        res.files.map(f => `
+        <div class="card"><img src="${f.url}" onclick="openZoom('${f.url}')" style="cursor:zoom-in">
+          <div class="body"><div style="font-size:11px;color:#a8977f;word-break:break-all">${f.name}</div>
+          <div class="actions" style="margin-top:8px">
+            <a class="btn" href="${f.url.split("?")[0]}" download="${f.name}" style="text-decoration:none;text-align:center">⬇ Télécharger</a>
+            <button class="btn no" onclick="libDelete('${f.name.replace(/'/g, "\\'")}')">🗑 Supprimer</button>
+          </div></div></div>`).join("");
+    });
     return;
   }
   if (TAB === "equipe"){

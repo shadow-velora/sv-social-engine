@@ -98,6 +98,14 @@ class Handler(SimpleHTTPRequestHandler):
                 return self._json(json.load(open(rp)))
             return self._json({"vide": True})
 
+        if self.path == "/api/library":
+            base = os.path.join(ROOT, "queue", "bibliotheque")
+            os.makedirs(base, exist_ok=True)
+            files = sorted((f for f in os.listdir(base) if f.lower().endswith((".jpg", ".png", ".mp4"))), reverse=True)
+            return self._json({"files": [
+                {"name": f, "url": f"/queue/bibliotheque/{urllib.parse.quote(f)}?v={int(os.path.getmtime(os.path.join(base, f)))}"}
+                for f in files]})
+
         if self.path == "/api/queue":
             return self._json({
                 "generating": _gen_running,
@@ -135,6 +143,14 @@ class Handler(SimpleHTTPRequestHandler):
                     _gen_running = False
             threading.Thread(target=_run, daemon=True).start()
             return self._json({"ok": True})
+
+        if self.path == "/api/library_delete":
+            name = os.path.basename(data.get("name", ""))
+            fp = os.path.join(ROOT, "queue", "bibliotheque", name)
+            if name and os.path.isfile(fp):
+                os.remove(fp)
+                return self._json({"ok": True})
+            return self._json({"error": "introuvable"}, 404)
 
         if self.path == "/api/curate":
             r = subprocess.run(["python3", os.path.join(ENGINE, "committee.py"), "curate"],
