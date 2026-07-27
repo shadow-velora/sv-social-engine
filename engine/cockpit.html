@@ -172,6 +172,10 @@ document.addEventListener("keydown", e => {
 function closeZoom(){ document.getElementById("zoombg").classList.remove("open"); }
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeZoom(); });
 
+function storyRegen(id){
+  toast("Nouvelle proposition en préparation… (~30 s) 🔄");
+  fetch("/api/story_regen", {method:"POST", body: JSON.stringify({id})}).then(() => { toast("Nouveau kit prêt ✨"); render(); });
+}
 function libDelete(name){
   if (!confirm("Supprimer définitivement « " + name + " » ?")) return;
   fetch("/api/library_delete", {method:"POST", body: JSON.stringify({name})}).then(() => render());
@@ -243,6 +247,7 @@ function render(){
             <b>📍 Placement :</b> ${k.placement_tip || "—"}</div>
             <div class="actions" style="margin-top:8px">
               <a class="btn" href="${k.media.split("?")[0]}" download style="text-decoration:none;text-align:center">⬇ Télécharger l'image</a>
+              <button class="btn no" onclick="storyRegen('${k.id}')">🔄 Autre proposition</button>
             </div></div></div>`).join("");
     });
     return;

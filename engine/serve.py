@@ -166,6 +166,15 @@ class Handler(SimpleHTTPRequestHandler):
                 return self._json({"ok": True})
             return self._json({"error": "introuvable"}, 404)
 
+        if self.path == "/api/story_regen":
+            kit = os.path.basename(data.get("id", ""))
+            kd = os.path.join(ROOT, "queue", "stories", kit)
+            if kit and os.path.isdir(kd):
+                shutil.rmtree(kd)
+            r = subprocess.run(["python3", os.path.join(ENGINE, "story.py")],
+                               cwd=ROOT, timeout=180, capture_output=True)
+            return self._json({"ok": r.returncode == 0})
+
         if self.path == "/api/curate":
             r = subprocess.run(["python3", os.path.join(ENGINE, "committee.py"), "curate"],
                                cwd=ROOT, capture_output=True, timeout=180)
