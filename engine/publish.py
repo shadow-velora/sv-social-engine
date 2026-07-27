@@ -43,14 +43,14 @@ def api(path, params, method="POST"):
         raise RuntimeError(f"Graph API {e.code}: {body}") from e
 
 
-def wait_ready(container_id, tries=30):
+def wait_ready(container_id, tries=40):
     for _ in range(tries):
         st = api(container_id, {"fields": "status_code"}, "GET")
         if st.get("status_code") == "FINISHED":
             return
         if st.get("status_code") == "ERROR":
             raise RuntimeError(f"container en erreur: {st}")
-        time.sleep(10)
+        time.sleep(5)
     raise RuntimeError("container jamais prêt")
 
 
@@ -66,6 +66,7 @@ def publish_item(folder):
             "media_type": "REELS",
             "video_url": f"{BASE}/{urllib.parse.quote(rel)}/media.mp4",
             "caption": caption,
+            "like_and_view_counts_disabled": "true",
         })
         wait_ready(c["id"])
         return api(f"{IG_USER}/media_publish", {"creation_id": c["id"]})
@@ -83,14 +84,18 @@ def publish_item(folder):
             "media_type": "CAROUSEL",
             "children": ",".join(children),
             "caption": caption,
+            "like_and_view_counts_disabled": "true",
         })
+        wait_ready(c["id"])
         return api(f"{IG_USER}/media_publish", {"creation_id": c["id"]})
 
-    # studio / band : image simple
+    # image simple
     c = api(f"{IG_USER}/media", {
         "image_url": f"{BASE}/{urllib.parse.quote(rel)}/media.jpg",
         "caption": caption,
+        "like_and_view_counts_disabled": "true",
     })
+    wait_ready(c["id"])
     return api(f"{IG_USER}/media_publish", {"creation_id": c["id"]})
 
 
