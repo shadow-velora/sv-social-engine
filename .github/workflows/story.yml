@@ -1,0 +1,23 @@
+name: Story Instagram
+on:
+  schedule:
+    - cron: "30 17 * * 2,4,6"   # mardi/jeudi/samedi 17:30 UTC (19:30 Paris)
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  story:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet pillow
+      - run: python engine/story.py
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          ASSET_BASE_URL: https://raw.githubusercontent.com/${{ github.repository }}/main

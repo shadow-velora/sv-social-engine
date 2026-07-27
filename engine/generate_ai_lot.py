@@ -30,6 +30,9 @@ for brief in plan[:4]:
         g.make_no_face("bust", p, captions, state, key)
     elif brief.get("format") == "robe_posee":
         g.make_no_face("chaise", p, captions, state, key)
+    elif brief.get("format") == "carrousel_muse":
+        autres = [x for x in core.pick_products(products, state, 3) if x["handle"] != p["handle"]][:2]
+        g.make_muse_carousel([p] + autres, captions, state, key)
     else:
         g.make_model_post(p, captions, state, key,
                           scene_text=brief.get("ambiance"), concept=brief.get("concept", ""))

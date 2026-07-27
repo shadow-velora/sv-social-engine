@@ -359,7 +359,7 @@ def edit_image(base_path, instruction, key):
     raise RuntimeError(f"pas d'image: {str(resp)[:200]}")
 
 
-def make_ai_set(key=None, ffmpeg=None):
+def make_ai_set(key=None, ffmpeg=None, product=None):
     """Génère 1 scène complète (3 vues contrôlées) → 1 carrousel. (Reels : uniquement depuis de vraies vidéos, dossier rushes/)"""
     from PIL import Image
     key = key or api_key()
@@ -368,11 +368,11 @@ def make_ai_set(key=None, ffmpeg=None):
     captions = core.load_captions()
     state = core.load_state()
     products = [p for p in core.fetch_products() if p.get("images")]
-    p = core.pick_products(products, state, 1)[0]
+    p = product or core.pick_products(products, state, 1)[0]
     name = core.first_name(p["title"])
     scene = pick_scene(cfg["scenes"], state.get("last_scene"))
     state["last_scene"] = scene["id"]
-    pose = pose_text or random.choice(cfg["poses"])
+    pose = random.choice(cfg["poses"])
 
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%S")
     work = os.path.join(ROOT, "queue", "rejected", f"__work_{stamp}")
@@ -464,6 +464,95 @@ Quiet luxury product photography, crisp and sharp, natural true-to-life muted co
 FLATLAY_PROMPT = """Top-down flat-lay editorial photograph. The EXACT dress from the reference image — same color, same fabric, same neckline, same construction, every detail from the reference only — laid carefully on a warm sand linen sheet, artfully but naturally arranged with soft real fabric folds and creases, one strap casually off-line as if just placed there. A simple wooden hanger rests beside it.
 
 Soft daylight from one side casting honest shadows in the fabric folds. The linen underneath shows natural wrinkles. Quiet luxury flat-lay, crisp and sharp, natural muted colors, vertical 4:5 composition. No text, no logos, no person, no other products."""
+
+
+
+def swap_dress(base_path, dress_ref_path, key):
+    """Même femme, même décor — on remplace uniquement la robe par celle de la référence."""
+    _budget_guard()
+    parts = [
+        {"text": ("Edit this photograph. Keep the SAME woman (same face, same hair, same skin), the same "
+                  "setting, the same light and the same general framing. Only change her outfit: she now "
+                  "wears the EXACT dress from the second reference image — same color, same fabric, same "
+                  "neckline, same construction, nothing invented. Adjust her pose slightly and naturally. "
+                  "Clean, crisp, high-resolution photograph.")},
+        {"inline_data": {"mime_type": "image/jpeg", "data": b64_of(base_path)}},
+        {"inline_data": {"mime_type": "image/jpeg", "data": b64_of(dress_ref_path)}},
+    ]
+    resp = gemini(IMAGE_MODEL, parts, key)
+    for cand in resp.get("candidates", []):
+        for part in cand.get("content", {}).get("parts", []):
+            dd = part.get("inlineData") or part.get("inline_data")
+            if dd:
+                return base64.b64decode(dd["data"])
+    raise RuntimeError(f"pas d'image: {str(resp)[:200]}")
+
+
+def make_muse_carousel(products3, captions, state, key):
+    """Carrousel engagement « One muse — 1, 2 or 3 ? » : la même femme dans 3 robes."""
+    from PIL import Image as _I
+    import shutil as _sh
+    cfg = json.load(open(os.path.join(ENGINE, "scenes.json")))
+    stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%S")
+    d = os.path.join(PENDING, f"{stamp}_carousel_muse-{'-'.join(core.first_name(p['title']).lower() for p in products3)}")
+    os.makedirs(d, exist_ok=True)
+    refs = []
+    for i, p in enumerate(products3):
+        rp = os.path.join(d, f"ref-{i+1}.jpg")
+        core.fetch_image(p["images"][0]["src"], 1200).save(rp, quality=92)
+        refs.append(rp)
+    scene = pick_scene(cfg["scenes"], state.get("last_scene"))
+    state["last_scene"] = scene["id"]
+    pose = random.choice(cfg["poses"])
+    hero = None
+    for attempt in range(1, 4):
+        try:
+            raw = generate_candidate(refs[0], scene["text"], pose, cfg["rules"], key, sample_imperfections(cfg))
+        except RuntimeError:
+            continue
+        cp = os.path.join(d, "slide-1.jpg")
+        save_jpeg(raw, cp)
+        try:
+            save_jpeg(texture_pass(cp, key), cp)
+        except RuntimeError:
+            pass
+        v = check_candidate(refs[0], cp, key)
+        if v.get("verdict") == "pass":
+            hero = cp
+            break
+    if not hero:
+        _sh.rmtree(d)
+        print("❌ carrousel muse : slide 1 jamais validée")
+        return None
+    ok_slides = [hero]
+    for i in (1, 2):
+        try:
+            raw = swap_dress(hero, refs[i], key)
+        except RuntimeError:
+            continue
+        cp = os.path.join(d, f"slide-{i+1}.jpg")
+        save_jpeg(raw, cp)
+        v = check_candidate(refs[i], cp, key)
+        if v.get("dress_identical") and not v.get("invented_details"):
+            ok_slides.append(cp)
+        else:
+            os.remove(cp)
+    if len(ok_slides) < 3:
+        _sh.move(d, os.path.join(ROOT, "queue", "rejected", os.path.basename(d)))
+        print("❌ carrousel muse : robes 2/3 jamais fidèles")
+        return None
+    for i, sl in enumerate(sorted(f for f in os.listdir(d) if f.startswith("slide")), 1):
+        sp = os.path.join(d, sl)
+        core.cover(_I.open(sp).convert("RGB"), 1080, 1350).save(sp, quality=92)
+        magnific_finalize(sp, key) if i == 1 else clean_noise(sp)
+    for rp in refs:
+        os.remove(rp)
+    names = " · ".join(core.first_name(p["title"]) for p in products3)
+    core.write_meta(d, "carousel", "One muse, three moods — 1, 2 or 3 ? ~",
+                    f"The same muse wearing three Shadow Velora dresses: {names}.",
+                    "#shadowvelora #quietluxury #eveningdress")
+    print(f"✅ carrousel muse : {names}")
+    return d
 
 
 def make_no_face(kind, product, captions, state, key, correction=""):
