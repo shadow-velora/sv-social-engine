@@ -129,8 +129,7 @@ async function load(){
   DATA = j;
   for (const s of ["pending","approved","published"])
     document.getElementById("n-"+s).textContent = "· " + j[s].length;
-  document.getElementById("gen") && document.getElementById("gen").disabled = j.generating; document.getElementById("genai").disabled = j.generating;
-  document.getElementById("gen") && document.getElementById("gen").textContent = j.generating ? "⚙ GÉNÉRATION EN COURS…" : "⚙ LOT PHOTOS BOUTIQUE";
+  document.getElementById("genai").disabled = j.generating;
   document.getElementById("genbar").classList.toggle("on", j.generating);
   if (wasGenerating && !j.generating && afterGen){
     TAB = afterGen; afterGen = null;
@@ -266,7 +265,7 @@ function render(){
   }
   if (TAB === "equipe"){
     fetch("/api/rapport").then(r => r.json()).then(rp => {
-      if (rp.vide){ g.innerHTML = `<div class="empty">Aucune réunion pour l'instant — clique sur 🧑‍💼 RÉUNION D'ÉQUIPE.</div>`; return; }
+      if (rp.vide){ g.innerHTML = `<div class="empty">Aucune réunion pour l'instant — elle se tient automatiquement après chaque lot.</div>`; return; }
       const sm = rp.social_media_manager || {};
       const da = rp.directrice_artistique || {};
       const cu = rp.curatrice_grille || {};
@@ -358,17 +357,6 @@ document.querySelectorAll(".tab").forEach(b => b.onclick = () => {
   document.querySelectorAll(".tab").forEach(x => x.classList.remove("on"));
   b.classList.add("on"); TAB = b.dataset.t; render();
 });
-document.getElementById("gen") && document.getElementById("gen").onclick = async () => {
-  await fetch("/api/generate", {method: "POST", body: "{}"});
-  toast("Génération lancée — les contenus arrivent dans 1 à 3 min");
-  setTimeout(load, 3000);
-};
-document.getElementById("reunion") && document.getElementById("reunion").onclick = async () => {
-  await fetch("/api/committee", {method: "POST", body: "{}"});
-  document.getElementById("genbar").classList.add("on");
-  afterGen = "pending"; wasGenerating = true;
-  toast("Réunion lancée (gratuit, ~1 min) — ordre, légendes et badges vont bouger");
-};
 document.getElementById("genai").onclick = async () => {
   await fetch("/api/generate_ai", {method: "POST", body: "{}"});
   document.getElementById("genbar").classList.add("on");
