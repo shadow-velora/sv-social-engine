@@ -196,7 +196,7 @@ def check_candidate(ref_path, gen_path, key):
 
 
 HEALTH_CHECK = """Inspect this fashion photograph closely. Answer ONLY with JSON:
-{"face_clean": true/false, "issues": ["list any bruise-like blue or purple discoloration on the face or body, black-eye shading, wound-like marks, sickly grey patches, anatomical glitches (extra fingers, warped hands), an awkward distressed-looking posture (hunched over, head hanging, looks sick or in pain), or visible grain/noise/speckling over the image — the image must be clean and crisp"]}
+{"face_clean": true/false, "issues": ["list any bruise-like blue or purple discoloration on the face or body, black-eye shading, wound-like marks, sickly grey patches, anatomical glitches (extra fingers, warped hands), an awkward distressed-looking posture (hunched over, head hanging, looks sick or in pain), visible grain/noise/speckling over the image, or a painterly / illustration-like / CGI-render look anywhere (the image must read as a REAL photograph, clean and crisp)"]}
 Natural freckles, moles and healthy redness are fine. Bruise-colored patches anywhere on the face = face_clean false."""
 
 
@@ -453,7 +453,7 @@ def make_ai_set(key=None, ffmpeg=None):
 
 # ---------- FORMATS SANS VISAGE (grille finale, verdict Laurie 26/07) ----------
 
-CHAISE_PROMPT = """Product photograph: this exact dress, empty (no one wearing it), gracefully draped over an antique gilded armchair in a château room with herringbone parquet, warm window light. Reproduce the dress exactly as in the reference: same color, same fabric, same neckline. The empty fabric lies limp with soft natural folds, and the room has a lived-in patina: rubbed gilding, worn parquet, faded upholstery."""
+CHAISE_PROMPT = """Real photograph taken on a full-frame camera with a 50mm lens: this exact dress, empty (no one wearing it), gracefully draped over an antique gilded armchair in a château room with herringbone parquet, warm window light. Reproduce the dress exactly as in the reference: same color, same fabric, same neckline. The empty fabric lies limp with soft natural folds, and the room has a lived-in patina: rubbed gilding, worn parquet, faded upholstery. True photographic rendering — real optical depth of field, accurate fabric weight and weave, natural light falloff — like an unstaged photo from a fashion shoot, never a painting, illustration or 3D render."""
 
 BUST_PROMPT = """Professional e-commerce product photograph. The EXACT dress from the reference image — same color, same fabric, same neckline, same straps, same construction, same sheen, every detail from the reference only — displayed on a cream linen tailor's dress form (a sewing mannequin bust, NO person, no head, no limbs).
 
