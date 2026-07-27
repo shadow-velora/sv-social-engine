@@ -24,7 +24,7 @@ sys.path.insert(0, ENGINE)
 import generate as core  # curl, fetch_products, fetch_image, cover, captions, state
 
 IMAGE_MODEL = "gemini-2.5-flash-image"
-MAX_GEN_PER_MONTH = 45  # plafond dur : ~2 EUR/mois d'images, budget 10 GBP = 2 mois garanti
+MAX_GEN_PER_MONTH = 120  # ~4,8 EUR/mois a 0,04 EUR l'appel — sous la regle 10 GBP / 2 mois  # plafond dur : ~2 EUR/mois d'images, budget 10 GBP = 2 mois garanti
 CHECK_MODEL = "gemini-flash-latest"
 API = "https://generativelanguage.googleapis.com/v1beta/models"
 
