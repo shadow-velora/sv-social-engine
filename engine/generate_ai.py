@@ -466,7 +466,7 @@ FLATLAY_PROMPT = """Top-down flat-lay editorial photograph. The EXACT dress from
 Soft daylight from one side casting honest shadows in the fabric folds. The linen underneath shows natural wrinkles. Quiet luxury flat-lay, crisp and sharp, natural muted colors, vertical 4:5 composition. No text, no logos, no person, no other products."""
 
 
-def make_no_face(kind, product, captions, state, key):
+def make_no_face(kind, product, captions, state, key, correction=""):
     """kind: 'bust', 'flatlay' ou 'chaise' — formats produit sans humain."""
     from PIL import Image as _I
     name = core.first_name(product["title"])
@@ -476,6 +476,8 @@ def make_no_face(kind, product, captions, state, key):
     ref = os.path.join(d, "reference.jpg")
     core.fetch_image(product["images"][0]["src"], 1200).save(ref, quality=92)
     prompt = {"bust": BUST_PROMPT, "chaise": CHAISE_PROMPT}.get(kind, FLATLAY_PROMPT)
+    if correction:
+        prompt += " CRITICAL correction requested by the brand founder after a rejected attempt: " + correction + ". Address this point precisely."
     kept, verdicts = None, []
     for attempt in range(1, 6 if kind == "chaise" else 4):
         _budget_guard()
@@ -516,12 +518,15 @@ def make_no_face(kind, product, captions, state, key):
     return d
 
 
-def make_model_post(product, captions, state, key, scene_text=None, concept="", pose_text=None, framing_text=None):
+def make_model_post(product, captions, state, key, scene_text=None, concept="", pose_text=None, framing_text=None, correction=""):
     """Plein-pied mannequin pipeline complet, avec brief d'ambiance de la Creative Producer."""
     from PIL import Image as _I
     cfg = json.load(open(os.path.join(ENGINE, "scenes.json")))
     name = core.first_name(product["title"])
     scene = scene_text or pick_scene(cfg["scenes"], state.get("last_scene"))["text"]
+    rules = cfg["rules"]
+    if correction:
+        rules = rules + " CRITICAL correction requested by the brand founder after a rejected attempt: " + correction + ". Address this point precisely."
     pose = pose_text or random.choice(cfg["poses"])
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%S")
     d = os.path.join(PENDING, f"{stamp}_ai-studio_{product['handle']}")
@@ -546,7 +551,7 @@ def make_model_post(product, captions, state, key, scene_text=None, concept="", 
     for attempt in range(1, 4):
         imps = sample_imperfections(cfg)
         try:
-            raw = generate_candidate(ref, scene, pose, cfg["rules"], key, imps, framing=framing_text)
+            raw = generate_candidate(ref, scene, pose, rules, key, imps, framing=framing_text)
         except RuntimeError as e:
             verdicts.append({"error": str(e)[:100]})
             continue

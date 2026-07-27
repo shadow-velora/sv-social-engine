@@ -237,6 +237,19 @@ class Handler(SimpleHTTPRequestHandler):
                         "item": item, "raison": reason or "sans raison donnée",
                     }, ensure_ascii=False) + "\n")
                 shutil.move(src, os.path.join(Q("rejected"), item))
+                if data.get("regen"):
+                    def _regen(it=item):
+                        global _gen_running
+                        with _gen_lock:
+                            if _gen_running:
+                                return
+                            _gen_running = True
+                        try:
+                            subprocess.run(["python3", os.path.join(ENGINE, "regenerate.py"), it],
+                                           cwd=ROOT, timeout=1800)
+                        finally:
+                            _gen_running = False
+                    threading.Thread(target=_regen, daemon=True).start()
             elif action == "save":
                 mp = os.path.join(src, "meta.json")
                 meta = json.load(open(mp))

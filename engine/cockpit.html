@@ -106,6 +106,7 @@ button{border:0;border-radius:5px;padding:9px 0;font-size:11.5px;letter-spacing:
     <textarea id="mtext" placeholder="Précision (optionnel)…"></textarea>
     <div class="row">
       <button class="no" onclick="confirmReject()">✗ REJETER</button>
+      <button class="no" style="background:#5a4632" onclick="confirmReject(true)">🔄 REJETER + RÉGÉNÉRER</button>
       <button class="sv" onclick="closeModal()">ANNULER</button>
     </div>
   </div>
@@ -312,12 +313,15 @@ async function act(state, id, action){
   load();
 }
 function closeModal(){ document.getElementById("mbg").style.display = "none"; }
-async function confirmReject(){
+async function confirmReject(regen){
   const picked = [...document.querySelectorAll(".reason.on")].map(r => r.textContent);
   const txt = document.getElementById("mtext").value.trim();
   const reason = [...picked, txt].filter(Boolean).join(" · ");
-  await fetch("/api/action", {method: "POST", body: JSON.stringify({...REJECT_TARGET, action: "reject", reason})});
-  closeModal(); toast("Rejeté — leçon enregistrée 📝"); load();
+  if (regen && !reason){ toast("Dis-moi POURQUOI pour que je corrige 🙏"); return; }
+  await fetch("/api/action", {method: "POST", body: JSON.stringify({...REJECT_TARGET, action: "reject", reason, regen: !!regen})});
+  closeModal();
+  toast(regen ? "Rejeté — version corrigée en route 🔄 (~3 min)" : "Rejeté — leçon enregistrée 📝");
+  load();
 }
 document.addEventListener("click", e => {
   if (e.target.classList && e.target.classList.contains("reason")) e.target.classList.toggle("on");
