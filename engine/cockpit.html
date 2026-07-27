@@ -84,7 +84,12 @@ button{border:0;border-radius:5px;padding:9px 0;font-size:11.5px;letter-spacing:
 <div class="toast" id="toast"></div>
 <div class="zoom-bg" id="zoombg" onclick="if(event.target===this||event.target.classList.contains('zoom-wrap'))closeZoom()">
   <span class="zoom-close" onclick="closeZoom()">✕</span>
-  <div class="zoom-wrap"><img id="zoomimg" onclick="document.getElementById('zoombg').classList.toggle('big')"></div>
+  <div class="zoom-wrap"><img id="zoomimg" onclick="document.getElementById('zoombg').classList.toggle('big')">
+    <div id="zoomnav" style="display:none;position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:#000c;border-radius:20px;padding:8px 18px;color:#e8d8c0;font-size:15px;user-select:none;z-index:10">
+      <span onclick="zoomStep(-1);event.stopPropagation()" style="cursor:pointer;padding:0 14px">◀</span>
+      <span id="zoomcount">1/1</span>
+      <span onclick="zoomStep(1);event.stopPropagation()" style="cursor:pointer;padding:0 14px">▶</span>
+    </div></div>
   <div class="zoom-hint">CLIC SUR L'IMAGE = ZOOM 100% · CLIC À CÔTÉ = FERMER</div>
 </div>
 <div class="modal-bg" id="mbg">
@@ -141,11 +146,27 @@ function mediaHtml(it){
   if (it.media.length > 1) return `<div class="caro">` + it.media.map(m => `<img src="${m}" onclick="openZoom('${m}')" style="cursor:zoom-in">`).join("") + `</div>`;
   return `<img src="${it.media[0]}" onclick="openZoom('${it.media[0]}')" style="cursor:zoom-in">`;
 }
-function openZoom(src){
-  document.getElementById("zoomimg").src = src;
+let ZOOMSET = [], ZOOMIDX = 0;
+function openZoom(src){ openZoomSet([src], 0); }
+function openZoomSet(medias, idx){
+  ZOOMSET = medias; ZOOMIDX = idx || 0;
+  document.getElementById("zoomimg").src = ZOOMSET[ZOOMIDX];
+  const nav = document.getElementById("zoomnav");
+  nav.style.display = ZOOMSET.length > 1 ? "block" : "none";
+  document.getElementById("zoomcount").textContent = (ZOOMIDX+1) + "/" + ZOOMSET.length;
   document.getElementById("zoombg").classList.remove("big");
   document.getElementById("zoombg").classList.add("open");
 }
+function zoomStep(d){
+  ZOOMIDX = (ZOOMIDX + d + ZOOMSET.length) % ZOOMSET.length;
+  document.getElementById("zoomimg").src = ZOOMSET[ZOOMIDX];
+  document.getElementById("zoomcount").textContent = (ZOOMIDX+1) + "/" + ZOOMSET.length;
+}
+document.addEventListener("keydown", e => {
+  if (!document.getElementById("zoombg").classList.contains("open")) return;
+  if (e.key === "ArrowRight") zoomStep(1);
+  if (e.key === "ArrowLeft") zoomStep(-1);
+});
 function closeZoom(){ document.getElementById("zoombg").classList.remove("open"); }
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeZoom(); });
 
@@ -195,7 +216,9 @@ function render(){
       <div id="curnote" style="color:#a8977f;margin-top:8px;font-size:12px"></div></div>
       <div class="ig">` + grid.map(it => {
         const gi = all.indexOf(it);
-        const med = it.type === "reel" ? `<video src="${it.media[0]}" muted onclick="openZoom(this.src)" style="cursor:zoom-in"></video>` : `<img src="${it.media[0]}" onclick="openZoom(this.src)" style="cursor:zoom-in">`;
+        const gzi = 'openZoomSet(' + JSON.stringify(it.media).replace(/"/g, "&quot;") + ', 0)';
+        const caroBadge = it.media.length > 1 ? `<span class="num" style="left:auto;right:6px;top:auto;bottom:6px;background:#000a">⧉ ${it.media.length}</span>` : "";
+        const med = (it.type === "reel" ? `<video src="${it.media[0]}" muted onclick="${gzi}" style="cursor:zoom-in"></video>` : `<img src="${it.media[0]}" onclick="${gzi}" style="cursor:zoom-in">`) + caroBadge;
         if (gi < pub.length)
           return `<div class="cell" style="opacity:.92">${med}<span class="num">${gi+1}</span><span class="num" style="left:auto;right:6px;background:#2e5c3f">✓ PUBLIÉ</span></div>`;
         const idx = gi - pub.length;
