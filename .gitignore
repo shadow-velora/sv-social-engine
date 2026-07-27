@@ -5,3 +5,4 @@ __pycache__/
 bin/
 test-recette/
 apercu.html
+engine/mdv-refs/*.jpg

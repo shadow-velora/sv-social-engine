@@ -101,7 +101,7 @@ def sample_imperfections(cfg):
 CHECKER_PROMPT = """You are the demanding photo editor of a luxury fashion brand. Image 1 is the REFERENCE product photo (note: the reference itself is heavily retouched — do NOT use its skin as the standard). Image 2 is a marketing image that must look like a REAL, unretouched photograph of the same woman in the same dress.
 
 Answer ONLY with a JSON object, no other text:
-{"dress_identical": true/false, "invented_details": ["any dress detail in image 2 absent from the reference"], "skin_natural": true/false, "face_consistent": true/false (true if the face is not visible in image 2), "verdict": "pass" or "fail"}
+{"dress_identical": true/false, "invented_details": ["any dress detail in image 2 absent from the reference"], "skin_natural": true/false, "face_consistent": true/false — the model in image 2 is INTENTIONALLY a different fictional woman from the reference, so never compare her identity to image 1; true when her face reads as one coherent, natural, believable real person (and always true when the face is hidden, in profile or seen from behind), "verdict": "pass" or "fail"}
 
 skin_natural = false ONLY if the skin is clearly artificial: waxy, plastic, poreless, airbrushed glow, doll-like. If the skin shows visible texture, freckles, moles or natural unevenness, set it to true. Noise or film grain over the whole image does NOT count as skin texture, and heavy grain or noise over the image = fail. Judge the dress strictly: any invented detail = fail. verdict = pass only if everything is true and invented_details is empty."""
 
@@ -271,7 +271,7 @@ def main(n_posts=2):
         name = core.first_name(p["title"])
         scene = pick_scene(cfg["scenes"], last_scene)
         last_scene = scene["id"]
-        pose = random.choice(cfg["poses"])
+        pose = pose_text or random.choice(cfg["poses"])
 
         stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%S")
         d = os.path.join(PENDING, f"{stamp}_ai-studio_{p['handle']}")
@@ -366,7 +366,7 @@ def make_ai_set(key=None, ffmpeg=None):
     name = core.first_name(p["title"])
     scene = pick_scene(cfg["scenes"], state.get("last_scene"))
     state["last_scene"] = scene["id"]
-    pose = random.choice(cfg["poses"])
+    pose = pose_text or random.choice(cfg["poses"])
 
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%S")
     work = os.path.join(ROOT, "queue", "rejected", f"__work_{stamp}")
@@ -508,13 +508,13 @@ def make_no_face(kind, product, captions, state, key):
     return d
 
 
-def make_model_post(product, captions, state, key, scene_text=None, concept=""):
+def make_model_post(product, captions, state, key, scene_text=None, concept="", pose_text=None, framing_text=None):
     """Plein-pied mannequin pipeline complet, avec brief d'ambiance de la Creative Producer."""
     from PIL import Image as _I
     cfg = json.load(open(os.path.join(ENGINE, "scenes.json")))
     name = core.first_name(product["title"])
     scene = scene_text or pick_scene(cfg["scenes"], state.get("last_scene"))["text"]
-    pose = random.choice(cfg["poses"])
+    pose = pose_text or random.choice(cfg["poses"])
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%S")
     d = os.path.join(PENDING, f"{stamp}_ai-studio_{product['handle']}")
     os.makedirs(d, exist_ok=True)
@@ -524,7 +524,7 @@ def make_model_post(product, captions, state, key, scene_text=None, concept=""):
     for attempt in range(1, 4):
         imps = sample_imperfections(cfg)
         try:
-            raw = generate_candidate(ref, scene, pose, cfg["rules"], key, imps)
+            raw = generate_candidate(ref, scene, pose, cfg["rules"], key, imps, framing=framing_text)
         except RuntimeError as e:
             verdicts.append({"error": str(e)[:100]})
             continue

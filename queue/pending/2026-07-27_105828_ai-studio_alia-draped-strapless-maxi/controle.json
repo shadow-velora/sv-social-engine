@@ -1,0 +1,15 @@
+[
+  {
+    "error": "pas d'image dans la réponse: {'candidates': [{'finishReason': 'IMAGE_OTHER', 'index': 0, 'finishMess"
+  },
+  {
+    "error": "pas d'image dans la réponse: {'candidates': [{'finishReason': 'IMAGE_OTHER', 'index': 0, 'finishMess"
+  },
+  {
+    "dress_identical": true,
+    "invented_details": [],
+    "skin_natural": true,
+    "face_consistent": true,
+    "verdict": "pass"
+  }
+]

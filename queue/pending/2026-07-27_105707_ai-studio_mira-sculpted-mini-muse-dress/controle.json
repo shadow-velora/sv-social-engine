@@ -1,0 +1,21 @@
+[
+  {
+    "error": "pas d'image dans la réponse: {'error': {'code': 503, 'message': 'This model is currently experiencin"
+  },
+  {
+    "dress_identical": false,
+    "invented_details": [
+      "smooth skirt lacking draped hip fabric"
+    ],
+    "skin_natural": true,
+    "face_consistent": true,
+    "verdict": "fail"
+  },
+  {
+    "dress_identical": true,
+    "invented_details": [],
+    "skin_natural": true,
+    "face_consistent": true,
+    "verdict": "pass"
+  }
+]
