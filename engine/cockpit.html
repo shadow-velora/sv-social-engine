@@ -76,9 +76,7 @@ button{border:0;border-radius:5px;padding:9px 0;font-size:11.5px;letter-spacing:
   <button class="tab" data-t="library">🖼 BIBLIOTHÈQUE</button>
   <button class="tab" data-t="story">📖 STORY</button>
   <button class="tab" data-t="equipe">🧑‍💼 ÉQUIPE</button>
-  <button class="gen" id="gen">⚙ LOT PHOTOS BOUTIQUE</button>
   <button class="gen" id="genai">✨ LOT IA (NOUVELLES IMAGES)</button>
-  <button class="gen" id="reunion">🧑‍💼 RÉUNION D'ÉQUIPE (GRATUIT)</button>
 </div>
 <div class="genbar" id="genbar">✨ GÉNÉRATION EN COURS — LES CONTENUS ARRIVENT DANS QUELQUES MINUTES<div class="track"><div class="fill"></div></div></div>
 <div class="grid" id="grid"></div>
@@ -131,8 +129,8 @@ async function load(){
   DATA = j;
   for (const s of ["pending","approved","published"])
     document.getElementById("n-"+s).textContent = "· " + j[s].length;
-  document.getElementById("gen").disabled = j.generating; document.getElementById("genai").disabled = j.generating;
-  document.getElementById("gen").textContent = j.generating ? "⚙ GÉNÉRATION EN COURS…" : "⚙ LOT PHOTOS BOUTIQUE";
+  document.getElementById("gen") && document.getElementById("gen").disabled = j.generating; document.getElementById("genai").disabled = j.generating;
+  document.getElementById("gen") && document.getElementById("gen").textContent = j.generating ? "⚙ GÉNÉRATION EN COURS…" : "⚙ LOT PHOTOS BOUTIQUE";
   document.getElementById("genbar").classList.toggle("on", j.generating);
   if (wasGenerating && !j.generating && afterGen){
     TAB = afterGen; afterGen = null;
@@ -360,12 +358,12 @@ document.querySelectorAll(".tab").forEach(b => b.onclick = () => {
   document.querySelectorAll(".tab").forEach(x => x.classList.remove("on"));
   b.classList.add("on"); TAB = b.dataset.t; render();
 });
-document.getElementById("gen").onclick = async () => {
+document.getElementById("gen") && document.getElementById("gen").onclick = async () => {
   await fetch("/api/generate", {method: "POST", body: "{}"});
   toast("Génération lancée — les contenus arrivent dans 1 à 3 min");
   setTimeout(load, 3000);
 };
-document.getElementById("reunion").onclick = async () => {
+document.getElementById("reunion") && document.getElementById("reunion").onclick = async () => {
   await fetch("/api/committee", {method: "POST", body: "{}"});
   document.getElementById("genbar").classList.add("on");
   afterGen = "pending"; wasGenerating = true;
