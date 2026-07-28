@@ -1,7 +1,7 @@
 name: Publier sur Instagram
 on:
   schedule:
-    - cron: "0 17 * * 1,3,5"   # posts : lundi/mercredi/vendredi 17:00 UTC (19h Paris)
+    - cron: "0 17 * * 1,2,3,4,5"   # SEMAINE DE LANCEMENT : posts quotidiens — REVENIR À 1,3,5 le lundi 03/08
   workflow_dispatch: {}
 
 permissions:
