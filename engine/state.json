@@ -14,7 +14,8 @@
     "She did not follow the season. The season followed her.",
     "{name} ~ closer, then closer again.",
     "Some women light the room. Others dim everything else.",
-    "The evening starts when {name} arrives."
+    "The evening starts when {name} arrives.",
+    "{name} ~ nothing to prove, everything to remember."
   ],
   "used_products": [
     "mira-sculpted-mini-muse-dress",
@@ -26,7 +27,7 @@
     "rosalia-the-ombre-mermaid-midi-dress",
     "alia-draped-strapless-maxi"
   ],
-  "last_scene": "interieur-soir",
+  "last_scene": "studio-sable",
   "gen_month": "2026-07",
   "gen_calls": 2
 }

@@ -626,11 +626,12 @@ def make_model_post(product, captions, state, key, scene_text=None, concept="", 
         blob = (str(im.get("alt") or "") + " " + im.get("src", "")).lower()
         if any(k in blob for k in ("back", "dos", "rear")) and im not in picks:
             picks.append(im)
-    for im in imgs[1:]:
+    for im in imgs[1:3]:
         if len(picks) >= 3:
             break
         if im not in picks:
             picks.append(im)
+    picks = picks[:3]
     ref = []
     for i, im in enumerate(picks):
         rp = os.path.join(d, "reference.jpg" if i == 0 else f"reference-{i+1}.jpg")
