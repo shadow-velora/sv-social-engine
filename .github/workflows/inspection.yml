@@ -1,0 +1,30 @@
+name: Inspection quotidienne
+on:
+  schedule:
+    - cron: "30 6 * * *"   # tous les jours 06:30 UTC (8h30 Paris)
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  inspection:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet pillow
+      - run: python engine/inspectrice.py
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GH_PAT: ${{ secrets.GH_PAT }}
+      - name: Archiver
+        run: |
+          git config user.name "sv-engine"
+          git config user.email "engine@shadowvelora.com"
+          git pull --rebase --autostash
+          git add queue engine
+          git commit -m "inspection $(date -u +%F)" || echo "rien"
+          git push

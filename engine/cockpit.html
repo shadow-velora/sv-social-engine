@@ -78,6 +78,7 @@ button{border:0;border-radius:5px;padding:9px 0;font-size:11.5px;letter-spacing:
   <button class="tab" data-t="equipe">🧑‍💼 ÉQUIPE</button>
   <button class="gen" id="genai">✨ LOT IA (NOUVELLES IMAGES)</button>
 </div>
+<div id="inspectbar" style="display:none;max-width:1350px;margin:0 auto 14px;background:#3a2626;border:1px solid #6a3636;border-radius:8px;padding:11px 18px;color:#f2dcdc;font-size:12px;line-height:1.8"></div>
 <div class="genbar" id="genbar">✨ GÉNÉRATION EN COURS — LES CONTENUS ARRIVENT DANS QUELQUES MINUTES<div class="track"><div class="fill"></div></div></div>
 <div class="grid" id="grid"></div>
 <div class="toast" id="toast"></div>
@@ -121,6 +122,17 @@ function toast(msg){
   setTimeout(() => t.classList.remove("show"), 2200);
 }
 
+async function loadInspection(){
+  try {
+    const r = await fetch("/api/inspection").then(x => x.json());
+    const b = document.getElementById("inspectbar");
+    if (r.tout_va_bien || !r.alertes || !r.alertes.length){ b.style.display = "none"; return; }
+    b.style.display = "block";
+    b.innerHTML = "🕵️‍♀️ <b>L'INSPECTRICE A REPÉRÉ :</b><br>" + r.alertes.map(a => "• " + a).join("<br>") +
+      (r.actions_reparation && r.actions_reparation.length ? "<br><span style='color:#7fc79a'>Réparations lancées : " + r.actions_reparation.join(" · ") + "</span>" : "");
+  } catch(e){}
+}
+setInterval(loadInspection, 30000); loadInspection();
 async function load(){
   const r = await fetch("/api/queue");
   const j = await r.json();

@@ -92,6 +92,12 @@ class Handler(SimpleHTTPRequestHandler):
         if self.path == "/" or self.path.startswith("/index"):
             self.path = "/engine/cockpit.html"
             return super().do_GET()
+        if self.path == "/api/inspection":
+            rp = os.path.join(ENGINE, "rapport-inspectrice.json")
+            if os.path.exists(rp):
+                return self._json(json.load(open(rp)))
+            return self._json({"tout_va_bien": True, "alertes": []})
+
         if self.path == "/api/rapport":
             rp = os.path.join(ENGINE, "rapport-equipe.json")
             if os.path.exists(rp):
