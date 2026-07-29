@@ -220,7 +220,15 @@ def make_reel(product, captions, state, ffmpeg="ffmpeg"):
     return d
 
 
+def _blacklist():
+    bp = os.path.join(os.path.dirname(os.path.abspath(__file__)), "blacklist.json")
+    if os.path.exists(bp):
+        return set(json.load(open(bp)).get("exclues_generation", []))
+    return set()
+
+
 def pick_products(products, state, n):
+    products = [p for p in products if p.get("handle") not in _blacklist()]
     """Tourne sur le catalogue sans répéter avant d'avoir tout couvert."""
     eligible = [p for p in products if p.get("images")]
     fresh = [p for p in eligible if p["handle"] not in state["used_products"]]
