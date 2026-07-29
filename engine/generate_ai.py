@@ -24,7 +24,7 @@ sys.path.insert(0, ENGINE)
 import generate as core  # curl, fetch_products, fetch_image, cover, captions, state
 
 IMAGE_MODEL = "gemini-2.5-flash-image"
-MAX_GEN_PER_MONTH = 120  # ~4,8 EUR/mois a 0,04 EUR l'appel — sous la regle 10 GBP / 2 mois  # plafond dur : ~2 EUR/mois d'images, budget 10 GBP = 2 mois garanti
+MAX_GEN_PER_MONTH = 135  # +15 fin juillet : ordre « 1 carrousel/semaine MINIMUM » (0,5 EUR) — retour 120 en aout
 CHECK_MODEL = "gemini-flash-latest"
 API = "https://generativelanguage.googleapis.com/v1beta/models"
 
@@ -526,16 +526,17 @@ def make_muse_carousel(products3, captions, state, key):
         return None
     ok_slides = [hero]
     for i in (1, 2):
-        try:
-            raw = swap_dress(hero, refs[i], key)
-        except RuntimeError:
-            continue
-        cp = os.path.join(d, f"slide-{i+1}.jpg")
-        save_jpeg(raw, cp)
-        v = check_candidate(refs[i], cp, key)
-        if v.get("dress_identical") and not v.get("invented_details"):
-            ok_slides.append(cp)
-        else:
+        for essai in (1, 2):
+            try:
+                raw = swap_dress(hero, refs[i], key)
+            except RuntimeError:
+                continue
+            cp = os.path.join(d, f"slide-{i+1}.jpg")
+            save_jpeg(raw, cp)
+            v = check_candidate(refs[i], cp, key)
+            if v.get("dress_identical") and not v.get("invented_details"):
+                ok_slides.append(cp)
+                break
             os.remove(cp)
     if len(ok_slides) < 3:
         _sh.move(d, os.path.join(ROOT, "queue", "rejected", os.path.basename(d)))

@@ -61,7 +61,7 @@ def main():
             if "carousel" in p and p[:10] >= semaine]
     if not caro:
         ALERTES.append("Aucun carrousel cette semaine (règle : 1/semaine)")
-        if budget() < 90:
+        if budget() < 128:  # le carrousel hebdo est une règle DURE, priorité sur la prudence
             r = subprocess.run([sys.executable, os.path.join(ENGINE, "make_carousel_week.py")],
                                cwd=ROOT, timeout=3000, capture_output=True)
             ACTIONS.append("carrousel muse lancé" if r.returncode == 0 else "carrousel tenté mais recalé (fidélité robes)")
