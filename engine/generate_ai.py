@@ -598,7 +598,9 @@ def make_no_face(kind, product, captions, state, key, correction=""):
         import shutil
         shutil.move(d, os.path.join(ROOT, "queue", "rejected", os.path.basename(d)))
         print(f"❌ {kind} {name} — robe jamais fidèle")
+        _fiabilite(product["handle"], False)
         return None
+    _fiabilite(product["handle"], True)
     os.remove(ref)
     cap = core.pick_caption(captions, "studio", state, name)
     core.write_meta(d, "studio", cap,
@@ -606,6 +608,23 @@ def make_no_face(kind, product, captions, state, key, correction=""):
                     random.choice(captions["hashtags"]))
     print(f"✅ {kind} {name}")
     return d
+
+
+def _fiabilite(handle, succes):
+    """Compte les réussites/échecs par robe. 2 échecs sans aucun succès → blacklist auto
+    (on arrête de payer pour des robes que l'IA rate systématiquement)."""
+    fp = os.path.join(ENGINE, "fiabilite.json")
+    f = json.load(open(fp)) if os.path.exists(fp) else {}
+    e = f.setdefault(handle, {"ok": 0, "echec": 0})
+    e["ok" if succes else "echec"] += 1
+    json.dump(f, open(fp, "w"), indent=2)
+    if not succes and e["echec"] >= 2 and e["ok"] == 0:
+        bp = os.path.join(ENGINE, "blacklist.json")
+        b = json.load(open(bp)) if os.path.exists(bp) else {"exclues_generation": []}
+        if handle not in b["exclues_generation"]:
+            b["exclues_generation"].append(handle)
+            json.dump(b, open(bp, "w"), indent=2, ensure_ascii=False)
+            print(f"⛔ {handle} blacklistée automatiquement (2 échecs, 0 réussite) — plus un centime dessus")
 
 
 def make_model_post(product, captions, state, key, scene_text=None, concept="", pose_text=None, framing_text=None, correction=""):
@@ -663,7 +682,9 @@ def make_model_post(product, captions, state, key, scene_text=None, concept="", 
         import shutil
         shutil.move(d, os.path.join(ROOT, "queue", "rejected", os.path.basename(d)))
         print(f"❌ {name} — brief '{concept}' jamais validé")
+        _fiabilite(product["handle"], False)
         return None
+    _fiabilite(product["handle"], True)
     img = _I.open(kept).convert("RGB")
     mp = os.path.join(d, "media.jpg")
     core.cover(img, 1080, 1350).save(mp, quality=92)
