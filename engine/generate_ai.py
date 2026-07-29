@@ -565,7 +565,7 @@ def make_no_face(kind, product, captions, state, key, correction=""):
     os.makedirs(d, exist_ok=True)
     ref = os.path.join(d, "reference.jpg")
     core.fetch_image(product["images"][0]["src"], 1200).save(ref, quality=92)
-    prompt = {"bust": BUST_PROMPT, "chaise": CHAISE_PROMPT}.get(kind, FLATLAY_PROMPT)
+    prompt = {"bust": BUST_PROMPT, "chaise": CHAISE_PROMPT}.get(kind, FLATLAY_PROMPT) + lecons_texte(product["handle"])
     if correction:
         prompt += " CRITICAL correction requested by the brand founder after a rejected attempt: " + correction + ". Address this point precisely."
     kept, verdicts = None, []
@@ -610,6 +610,20 @@ def make_no_face(kind, product, captions, state, key, correction=""):
     return d
 
 
+def lecons_texte(handle=""):
+    """Les règles apprises des rejets de Laurie — injectées dans chaque prompt."""
+    lp = os.path.join(ENGINE, "lecons.json")
+    if not os.path.exists(lp):
+        return ""
+    lec = json.load(open(lp))
+    regles = list(lec.get("global", []))
+    if handle:
+        regles += lec.get("par_robe", {}).get(handle, [])
+    if not regles:
+        return ""
+    return " HARD RULES learned from the founder's past rejections (breaking any of these means instant rejection): " + " ".join(regles)
+
+
 def _fiabilite(handle, succes):
     """Compte les réussites/échecs par robe. 2 échecs sans aucun succès → blacklist auto
     (on arrête de payer pour des robes que l'IA rate systématiquement)."""
@@ -633,7 +647,7 @@ def make_model_post(product, captions, state, key, scene_text=None, concept="", 
     cfg = json.load(open(os.path.join(ENGINE, "scenes.json")))
     name = core.first_name(product["title"])
     scene = scene_text or pick_scene(cfg["scenes"], state.get("last_scene"))["text"]
-    rules = cfg["rules"]
+    rules = cfg["rules"] + lecons_texte(product["handle"])
     if correction:
         rules = rules + " CRITICAL correction requested by the brand founder after a rejected attempt: " + correction + ". Address this point precisely."
     pose = pose_text or random.choice(cfg["poses"])

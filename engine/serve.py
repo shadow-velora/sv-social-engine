@@ -315,6 +315,10 @@ class Handler(SimpleHTTPRequestHandler):
                         "item": item, "raison": reason or "sans raison donnée",
                     }, ensure_ascii=False) + "\n")
                 shutil.move(src, os.path.join(Q("rejected"), item))
+                if reason:
+                    threading.Thread(target=lambda: subprocess.run(
+                        ["python3", os.path.join(ENGINE, "apprendre.py"), item, reason],
+                        cwd=ROOT, timeout=120), daemon=True).start()
                 if data.get("regen"):
                     def _regen(it=item):
                         global _gen_running
