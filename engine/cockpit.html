@@ -244,31 +244,18 @@ function render(){
     return;
   }
   if (TAB === "programme"){
-    const order = publishOrder();
-    const jours = [
-      {j:"LUNDI",    h:"8h",  quoi:"La machine génère le programme (3 posts + 1 réel) et l'équipe se réunit", toi:"Tu valides, rejettes, réorganises — jusqu'à 19h", auto:true},
-      {j:"LUNDI",    h:"19h", quoi:"Publication du post n°1", slot:0},
-      {j:"MERCREDI", h:"19h", quoi:"Publication du post n°2", slot:1},
-      {j:"VENDREDI", h:"19h", quoi:"Publication du post n°3", slot:2},
-      {j:"SAMEDI",   h:"soir", quoi:"RÉEL — kit dans 📖 À POSTER (vidéo + légende + hashtags)", toi:"Tu télécharges et postes avec un son tendance (2 min)", kit:"reel"},
-      {j:"DIMANCHE", h:"9h → soir", quoi:"STORY — kit dans 📖 À POSTER (image + texte + sondage)", toi:"Tu postes la story avec le sondage (2 min)", kit:"story"},
-    ];
-    fetch("/api/stories").then(r => r.json()).then(res => {
-      const kitOk = t => res.kits.some(k => (t === "reel") === (k.type === "reel"));
+    fetch("/api/programme").then(r => r.json()).then(res => {
       g.innerHTML = `<div style="grid-column:1/-1;max-width:720px;margin:0 auto">
-        <div class="ig-note" style="max-width:none">Ton rythme hebdomadaire — les publications partent toutes seules, toi tu as ~15 min le lundi et 2×2 min le week-end.</div>` +
-        jours.map(l => {
-          const it = l.slot !== undefined ? order[l.slot] : null;
-          const thumb = it ? `<img src="${it.media[0]}" style="width:54px;height:68px;object-fit:cover;border-radius:6px;aspect-ratio:auto">` :
-                        (l.slot !== undefined ? `<div style="width:54px;height:68px;border:1px dashed #4a443f;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#666;font-size:9px">vide</div>` : "");
-          const badge = l.kit ? (kitOk(l.kit) ? `<span style="color:#7fc79a;font-size:11px">✓ kit prêt</span>` : `<span style="color:#a8977f;font-size:11px">kit à venir</span>`) : "";
-          return `<div style="display:flex;gap:14px;align-items:center;background:#1d1b1a;border:1px solid #322e2c;border-radius:10px;padding:13px 16px;margin-bottom:10px">
-            <div style="min-width:96px"><b style="color:#e8d8c0;font-size:12px;letter-spacing:1px">${l.j}</b><br><span style="color:#a8977f;font-size:11px">${l.h}</span></div>
-            ${thumb}
-            <div style="flex:1;font-size:12.5px;line-height:1.6">${l.quoi}${l.toi ? `<br><span style="color:#a8977f">👩 ${l.toi}</span>` : ""} ${badge}</div>
-            ${l.auto || l.slot !== undefined ? `<span style="color:#7fc79a;font-size:10px;letter-spacing:1px">AUTO</span>` : `<span style="color:#e8d8c0;font-size:10px;letter-spacing:1px">TOI</span>`}
-          </div>`;
-        }).join("") + `</div>`;
+        <div class="ig-note" style="max-width:none">Le vrai calendrier des 7 prochains jours — mis à jour selon la file et le planning réel du robot.</div>` +
+        res.rows.map(l => `
+          <div style="display:flex;gap:14px;align-items:center;background:#1d1b1a;border:1px solid ${l.badge === "AUJOURD'HUI" ? "#4B3E3C" : "#322e2c"};border-radius:10px;padding:13px 16px;margin-bottom:10px">
+            <div style="min-width:130px"><b style="color:#e8d8c0;font-size:12px;letter-spacing:1px;text-transform:uppercase">${l.date}</b>
+              ${l.badge ? `<br><span style="color:#7fc79a;font-size:10px;letter-spacing:1px">${l.badge}</span>` : ""}</div>
+            ${l.type === "post" ? (l.thumb ? `<img src="${l.thumb}" style="width:54px;height:68px;object-fit:cover;border-radius:6px;aspect-ratio:auto" onclick="openZoom('${l.thumb}')">`
+              : `<div style="width:54px;height:68px;border:1px dashed #6a3636;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#c77;font-size:9px;text-align:center">rien de prêt !</div>`) : ""}
+            <div style="flex:1;font-size:12.5px;line-height:1.6">${l.quoi}</div>
+            <span style="color:${l.type === "toi" ? "#e8d8c0" : "#7fc79a"};font-size:10px;letter-spacing:1px">${l.type === "toi" ? "TOI" : "AUTO"}</span>
+          </div>`).join("") + `</div>`;
     });
     return;
   }

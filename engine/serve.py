@@ -92,6 +92,52 @@ class Handler(SimpleHTTPRequestHandler):
         if self.path == "/" or self.path.startswith("/index"):
             self.path = "/engine/cockpit.html"
             return super().do_GET()
+        if self.path == "/api/programme":
+            import re as _re
+            from datetime import datetime as _dt, timedelta as _td
+            wf = os.path.join(ROOT, ".github", "workflows", "publish.yml")
+            jours_posts = {1, 3, 5}
+            try:
+                m = _re.search(r'cron:\s*"0 17 \* \* ([0-9,]+)"', open(wf).read())
+                if m:
+                    jours_posts = {int(x) % 7 for x in m.group(1).split(",")}
+            except OSError:
+                pass
+            NOMS = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"]
+            MOIS = ["", "janvier", "février", "mars", "avril", "mai", "juin", "juillet",
+                    "août", "septembre", "octobre", "novembre", "décembre"]
+            file_posts = []
+            for st in ("approved", "pending"):
+                for it in sorted(os.listdir(Q(st))):
+                    d = os.path.join(Q(st), it)
+                    if os.path.isdir(d) and os.path.exists(os.path.join(d, "meta.json")) and "_reel_" not in it:
+                        media = os.path.join(d, "media.jpg")
+                        if not os.path.exists(media):
+                            sl = sorted(f for f in os.listdir(d) if f.startswith("slide"))
+                            media = os.path.join(d, sl[0]) if sl else None
+                        if media:
+                            file_posts.append(f"/queue/{st}/{urllib.parse.quote(it)}/{os.path.basename(media)}?v={int(os.path.getmtime(media))}")
+            rows, slot = [], 0
+            today = _dt.now().date()
+            for i in range(8):
+                day = today + _td(days=i)
+                wd = day.weekday()  # 0 = lundi
+                label = ("AUJOURD'HUI" if i == 0 else "demain" if i == 1 else "")
+                date_fr = f"{NOMS[wd]} {day.day} {MOIS[day.month]}"
+                cron_wd = (wd + 1) % 7  # cron : 0 = dimanche
+                if cron_wd in jours_posts:
+                    thumb = file_posts[slot] if slot < len(file_posts) else None
+                    rows.append({"date": date_fr, "badge": label, "quoi": "Publication automatique 19h",
+                                 "thumb": thumb, "type": "post", "vide": thumb is None})
+                    slot += 1
+                if wd == 5:
+                    rows.append({"date": date_fr, "badge": label, "quoi": "RÉEL — kit généré 9h, à poster le soir avec un son tendance", "type": "toi"})
+                if wd == 6:
+                    rows.append({"date": date_fr, "badge": label, "quoi": "STORY — kit généré 9h, à poster le soir avec le sondage", "type": "toi"})
+                if wd == 0 and i > 0:
+                    rows.append({"date": date_fr, "badge": "", "quoi": "8h : génération du programme de la semaine + réunion d'équipe — tu valides entre 8h et 19h", "type": "machine"})
+            return self._json({"rows": rows})
+
         if self.path == "/api/inspection":
             rp = os.path.join(ENGINE, "rapport-inspectrice.json")
             if os.path.exists(rp):
