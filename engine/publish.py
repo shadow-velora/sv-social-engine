@@ -184,6 +184,7 @@ def main():
     rejected = os.path.join(ROOT, "queue", "rejected")
     os.makedirs(pending, exist_ok=True)
     os.makedirs(rejected, exist_ok=True)
+    os.makedirs(APPROVED, exist_ok=True)
 
     approved = sorted(d for d in os.listdir(APPROVED)
                       if os.path.isdir(os.path.join(APPROVED, d)))

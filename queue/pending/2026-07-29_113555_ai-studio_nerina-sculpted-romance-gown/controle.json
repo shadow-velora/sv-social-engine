@@ -1,5 +1,8 @@
 [
   {
+    "error": "pas d'image dans la réponse: {'candidates': [{'finishReason': 'IMAGE_OTHER', 'index': 0, 'finishMess"
+  },
+  {
     "dress_identical": true,
     "invented_details": [],
     "skin_natural": true,
