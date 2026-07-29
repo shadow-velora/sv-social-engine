@@ -257,7 +257,7 @@ def magnific_finalize(media_path, key):
 
 
 def pick_scene(scenes, last_id=None):
-    pool = [s for s in scenes for _ in range(s["weight"]) if s["id"] != last_id]
+    pool = [s for s in scenes for _ in range(s.get("weight", 1)) if s["id"] != last_id]
     return random.choice(pool)
 
 
