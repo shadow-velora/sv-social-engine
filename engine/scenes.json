@@ -29,6 +29,36 @@
       "id": "backstage-shooting",
       "weight": 1,
       "text": "the honest backstage of a fashion shoot: a clothes rail with a few garment bags softly out of focus behind her, a garment steamer in the corner, cardboard boxes near the wall, real working-space clutter"
+    },
+    {
+      "id": "studio-blanc",
+      "palette": "blanc cassé / gris perle",
+      "text": "a minimal studio with an off-white seamless backdrop, soft near-shadowless daylight-balanced light wrapping around her, subtle scuffs on the studio floor — the clean white world reserved for dark and dramatic dresses"
+    },
+    {
+      "id": "studio-chocolat-persiennes",
+      "palette": "chocolat / taupe profond",
+      "text": "a studio with a deep warm chocolate-brown backdrop, dramatic warm light raking through venetian blinds casting graphic slatted shadows across her body and the wall, a worn wooden stool to one side"
+    },
+    {
+      "id": "monument-pierre-grise",
+      "palette": "gris pierre / gris vert",
+      "text": "in front of a weathered grey stone monument with baroque carvings, moss in the crevices, cool grey stone tones with soft overcast daylight, old cobblestones underfoot"
+    },
+    {
+      "id": "riviera-sepia",
+      "palette": "sépia / champagne doré",
+      "text": "a lakeside stone terrace on the Italian Riviera at golden hour, warm sepia champagne light, sun sparkling on the water behind, weathered stone balustrade with patina, the whole frame bathed in a fine warm haze like a 90s film photograph"
+    },
+    {
+      "id": "paris-haussmannien",
+      "palette": "pierre calcaire claire / gris zinc",
+      "text": "a Parisian street in front of a pale limestone Haussmann facade with fluted columns and a wrought-iron balcony, soft grey Paris daylight, worn pale stone pavement — cool elegant city tones"
+    },
+    {
+      "id": "nuit-interieure-bordeaux",
+      "palette": "bordeaux / brun nuit",
+      "text": "a dim evening interior with deep wine-red and dark wood tones, a single warm lamp glowing, long shadows, a glass left on a side table — intimate after-dark mood for rich colored dresses"
     }
   ],
   "poses": [
@@ -40,7 +70,7 @@
     "looking back over her shoulder toward the camera, spine elegant, one hand gathering her hair off her neck",
     "leaning her shoulder blades back against the wall, one knee bent, chin level, arms relaxed"
   ],
-  "rules": "Warm desaturated palette only (sand, cream, taupe, espresso). NEVER cold grey, never loud colors. The location is REAL and lived-in: honest imperfections in the set, background rendered with true optical depth of field from a 50mm lens, never painted-looking blur. No mirrors. No smile (composed, serene). No text, no logos, no other people.",
+  "rules": "Warm desaturated palette only (sand, cream, taupe, espresso). NEVER cold grey, never loud colors. The location is REAL and lived-in: honest imperfections in the set, background rendered with true optical depth of field from a 50mm lens, never painted-looking blur. No mirrors. No smile (composed, serene). No text, no logos, no other people. SCENE-COLOR PAIRING: dark or dramatic dresses belong on the off-white studio backdrop; light cream dresses can live on warm or deep backdrops; never let every image drift into the same yellow-beige — the feed alternates COLOR WORLDS (white, chocolate, grey stone, sepia gold, pale Paris limestone, wine-dark night) with smooth transitions.",
   "imperfections": {
     "face": [
       "one small emerging blemish on her jawline",
