@@ -126,10 +126,18 @@ class Handler(SimpleHTTPRequestHandler):
                 date_fr = f"{NOMS[wd]} {day.day} {MOIS[day.month]}"
                 cron_wd = (wd + 1) % 7  # cron : 0 = dimanche
                 if cron_wd in jours_posts:
-                    thumb = file_posts[slot] if slot < len(file_posts) else None
-                    rows.append({"date": date_fr, "badge": label, "quoi": "Publication automatique 19h",
-                                 "thumb": thumb, "type": "post", "vide": thumb is None})
-                    slot += 1
+                    deja = False
+                    if i == 0:
+                        psp = os.path.join(ENGINE, "publish-state.json")
+                        if os.path.exists(psp):
+                            deja = json.load(open(psp)).get("derniere_publication") == day.strftime("%Y-%m-%d")
+                    if deja:
+                        rows.append({"date": date_fr, "badge": label, "quoi": "✅ Publication du jour déjà partie", "type": "machine"})
+                    else:
+                        thumb = file_posts[slot] if slot < len(file_posts) else None
+                        rows.append({"date": date_fr, "badge": label, "quoi": "Publication automatique 19h",
+                                     "thumb": thumb, "type": "post", "vide": thumb is None})
+                        slot += 1
                 if wd == 5:
                     rows.append({"date": date_fr, "badge": label, "quoi": "RÉEL — kit généré 9h, à poster le soir avec un son tendance", "type": "toi"})
                 if wd == 6:

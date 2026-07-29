@@ -29,6 +29,6 @@ jobs:
         run: |
           git config user.name "sv-engine"
           git config user.email "engine@shadowvelora.com"
-          git add queue
+          git add queue engine/publish-state.json
           git commit -m "publié $(date -u +%F)" || echo "rien à committer"
           git push

@@ -177,6 +177,14 @@ def final_check(folder):
 
 def main():
     os.makedirs(PUBLISHED, exist_ok=True)
+    # RÈGLE DURE : maximum 1 publication par jour (védé du 29/07 — double post évité)
+    from datetime import datetime as _dt
+    psp = os.path.join(ROOT, "engine", "publish-state.json")
+    ps = json.load(open(psp)) if os.path.exists(psp) else {}
+    aujourdhui = _dt.utcnow().strftime("%Y-%m-%d")
+    if ps.get("derniere_publication") == aujourdhui:
+        print("Déjà publié aujourd'hui — règle 1/jour, on ne double pas.")
+        sys.exit(0)
     # Modèle VETO : les posts validés par Laurie partent tels quels.
     # Un post NON validé passe d'abord le contrôle qualité IA (garde-fou) ;
     # s'il est bloqué, il part en rejected avec la raison et on essaie le suivant.
@@ -221,6 +229,7 @@ def main():
         res = publish_item(folder)
         print("OK, media id:", res.get("id"))
         shutil.move(folder, os.path.join(PUBLISHED, item))
+        json.dump({"derniere_publication": aujourdhui}, open(psp, "w"))
         break
     else:
         print("Aucun contenu publiable aujourd'hui (tout bloqué par le garde-fou).")
