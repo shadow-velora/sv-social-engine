@@ -21,6 +21,9 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           FFMPEG: ffmpeg
+      - run: python engine/make_carousel_week.py || true
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       - name: Archiver
         run: |
           git config user.name "sv-engine"

@@ -59,6 +59,71 @@
       "id": "nuit-interieure-bordeaux",
       "palette": "bordeaux / brun nuit",
       "text": "a dim evening interior with deep wine-red and dark wood tones, a single warm lamp glowing, long shadows, a glass left on a side table — intimate after-dark mood for rich colored dresses"
+    },
+    {
+      "id": "facade-baroque-statues",
+      "palette": "pierre claire / gris doux",
+      "text": "outside a grand baroque facade in pale stone with marble statues in carved niches behind a wrought-iron railing, grey stone paving, soft overcast late-afternoon light"
+    },
+    {
+      "id": "colonnade-damier",
+      "palette": "beige pierre / damier",
+      "text": "a classical colonnade in warm beige stone with a black-and-white checkered floor softly blurred behind, warm end-of-day natural light"
+    },
+    {
+      "id": "nuit-vitrine-flash",
+      "palette": "nuit / noir contrasté",
+      "text": "a city street at night in front of a dark elegant boutique window, hard frontal flash light like a 90s paparazzi streetstyle shot, deep black shadows"
+    },
+    {
+      "id": "studio-gris-cyclorama",
+      "palette": "gris clair neutre",
+      "text": "a plain light-grey cyclorama studio, even shadowless frontal light, minimal and clean"
+    },
+    {
+      "id": "studio-vert-sauge",
+      "palette": "vert sauge",
+      "text": "a studio with a plain sage-green backdrop, flat even editorial light, subtle paper texture"
+    },
+    {
+      "id": "studio-aubergine",
+      "palette": "aubergine / brun profond",
+      "text": "a studio with a deep warm aubergine-brown backdrop and a soft light gradient, enveloping studio light"
+    },
+    {
+      "id": "studio-dentelle-boudoir",
+      "palette": "beige rosé boudoir",
+      "text": "a studio backdrop printed with a large beige-rose lace pattern, soft bounced warm light, intimate boudoir mood"
+    },
+    {
+      "id": "lac-come-goldenhour",
+      "palette": "sépia doré",
+      "text": "a stone staircase and balustrade at the edge of an Italian lake, golden raking end-of-day light sparkling on the water, wrought-iron gate, fine warm haze"
+    },
+    {
+      "id": "villa-italienne-grilles",
+      "palette": "vert montagne / pierre",
+      "text": "in front of the wrought-iron gates of a classical Italian villa, green mountains softly out of focus behind, gentle diffuse evening light under a veiled sky"
+    },
+    {
+      "id": "fontaine-parc-italien",
+      "palette": "sépia dramatique",
+      "text": "a monumental stone fountain in an Italian garden, statue and basin behind, warm subdued evening light with a dramatic sepia mood"
+    },
+    {
+      "id": "escalier-monumental-rasante",
+      "palette": "pierre chaude contrastée",
+      "text": "the carved stone pilasters of a monumental outdoor staircase, warm raking light with strong shadow-light contrast across the stone"
+    },
+    {
+      "id": "interieur-moderne-luxe",
+      "palette": "beige contemporain",
+      "text": "a high-end modern interior, a living room with a staircase, golden lamp and beige sofa softly blurred behind, warm ambient indoor light"
+    },
+    {
+      "id": "pilier-fer-forge",
+      "palette": "pierre / noir ferronnerie",
+      "text": "leaning context: a fluted stone pillar with a black wrought-iron gate behind, soft slightly golden natural light, urban Parisian mood"
     }
   ],
   "poses": [
