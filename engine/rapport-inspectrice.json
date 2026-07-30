@@ -1,10 +1,11 @@
 {
-  "date": "2026-07-29T12:00+00:00",
+  "date": "2026-07-30T12:15+00:00",
   "alertes": [
     "Aucun carrousel cette semaine (règle : 1/semaine)",
-    "Robot en échec : « Publier sur Instagram » (07-28T20:49 UTC) — voir logs GitHub",
-    "Budget presque épuisé : 115/120 générations ce mois"
+    "Budget presque épuisé : 133/120 générations ce mois"
   ],
-  "actions_reparation": [],
+  "actions_reparation": [
+    "carrousel tenté mais recalé (fidélité robes)"
+  ],
   "tout_va_bien": false
 }
