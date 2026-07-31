@@ -1,11 +1,10 @@
 {
-  "date": "2026-07-30T12:15+00:00",
+  "date": "2026-07-31T13:10+00:00",
   "alertes": [
+    "File courte : 1 post(s) prêt(s) pour les prochains créneaux",
     "Aucun carrousel cette semaine (règle : 1/semaine)",
     "Budget presque épuisé : 133/120 générations ce mois"
   ],
-  "actions_reparation": [
-    "carrousel tenté mais recalé (fidélité robes)"
-  ],
+  "actions_reparation": [],
   "tout_va_bien": false
 }
