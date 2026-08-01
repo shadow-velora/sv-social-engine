@@ -1,0 +1,12 @@
+[
+  {
+    "error": "pas d'image dans la réponse: {'error': {'code': 503, 'message': 'This model is currently experiencin"
+  },
+  {
+    "dress_identical": true,
+    "invented_details": [],
+    "skin_natural": true,
+    "face_consistent": true,
+    "verdict": "pass"
+  }
+]
