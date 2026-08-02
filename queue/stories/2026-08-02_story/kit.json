@@ -1,10 +1,10 @@
 {
-  "source": "2026-07-28_103343_ai-studio_rosalia-the-ombre-mermaid-midi-dress",
-  "text_overlay": "Reserved for late hours.",
-  "poll_question": "Which dark tone next?",
-  "poll_options": [
-    "Midnight navy",
-    "Deep emerald"
-  ],
-  "placement_tip": "Placez le texte en haut à gauche sur le fond neutre et le sticker sondage juste en dessous pour ne pas masquer le laçage du dos."
+  "type": "story",
+  "source": "2026-07-27_110900_marque-boite-macro_shadow-velora",
+  "frames": 3,
+  "frame1_text": "Look closer.",
+  "frame2_text": "The one for tonight.",
+  "frame3_text": "Yours this week.",
+  "link_label": "Shop the dress",
+  "conseil": "(consignes IA indisponibles : [Errno 2] No such file or directory: '/Users/lauriehernandez/Desktop/sv-social-engine — NE PAS SUPPRIMER/queue/stories/2026-08-02_story/media.jpg')"
 }
