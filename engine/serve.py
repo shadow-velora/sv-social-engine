@@ -169,11 +169,14 @@ class Handler(SimpleHTTPRequestHandler):
                 kp = os.path.join(d, "kit.json")
                 mp2 = os.path.join(d, "media.jpg")
                 if not os.path.exists(mp2):
-                    mp2 = os.path.join(d, "media.mp4")
+                    f1 = os.path.join(d, "frame-1.jpg")
+                    mp2 = f1 if os.path.exists(f1) else os.path.join(d, "media.mp4")
                 if os.path.isdir(d) and os.path.exists(mp2):
                     kit = json.load(open(kp)) if os.path.exists(kp) else {}
+                    frames = sorted(f for f in os.listdir(d) if f.startswith("frame-"))
                     kits.append({"id": it,
                                  "media": f"/queue/stories/{urllib.parse.quote(it)}/{os.path.basename(mp2)}?v={int(os.path.getmtime(mp2))}",
+                                 "frames_urls": [f"/queue/stories/{urllib.parse.quote(it)}/{f}?v={int(os.path.getmtime(os.path.join(d, f)))}" for f in frames],
                                  **kit})
             return self._json({"kits": kits})
 

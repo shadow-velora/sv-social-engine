@@ -263,10 +263,10 @@ function render(){
     fetch("/api/stories").then(r => r.json()).then(res => {
       if (!res.kits.length){ g.innerHTML = `<div class="empty">Pas encore de kit — il arrive chaque dimanche 9h. La machine choisit l'image, toi tu postes avec le texte et le sondage proposés.</div>`; return; }
       g.innerHTML = res.kits.map(k => `
-        <div class="card">${k.type === "reel" ? `<video src="${k.media.replace('media.jpg','media.mp4')}" controls loop style="aspect-ratio:9/16;max-height:520px"></video>` : `<img src="${k.media}" style="aspect-ratio:9/16;max-height:520px" onclick="openZoom('${k.media}')">`}
+        <div class="card">${k.type === "reel" ? `<video src="${k.media.replace('media.jpg','media.mp4')}" controls loop style="aspect-ratio:9/16;max-height:520px"></video>` : (k.frames_urls && k.frames_urls.length ? `<div style="display:flex;gap:3px">${k.frames_urls.map(u => `<img src="${u}" style="width:33.3%;aspect-ratio:9/16;object-fit:cover" onclick="openZoom('${u}')">`).join("")}</div>` : `<img src="${k.media}" style="aspect-ratio:9/16;max-height:520px" onclick="openZoom('${k.media}')">`)}
           <div class="body">
             <div style="font-size:11px;color:#a8977f;letter-spacing:1px">${k.type === "reel" ? "🎬 KIT RÉEL" : "📖 KIT STORY"} DU ${k.id.split("_")[0]}</div>
-            <div style="font-size:13px;line-height:1.7">${k.type === "reel" ? `<b>📝 Légende :</b> ${k.legende}<br><b>#️⃣ Hashtags :</b> ${k.hashtags}<br><b>🎵 Musique :</b> ${k.consigne_musique}` : `<b>✍️ Texte à écrire :</b> « ${k.text_overlay || "—"} »<br>`}
+            <div style="font-size:13px;line-height:1.7">${k.type === "reel" ? `<b>📝 Légende :</b> ${k.legende}<br><b>#️⃣ Hashtags :</b> ${k.hashtags}<br><b>🎵 Musique :</b> ${k.consigne_musique}` : (k.frame1_text ? `<b>1️⃣</b> « ${k.frame1_text} » · <b>2️⃣</b> « ${k.frame2_text} » · <b>3️⃣</b> « ${k.frame3_text} »<br><b>🔗 Lien :</b> « ${k.link_label} » → fiche produit<br><b>📍</b> ${k.conseil || ""}` : `<b>✍️ Texte à écrire :</b> « ${k.text_overlay || "—"} »<br>`)}
             <b>📊 Sondage :</b> « ${k.poll_question || "—"} »<br>
             <b>Réponses :</b> ${(k.poll_options || []).map(o => "« " + o + " »").join(" / ")}<br>
             <b>📍 Placement :</b> ${k.placement_tip || "—"}</div>

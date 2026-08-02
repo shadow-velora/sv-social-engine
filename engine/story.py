@@ -28,17 +28,16 @@ def sh(*cmd):
 def consignes(media_path, alt, key):
     """Demande au stratège IA le texte + le sondage de la story (en anglais)."""
     img = base64.b64encode(open(media_path, "rb").read()).decode()
-    prompt = (cerveau.contexte(role="smm", pour_texte=True) + "\n\n"
-              "You are writing an Instagram STORY for Shadow Velora. The founder posts it herself, "
-              "by hand, with a poll sticker. Context of the image: " + (alt or "brand visual") + ". "
-              "A story must EARN its place: it is not a caption, it is a reason to tap. "
-              "Give her: a SHORT text overlay (max 7 words, English, an angle or a hook — never a "
-              "product description), and ONE poll whose answer teaches the brand something useful "
-              "(what to restock, which colour to launch next, which occasion the audience dresses "
-              "for). Question max 6 words, exactly 2 short options. "
-              'Answer ONLY in JSON: {"text_overlay": "...", "poll_question": "...", '
-              '"poll_options": ["...", "..."], "placement_tip": "one short sentence in French '
-              'telling her where to place text and poll on the image"}')
+    prompt = (cerveau.contexte(role="cm", pour_texte=True) + "\n\n"
+              "You are the social media manager of Shadow Velora, writing this week's Instagram STORY "
+              "SEQUENCE. Context of the image: " + (alt or "brand visual") + ". "
+              "A story sequence is three frames that build: (1) a tight detail that creates curiosity, "
+              "(2) the full look revealed, (3) the same look with a link sticker to shop. "
+              "Text on a story is 3 to 6 words maximum — a hook, never a product description. "
+              "Frame 3 must give a short call to action for the link sticker. "
+              'Answer ONLY in JSON: {"frame1_text": "...", "frame2_text": "...", '
+              '"frame3_text": "...", "link_label": "short CTA for the link sticker, max 4 words", '
+              '"conseil": "one short sentence in French: where to place the texts and the link sticker"}')
     body = json.dumps({"contents": [{"parts": [
         {"text": prompt}, {"inline_data": {"mime_type": "image/jpeg", "data": img}}]}]}).encode()
     req = urllib.request.Request(
@@ -88,14 +87,23 @@ def main():
     from PIL import Image
     img = Image.open(src_path).convert("RGB")
     tw, th = 1080, 1920
-    scale = max(tw / img.width, th / img.height)
-    img = img.resize((round(img.width * scale), round(img.height * scale)), Image.LANCZOS)
-    x, y = (img.width - tw) // 2, (img.height - th) // 3
     from datetime import datetime, timezone
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     d = os.path.join(KITS, f"{stamp}_story")
     os.makedirs(d, exist_ok=True)
-    img.crop((x, y, x + tw, y + th)).save(os.path.join(d, "media.jpg"), quality=93)
+
+    def cadre(im, zoom=1.0, focus_y=0.33):
+        """Recadre en 9:16. zoom>1 = plan resserré (le détail)."""
+        e = max(tw / im.width, th / im.height) * zoom
+        r = im.resize((max(1, round(im.width * e)), max(1, round(im.height * e))), Image.LANCZOS)
+        x = (r.width - tw) // 2
+        y = max(0, min(r.height - th, int(r.height * focus_y - th / 2)))
+        return r.crop((x, y, x + tw, y + th))
+
+    cadre(img, zoom=2.1, focus_y=0.42).save(os.path.join(d, "frame-1.jpg"), quality=93)  # détail
+    plein = cadre(img, zoom=1.0, focus_y=0.33)
+    plein.save(os.path.join(d, "frame-2.jpg"), quality=93)                               # plan complet
+    plein.save(os.path.join(d, "frame-3.jpg"), quality=93)                               # + lien
 
     alt = ""
     mp = os.path.join(PUBLISHED, cible, "meta.json")
@@ -106,10 +114,11 @@ def main():
     try:
         c = consignes(os.path.join(d, "media.jpg"), alt, key)
     except Exception as e:
-        c = {"text_overlay": "New in — which one is you?",
-             "poll_question": "Your pick?", "poll_options": ["This one", "Need it all"],
-             "placement_tip": f"(consignes IA indisponibles : {e})"}
-    json.dump({"source": cible, **c}, open(os.path.join(d, "kit.json"), "w"), indent=2, ensure_ascii=False)
+        c = {"frame1_text": "Look closer.", "frame2_text": "The one for tonight.",
+             "frame3_text": "Yours this week.", "link_label": "Shop the dress",
+             "conseil": f"(consignes IA indisponibles : {e})"}
+    json.dump({"type": "story", "source": cible, "frames": 3, **c},
+              open(os.path.join(d, "kit.json"), "w"), indent=2, ensure_ascii=False)
 
     state["faites"].append(cible)
     json.dump(state, open(STATE, "w"), indent=2)
