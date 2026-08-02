@@ -1,10 +1,10 @@
 {
-  "source": "2026-07-28_103456_ai-studio_estella-floral-embroidered-hourglass-gown",
-  "text_overlay": "New in — which one is you?",
-  "poll_question": "Your pick?",
+  "source": "2026-07-28_103343_ai-studio_rosalia-the-ombre-mermaid-midi-dress",
+  "text_overlay": "Reserved for late hours.",
+  "poll_question": "Which dark tone next?",
   "poll_options": [
-    "This one",
-    "Need it all"
+    "Midnight navy",
+    "Deep emerald"
   ],
-  "placement_tip": "(consignes IA indisponibles : name 'cerveau' is not defined)"
+  "placement_tip": "Placez le texte en haut à gauche sur le fond neutre et le sticker sondage juste en dessous pour ne pas masquer le laçage du dos."
 }
