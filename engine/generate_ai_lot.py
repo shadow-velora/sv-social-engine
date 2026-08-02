@@ -3,6 +3,7 @@
 import sys, os, json
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import generate_ai as g
+import cerveau
 import generate as core
 
 ENGINE = os.path.dirname(os.path.abspath(__file__))

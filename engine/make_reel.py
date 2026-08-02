@@ -18,6 +18,7 @@ sys.path.insert(0, ENGINE)
 import generate as core
 import generate_ai as gai
 import reel_slideshow
+import cerveau
 
 PHRASES = [
     "for the moments that matter.",
@@ -81,9 +82,22 @@ def main():
     phrase = random.choice(PHRASES)
     reel_slideshow.build(os.path.join(d, "media.mp4"), phrase, keepers)
     names = " & ".join(core.first_name(p["title"]) for p in duo)
+    legende = f"Blink and you miss it. {names}, designed in London. ~"
+    try:
+        import urllib.request as _u
+        q = (cerveau.contexte(role="cm", pour_texte=True) + "\n\nWrite ONE Instagram caption (max 12 words) "
+             f"for a fast-cut reel showing the {names} dress. Answer with the caption only, no quotes.")
+        body = json.dumps({"contents": [{"parts": [{"text": q}]}]}).encode()
+        rq = _u.Request("https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" + key,
+                        data=body, headers={"Content-Type": "application/json"})
+        txt = json.loads(_u.urlopen(rq, timeout=60).read())["candidates"][0]["content"]["parts"][0]["text"].strip()
+        if txt:
+            legende = txt.strip('"')
+    except Exception:
+        pass
     json.dump({
         "type": "reel",
-        "legende": f"Blink and you miss it. {names}, designed in London. ~",
+        "legende": legende,
         "hashtags": "#shadowvelora #quietluxury #eveningdress #fashionreels #dressinspo #oldmoneystyle",
         "consigne_musique": "Poste avec un son TENDANCE Instagram (onglet sons > tendances, style mode/élégant, rythme rapide).",
         "images": len(keepers),

@@ -14,6 +14,8 @@ import urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ENGINE = os.path.join(ROOT, "engine")
+sys.path.insert(0, ENGINE)
+import cerveau
 PUBLISHED = os.path.join(ROOT, "queue", "published")
 KITS = os.path.join(ROOT, "queue", "stories")
 STATE = os.path.join(ENGINE, "story-state.json")
@@ -26,13 +28,17 @@ def sh(*cmd):
 def consignes(media_path, alt, key):
     """Demande au stratège IA le texte + le sondage de la story (en anglais)."""
     img = base64.b64encode(open(media_path, "rb").read()).decode()
-    prompt = ("You are the social media manager of Shadow Velora (quiet-luxury dresses, 'Designed in London', "
-              "sober tone, no emojis in brand copy). This image will be posted as an Instagram STORY by the founder. "
-              "Post context: " + (alt or "brand visual") + ". "
-              "Give her exact instructions: a SHORT text overlay to type on the story (max 8 words, elegant, English) "
-              "and ONE poll to add (question max 6 words + exactly 2 short answer options, playful but on-brand, English). "
-              'Answer ONLY in JSON: {"text_overlay": "...", "poll_question": "...", "poll_options": ["...", "..."], '
-              '"placement_tip": "one short sentence in French telling her where to place text and poll on the image"}')
+    prompt = (cerveau.contexte(role="smm", pour_texte=True) + "\n\n"
+              "You are writing an Instagram STORY for Shadow Velora. The founder posts it herself, "
+              "by hand, with a poll sticker. Context of the image: " + (alt or "brand visual") + ". "
+              "A story must EARN its place: it is not a caption, it is a reason to tap. "
+              "Give her: a SHORT text overlay (max 7 words, English, an angle or a hook — never a "
+              "product description), and ONE poll whose answer teaches the brand something useful "
+              "(what to restock, which colour to launch next, which occasion the audience dresses "
+              "for). Question max 6 words, exactly 2 short options. "
+              'Answer ONLY in JSON: {"text_overlay": "...", "poll_question": "...", '
+              '"poll_options": ["...", "..."], "placement_tip": "one short sentence in French '
+              'telling her where to place text and poll on the image"}')
     body = json.dumps({"contents": [{"parts": [
         {"text": prompt}, {"inline_data": {"mime_type": "image/jpeg", "data": img}}]}]}).encode()
     req = urllib.request.Request(
@@ -56,20 +62,31 @@ def main():
 
     os.makedirs(KITS, exist_ok=True)
     state = json.load(open(STATE)) if os.path.exists(STATE) else {"faites": []}
+    biblio = os.path.join(ROOT, "queue", "bibliotheque")
+    inedites = sorted((f for f in os.listdir(biblio)
+                       if f.lower().endswith((".jpg", ".png"))), reverse=True) if os.path.isdir(biblio) else []
+    inedites = [f for f in inedites if f not in state["faites"]]
     posts = sorted((d for d in os.listdir(PUBLISHED)
                     if os.path.isdir(os.path.join(PUBLISHED, d))
                     and os.path.exists(os.path.join(PUBLISHED, d, "media.jpg"))), reverse=True)
-    cible = next((p for p in posts if p not in state["faites"]), None)
-    if not cible and posts:
-        state["faites"] = []
-        cible = posts[0]
+    # 1) une image inédite de la bibliothèque (déjà payée, jamais vue) 2) sinon un post publié
+    cible, src_path = None, None
+    if inedites:
+        cible = inedites[0]
+        src_path = os.path.join(biblio, cible)
+    else:
+        cible = next((p for p in posts if p not in state["faites"]), None)
+        if not cible and posts:
+            state["faites"] = []
+            cible = posts[0]
+        if cible:
+            src_path = os.path.join(PUBLISHED, cible, "media.jpg")
     if not cible:
         print("aucun post publié — pas de kit story")
         sys.exit(0)
 
     from PIL import Image
-    src = os.path.join(PUBLISHED, cible, "media.jpg")
-    img = Image.open(src).convert("RGB")
+    img = Image.open(src_path).convert("RGB")
     tw, th = 1080, 1920
     scale = max(tw / img.width, th / img.height)
     img = img.resize((round(img.width * scale), round(img.height * scale)), Image.LANCZOS)
@@ -84,6 +101,8 @@ def main():
     mp = os.path.join(PUBLISHED, cible, "meta.json")
     if os.path.exists(mp):
         alt = json.load(open(mp)).get("alt", "")
+    elif src_path and "bibliotheque" in src_path:
+        alt = "unpublished Shadow Velora image, never seen by the audience"
     try:
         c = consignes(os.path.join(d, "media.jpg"), alt, key)
     except Exception as e:
