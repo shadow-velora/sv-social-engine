@@ -1,0 +1,26 @@
+{
+  "regle_or": "Un carrousel est UNE série cohérente d'un même shooting : même muse, même lumière, même fond/lieu. La cohérence entre slides est ce qui fait la qualité — jamais un assemblage d'images disparates.",
+  "recettes": {
+    "lookbook_aligne": "Même muse debout, fond studio uni (blanc/gris/beige), une tenue différente par slide, cadrage et échelle STRICTEMENT identiques d'une slide à l'autre, bases alignées. Réf : fichiers 'Carousel 1-4' (looks 1→7 en continu).",
+    "meme_look_multi_angles": "Une seule robe : plein pied → dos → détail construction → buste. Réf : Diane Dress ×4, Covered in Chantilly ×4, Laya ×4, only corset ×3.",
+    "serie_shooting": "Même lieu et même robe, angles et poses variés, comme les pages d'un éditorial. Réf : Euro Summer ×4, фея ×6, bridal aisle ×5, Путешествуйте ×4.",
+    "porte_pose": "Slide 1 : la robe portée. Slide 2 : la même robe à plat sur draps de lin ou posée sur fauteuil. Optionnel slide 3 : détail. Réf : série 'Soft neutrals' (porté + flatlay lit).",
+    "apres_dark": "2-3 tenues de la même ambiance nocturne (intérieur soir, verre à la main, lumière chaude). Réf : série 'Romantic Glow' (Resort dressing + Satin black lace)."
+  },
+  "carrousels_caches_identifies": {
+    "romantic-glow": [
+      "Resort dressing, but make it after dark...",
+      "Satin, black lace, and a glass in hand..."
+    ],
+    "soft-neutrals": [
+      "Soft neutrals and delicate lace... (flatlay lit)",
+      "Soft neutrals, easy drape... (porté)"
+    ],
+    "packaging-mdv": [
+      "For the Tastemakers. (pile de sacs)",
+      "From vision to reality ~ SoHo (main)",
+      "High streets turn gold (sac géant)"
+    ]
+  },
+  "notes": "Les numéros manuscrits des lookbooks MDV = petits chiffres discrets, PAS du texte plaqué. Chez SV on peut s'en passer. La continuité d'échelle entre slides est LE détail qui fait pro."
+}
