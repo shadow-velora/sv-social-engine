@@ -119,7 +119,9 @@ class Handler(SimpleHTTPRequestHandler):
                             file_posts.append(f"/queue/{st}/{urllib.parse.quote(it)}/{os.path.basename(media)}?v={int(os.path.getmtime(media))}")
             rows, slot = [], 0
             today = _dt.now().date()
-            for i in range(8):
+            # une seule semaine : d'aujourd'hui jusqu'au dimanche inclus
+            jours_restants = 7 - today.weekday()   # lundi=0 → 7 jours, dimanche=6 → 1 jour
+            for i in range(jours_restants):
                 day = today + _td(days=i)
                 wd = day.weekday()  # 0 = lundi
                 label = ("AUJOURD'HUI" if i == 0 else "demain" if i == 1 else "")
@@ -142,7 +144,7 @@ class Handler(SimpleHTTPRequestHandler):
                     rows.append({"date": date_fr, "badge": label, "quoi": "RÉEL — kit généré 9h, à poster le soir avec un son tendance", "type": "toi"})
                 if wd == 6:
                     rows.append({"date": date_fr, "badge": label, "quoi": "STORY — kit généré 9h, à poster le soir avec le sondage", "type": "toi"})
-                if wd == 0 and i > 0:
+                if False:
                     rows.append({"date": date_fr, "badge": "", "quoi": "8h : génération du programme de la semaine + réunion d'équipe — tu valides entre 8h et 19h", "type": "machine"})
             return self._json({"rows": rows})
 

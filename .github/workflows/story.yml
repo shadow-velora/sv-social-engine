@@ -1,7 +1,7 @@
 name: Kit Story du dimanche
 on:
   schedule:
-    - cron: "0 7 * * 0"   # dimanche 07:00 UTC (9h Paris) — Laurie poste le soir
+    - cron: "0 8 * * 0"   # dimanche 08:00 UTC (10h Paris) — Laurie poste le soir
   workflow_dispatch: {}
 
 permissions:

@@ -70,10 +70,10 @@ def main():
             else:
                 os.remove(cp)
         os.remove(ref)
-    if len(keepers) < 5:
+    if len(keepers) < 4:
         import shutil
         shutil.move(d, os.path.join(ROOT, "queue", "rejected", os.path.basename(d)))
-        print(f"❌ réel : seulement {len(keepers)} images validées — abandonné")
+        print(f"❌ réel : seulement {len(keepers)} images validées (minimum 4) — abandonné")
         return
     phrase = random.choice(PHRASES)
     reel_slideshow.build(os.path.join(d, "media.mp4"), phrase, keepers)
