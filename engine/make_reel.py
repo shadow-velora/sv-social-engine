@@ -64,7 +64,10 @@ def main():
             except RuntimeError:
                 pass
             v = gai.check_candidate(ref, cp, key)
+            if v.get("verdict") == "pass" and not v.get("skin_natural", True):
+                v["verdict"] = "fail"
             if v.get("verdict") == "pass":
+                gai.magnific_finalize(cp, key)   # passe humanité — INDISPENSABLE
                 gai.clean_noise(cp)
                 keepers.append(cp)
             else:
