@@ -140,8 +140,6 @@ class Handler(SimpleHTTPRequestHandler):
                         rows.append({"date": date_fr, "badge": label, "quoi": "Publication automatique 19h",
                                      "thumb": thumb, "type": "post", "vide": thumb is None})
                         slot += 1
-                if wd == 5:
-                    rows.append({"date": date_fr, "badge": label, "quoi": "RÉEL — kit généré 9h, à poster le soir avec un son tendance", "type": "toi"})
                 if wd == 6:
                     rows.append({"date": date_fr, "badge": label, "quoi": "STORY — kit généré 9h, à poster le soir avec le sondage", "type": "toi"})
                 if False:
