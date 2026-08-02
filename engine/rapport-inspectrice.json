@@ -1,12 +1,6 @@
 {
-  "date": "2026-08-01T11:12+00:00",
-  "alertes": [
-    "File courte : 0 post(s) prêt(s) pour les prochains créneaux",
-    "Aucun carrousel cette semaine (règle : 1/semaine)"
-  ],
-  "actions_reparation": [
-    "lot de complément ÉCHOUÉ",
-    "carrousel tenté mais recalé (fidélité robes)"
-  ],
-  "tout_va_bien": false
+  "date": "2026-08-02T11:07+00:00",
+  "alertes": [],
+  "actions_reparation": [],
+  "tout_va_bien": true
 }
