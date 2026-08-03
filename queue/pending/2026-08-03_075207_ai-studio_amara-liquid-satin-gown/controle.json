@@ -1,0 +1,19 @@
+[
+  {
+    "dress_identical": false,
+    "invented_details": [
+      "straight parallel straps instead of crossed X-back straps",
+      "missing long dangling corset ties"
+    ],
+    "skin_natural": true,
+    "face_consistent": true,
+    "verdict": "fail"
+  },
+  {
+    "dress_identical": true,
+    "invented_details": [],
+    "skin_natural": true,
+    "face_consistent": true,
+    "verdict": "pass"
+  }
+]

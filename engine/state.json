@@ -16,12 +16,16 @@
     "Some women light the room. Others dim everything else.",
     "The evening starts when {name} arrives.",
     "{name} ~ nothing to prove, everything to remember.",
-    "{name} ~ draped like candlelight."
+    "{name} ~ draped like candlelight.",
+    "Sculpted, not styled. {name}.",
+    "{name} ~ the dress that enters the room first."
   ],
   "used_products": [
     "bianca-draped-lace-corset-gown",
     "estella-floral-embroidered-hourglass-gown",
-    "alia-draped-strapless-maxi"
+    "alia-draped-strapless-maxi",
+    "amara-liquid-satin-gown",
+    "selena-the-parisian-flow-dress"
   ],
   "last_scene": "villa-italienne-grilles",
   "gen_month": "2026-07",
