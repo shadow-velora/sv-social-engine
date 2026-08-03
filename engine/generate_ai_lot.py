@@ -31,18 +31,21 @@ for brief in plan[:4]:
         g.make_no_face("bust", p, captions, state, key)
     elif brief.get("format") == "robe_posee":
         g.make_no_face("chaise", p, captions, state, key)
-    elif brief.get("format") == "carrousel_muse":
+    elif brief.get("format") in ("carrousel_muse", "carrousel_lookbook"):
         autres = [x for x in core.pick_products(products, state, 3) if x["handle"] != p["handle"]][:2]
         g.make_muse_carousel([p] + autres, captions, state, key)
+    elif brief.get("format") == "carrousel_porte_pose":
+        g.make_carousel_porte_pose(p, captions, state, key)
     else:
         g.make_model_post(p, captions, state, key,
                           scene_text=brief.get("ambiance"), concept=brief.get("concept", ""))
     executed += 1
 
 if executed == 0:
+    # secours : la règle fondatrice 03/08 reste respectée — 1 post simple + au moins 1 carrousel
     chosen = core.pick_products(products, state, 2)
     g.make_model_post(chosen[0], captions, state, key)
-    g.make_no_face("bust", chosen[1], captions, state, key)
+    g.make_carousel_porte_pose(chosen[1], captions, state, key)
 
 core.save_state(state)
 if os.path.exists(plan_path):

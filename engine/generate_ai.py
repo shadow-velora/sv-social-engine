@@ -19,6 +19,25 @@ from datetime import datetime, timezone
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ENGINE = os.path.dirname(os.path.abspath(__file__))
 PENDING = os.path.join(ROOT, "queue", "pending")
+ATELIER = os.path.join(ROOT, "queue", "_atelier")
+
+
+def _atelier_dir(nom):
+    """Zone de travail : un contenu se fabrique ICI et n'entre dans pending que COMPLET."""
+    os.makedirs(ATELIER, exist_ok=True)
+    d = os.path.join(ATELIER, nom)
+    os.makedirs(d, exist_ok=True)
+    return d
+
+
+def _livrer(d):
+    """Livraison atomique : le dossier part dans pending seulement une fois meta.json écrit.
+    Plus jamais de dossier à moitié fini qui fait crasher la publication (leçon du 02/08)."""
+    import shutil as _s
+    os.makedirs(PENDING, exist_ok=True)
+    dest = os.path.join(PENDING, os.path.basename(d))
+    _s.move(d, dest)
+    return dest
 
 sys.path.insert(0, ENGINE)
 import generate as core  # curl, fetch_products, fetch_image, cover, captions, state
@@ -472,9 +491,10 @@ def swap_dress(base_path, dress_ref_path, key):
     _budget_guard()
     parts = [
         {"text": ("Edit this photograph. Keep the SAME woman (same face, same hair, same skin), the same "
-                  "setting, the same light and the same general framing. Only change her outfit: she now "
-                  "wears the EXACT dress from the second reference image — same color, same fabric, same "
-                  "neckline, same construction, nothing invented. Adjust her pose slightly and naturally. "
+                  "setting, the same light, the SAME pose and the SAME camera distance and framing — this "
+                  "is a lookbook series and the slides must align perfectly when swiped. Only change her "
+                  "outfit: she now wears the EXACT dress from the second reference image — same color, "
+                  "same fabric, same neckline, same construction, nothing invented. "
                   "Clean, crisp, high-resolution photograph.")},
         {"inline_data": {"mime_type": "image/jpeg", "data": b64_of(base_path)}},
         {"inline_data": {"mime_type": "image/jpeg", "data": b64_of(dress_ref_path)}},
@@ -489,25 +509,28 @@ def swap_dress(base_path, dress_ref_path, key):
 
 
 def make_muse_carousel(products3, captions, state, key):
-    """Carrousel engagement « One muse — 1, 2 or 3 ? » : la même femme dans 3 robes."""
+    """RECETTE FONDATRICE N°1 « lookbook aligné » (engine/mdv-refs/carrousels.json) :
+    la même muse en STUDIO, une robe par slide, pose et cadrage IDENTIQUES sur chaque slide."""
     from PIL import Image as _I
     import shutil as _sh
     cfg = json.load(open(os.path.join(ENGINE, "scenes.json")))
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%S")
-    d = os.path.join(PENDING, f"{stamp}_carousel_muse-{'-'.join(core.first_name(p['title']).lower() for p in products3)}")
-    os.makedirs(d, exist_ok=True)
+    d = _atelier_dir(f"{stamp}_carousel_muse-{'-'.join(core.first_name(p['title']).lower() for p in products3)}")
     refs = []
     for i, p in enumerate(products3):
         rp = os.path.join(d, f"ref-{i+1}.jpg")
         core.fetch_image(p["images"][0]["src"], 1200).save(rp, quality=92)
         refs.append(rp)
-    scene = pick_scene(cfg["scenes"], state.get("last_scene"))
+    studios = [s for s in cfg["scenes"] if s["id"].startswith("studio")]
+    scene = pick_scene(studios or cfg["scenes"], state.get("last_scene"))
     state["last_scene"] = scene["id"]
-    pose = random.choice(cfg["poses"])
+    pose = ("standing full length facing the camera, feet visible, arms relaxed along the body — "
+            "clean lookbook stance that will be repeated identically on every slide")
     hero = None
     for attempt in range(1, 4):
         try:
-            raw = generate_candidate(refs[0], scene["text"], pose, cfg["rules"], key, sample_imperfections(cfg))
+            raw = generate_candidate(refs[0], scene["text"], pose, cfg["rules"], key, sample_imperfections(cfg),
+                                     framing="full-length, centered, generous and identical margins — lookbook framing")
         except RuntimeError:
             continue
         cp = os.path.join(d, "slide-1.jpg")
@@ -549,11 +572,98 @@ def make_muse_carousel(products3, captions, state, key):
     for rp in refs:
         os.remove(rp)
     names = " · ".join(core.first_name(p["title"]) for p in products3)
-    core.write_meta(d, "carousel", "One muse, three moods — 1, 2 or 3 ? ~",
-                    f"The same muse wearing three Shadow Velora dresses: {names}.",
+    core.write_meta(d, "carousel", "Look 1, 2 or 3 ? ~",
+                    f"Lookbook carousel: the same muse in an aligned studio series wearing three Shadow Velora dresses: {names}.",
                     "#shadowvelora #quietluxury #eveningdress")
-    print(f"✅ carrousel muse : {names}")
-    return d
+    print(f"✅ carrousel lookbook aligné : {names}")
+    return _livrer(d)
+
+
+def make_carousel_porte_pose(product, captions, state, key):
+    """RECETTE FONDATRICE N°4 « porté + posé » (engine/mdv-refs/carrousels.json) :
+    UNE robe, UN shooting cohérent — slide 1 portée, slide 2 posée sur le fauteuil,
+    slide 3 à plat. Même lumière et même ambiance sur les 3 slides."""
+    from PIL import Image as _I
+    import shutil as _sh
+    cfg = json.load(open(os.path.join(ENGINE, "scenes.json")))
+    name = core.first_name(product["title"])
+    stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%S")
+    d = _atelier_dir(f"{stamp}_carousel_porte-pose_{product['handle']}")
+    refs = []
+    for i, im in enumerate(product["images"][:2]):
+        rp = os.path.join(d, f"ref-{i+1}.jpg")
+        core.fetch_image(im["src"], 1200).save(rp, quality=92)
+        refs.append(rp)
+    interieurs = [s for s in cfg["scenes"] if s["id"] in
+                  ("interieur-soir", "nuit-interieure-bordeaux", "townhouse-londonien", "interieur-moderne-luxe")]
+    scene = pick_scene(interieurs or cfg["scenes"], state.get("last_scene"))
+    state["last_scene"] = scene["id"]
+    rules = cfg["rules"] + lecons_texte(product["handle"])
+    # slide 1 : la robe portée
+    porte = None
+    for attempt in range(1, 4):
+        try:
+            raw = generate_candidate(refs, scene["text"], random.choice(cfg["poses"]), rules, key,
+                                     sample_imperfections(cfg))
+        except RuntimeError:
+            continue
+        cp = os.path.join(d, "slide-1.jpg")
+        save_jpeg(raw, cp)
+        try:
+            save_jpeg(texture_pass(cp, key), cp)
+        except RuntimeError:
+            pass
+        v = check_candidate(refs[0], cp, key)
+        if v.get("verdict") == "pass":
+            porte = cp
+            break
+    if not porte:
+        _sh.move(d, os.path.join(ROOT, "queue", "rejected", os.path.basename(d)))
+        print(f"❌ porté+posé {name} : slide portée jamais validée")
+        _fiabilite(product["handle"], False)
+        return None
+    # slides 2 et 3 : la robe posée (fauteuil puis à plat) — MÊME shooting, même lumière
+    meme_shooting = (" SAME SHOOTING as the rest of this editorial series — keep the ambiance and light "
+                     "consistent with: " + scene["text"])
+    for fname, base_prompt in (("slide-2.jpg", CHAISE_PROMPT), ("slide-3.jpg", FLATLAY_PROMPT)):
+        prompt = base_prompt + meme_shooting + lecons_texte(product["handle"])
+        ok = False
+        for attempt in (1, 2, 3):
+            _budget_guard()
+            parts = [{"text": prompt},
+                     {"inline_data": {"mime_type": "image/jpeg", "data": b64_of(refs[0])}}]
+            resp = gemini(IMAGE_MODEL, parts, key)
+            raw = None
+            for c in resp.get("candidates", []):
+                for pt in c.get("content", {}).get("parts", []):
+                    dd = pt.get("inlineData") or pt.get("inline_data")
+                    if dd:
+                        raw = base64.b64decode(dd["data"])
+            if not raw:
+                continue
+            cp = os.path.join(d, fname)
+            save_jpeg(raw, cp)
+            v = check_candidate(refs[0], cp, key)
+            if v.get("dress_identical") and not v.get("invented_details"):
+                ok = True
+                break
+            os.remove(cp)
+        if not ok:
+            _sh.move(d, os.path.join(ROOT, "queue", "rejected", os.path.basename(d)))
+            print(f"❌ porté+posé {name} : {fname} jamais fidèle")
+            return None
+    for i, sl in enumerate(sorted(f for f in os.listdir(d) if f.startswith("slide")), 1):
+        sp = os.path.join(d, sl)
+        core.cover(_I.open(sp).convert("RGB"), 1080, 1350).save(sp, quality=92)
+        magnific_finalize(sp, key) if i == 1 else clean_noise(sp)
+    for rp in refs:
+        os.remove(rp)
+    _fiabilite(product["handle"], True)
+    core.write_meta(d, "carousel", f"Worn, then at rest. The {name}. ~",
+                    f"Carousel from one shooting: the {name} dress worn by the muse, then draped over an antique armchair, then laid flat — same warm light throughout.",
+                    "#shadowvelora #quietluxury #eveningdress")
+    print(f"✅ carrousel porté+posé : {name}")
+    return _livrer(d)
 
 
 def make_no_face(kind, product, captions, state, key, correction=""):
@@ -561,8 +671,7 @@ def make_no_face(kind, product, captions, state, key, correction=""):
     from PIL import Image as _I
     name = core.first_name(product["title"])
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%S")
-    d = os.path.join(PENDING, f"{stamp}_ai-{kind}_{product['handle']}")
-    os.makedirs(d, exist_ok=True)
+    d = _atelier_dir(f"{stamp}_ai-{kind}_{product['handle']}")
     ref = os.path.join(d, "reference.jpg")
     core.fetch_image(product["images"][0]["src"], 1200).save(ref, quality=92)
     prompt = {"bust": BUST_PROMPT, "chaise": CHAISE_PROMPT}.get(kind, FLATLAY_PROMPT) + lecons_texte(product["handle"])
@@ -607,7 +716,7 @@ def make_no_face(kind, product, captions, state, key, correction=""):
                     f"The {name} dress, {('displayed on a dress form' if kind=='bust' else 'flat-lay editorial')}.",
                     random.choice(captions["hashtags"]))
     print(f"✅ {kind} {name}")
-    return d
+    return _livrer(d)
 
 
 def lecons_texte(handle=""):
@@ -652,8 +761,7 @@ def make_model_post(product, captions, state, key, scene_text=None, concept="", 
         rules = rules + " CRITICAL correction requested by the brand founder after a rejected attempt: " + correction + ". Address this point precisely."
     pose = pose_text or random.choice(cfg["poses"])
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%S")
-    d = os.path.join(PENDING, f"{stamp}_ai-studio_{product['handle']}")
-    os.makedirs(d, exist_ok=True)
+    d = _atelier_dir(f"{stamp}_ai-studio_{product['handle']}")
     imgs = product["images"]
     picks = [imgs[0]]
     for im in imgs[1:]:
@@ -710,4 +818,4 @@ def make_model_post(product, captions, state, key, scene_text=None, concept="", 
     core.write_meta(d, "studio", cap, f"{name} dress, editorial photograph. Concept: {concept or 'editorial'}.",
                     random.choice(captions["hashtags"]))
     print(f"✅ {name} — concept: {concept or 'libre'}")
-    return d
+    return _livrer(d)

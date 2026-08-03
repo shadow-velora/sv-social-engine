@@ -41,10 +41,42 @@ def teinte_moyenne(media):
 
 
 def main():
+    import shutil
     now = datetime.now(timezone.utc)
     pending = contenus("pending")
     approved = contenus("approved")
     publies = contenus("published")
+
+    # 0. dossiers incomplets dans pending (sans meta.json) → écartés (cause du crash publish du 02/08)
+    for it in list(pending):
+        dd = os.path.join(ROOT, "queue", "pending", it)
+        if not os.path.exists(os.path.join(dd, "meta.json")):
+            os.makedirs(os.path.join(ROOT, "queue", "rejected"), exist_ok=True)
+            shutil.move(dd, os.path.join(ROOT, "queue", "rejected", it))
+            pending.remove(it)
+            ALERTES.append(f"Dossier incomplet écarté de la file : {it}")
+            ACTIONS.append(f"{it} déplacé en rejected (meta.json manquant)")
+
+    # 0 bis. lundi : le lot hebdo est-il bien parti ? (les crons GitHub sautent parfois)
+    if now.weekday() == 0:
+        tokp = os.path.join(ROOT, ".github-token")
+        tok = open(tokp).read().strip() if os.path.exists(tokp) else os.environ.get("GH_PAT", "")
+        if tok:
+            try:
+                out = subprocess.check_output(
+                    ["curl", "-s", "-H", f"Authorization: token {tok}",
+                     "https://api.github.com/repos/shadow-velora/sv-social-engine/actions/workflows/generate.yml/runs?per_page=1"],
+                    timeout=30)
+                runs = json.loads(out).get("workflow_runs", [])
+                if not runs or runs[0]["created_at"][:10] != now.strftime("%Y-%m-%d"):
+                    subprocess.check_output(
+                        ["curl", "-s", "-X", "POST", "-H", f"Authorization: token {tok}",
+                         "https://api.github.com/repos/shadow-velora/sv-social-engine/actions/workflows/generate.yml/dispatches",
+                         "-d", '{"ref":"main"}'], timeout=30)
+                    ALERTES.append("Lot du lundi jamais parti (cron GitHub sauté) — relancé automatiquement")
+                    ACTIONS.append("generate.yml déclenché à la main par l'inspectrice")
+            except Exception as e:
+                ALERTES.append(f"Impossible de vérifier le lot du lundi : {str(e)[:80]}")
 
     # 1. la file couvre-t-elle les 3 prochains créneaux ?
     posts_dispo = [p for p in pending + approved if "_reel_" not in p]
