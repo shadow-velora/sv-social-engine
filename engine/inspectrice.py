@@ -82,7 +82,7 @@ def main():
     posts_dispo = [p for p in pending + approved if "_reel_" not in p]
     if len(posts_dispo) < 2:
         ALERTES.append(f"File courte : {len(posts_dispo)} post(s) prêt(s) pour les prochains créneaux")
-        if budget() < 96:  # au moins 20% de budget restant
+        if budget() < 80:  # au moins 20% du plafond 100 restant
             r = subprocess.run([sys.executable, os.path.join(ENGINE, "generate_ai_lot.py")],
                                cwd=ROOT, timeout=3000, capture_output=True)
             ACTIONS.append("lot de complément lancé" if r.returncode == 0 else "lot de complément ÉCHOUÉ")
@@ -93,7 +93,7 @@ def main():
             if "carousel" in p and p[:10] >= semaine]
     if len(caro) < 2:
         ALERTES.append(f"{len(caro)} carrousel(s) cette semaine (règle : 2/semaine, 1 post + 2 carrousels)")
-        if budget() < 128:  # le carrousel hebdo est une règle DURE, priorité sur la prudence
+        if budget() < 95:  # le carrousel hebdo est une règle DURE, priorité sur la prudence (plafond 100)
             r = subprocess.run([sys.executable, os.path.join(ENGINE, "make_carousel_week.py")],
                                cwd=ROOT, timeout=3000, capture_output=True)
             ACTIONS.append("carrousel muse lancé" if r.returncode == 0 else "carrousel tenté mais recalé (fidélité robes)")
