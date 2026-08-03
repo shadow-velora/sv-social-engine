@@ -1,4 +1,9 @@
 {
-  "erreur": "Gemini indisponible (Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage) — réessaie dans une minute",
-  "raison": "Gemini est surchargé, réessaie dans une minute."
+  "ordre_libres": [
+    14,
+    13,
+    15
+  ],
+  "raison": "Cet agencement crée une transition chromatique fluide du bordeaux chaleureux vers l'olive feutré puis le jaune d'or, alignant harmonieusement les teintes avec la rangée précédente. Il garantit une alternance stricte entre trois cadrages mannequins distincts (extérieur architectural, intérieur tamisé, studio minimaliste).",
+  "applique": true
 }

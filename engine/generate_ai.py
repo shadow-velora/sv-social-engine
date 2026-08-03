@@ -43,7 +43,7 @@ sys.path.insert(0, ENGINE)
 import generate as core  # curl, fetch_products, fetch_image, cover, captions, state
 
 IMAGE_MODEL = "gemini-2.5-flash-image"
-MAX_GEN_PER_MONTH = 120  # plafond officiel (6-7 EUR/mois tout compris) — retour au normal depuis aout
+MAX_GEN_PER_MONTH = 100  # règle fondatrice 03/08 : 10 GBP rechargés doivent tenir 2 MOIS MINIMUM (3 publications/semaine)
 CHECK_MODEL = "gemini-flash-latest"
 API = "https://generativelanguage.googleapis.com/v1beta/models"
 
