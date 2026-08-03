@@ -594,57 +594,117 @@ def make_carousel_lineup(products3, captions, state, key):
         rp = os.path.join(d, f"ref-{i+1}.jpg")
         core.fetch_image(p["images"][0]["src"], 1200).save(rp, quality=92)
         refs.append(rp)
-    prompt = ("One WIDE horizontal 16:9 studio lookbook photograph, warm sand seamless paper backdrop, "
-              "soft even light: the SAME woman standing full length THREE times side by side, generously "
-              "spaced. Each figure wears exactly one of the dresses from the three reference images, in "
-              "order — same colors, same fabrics, same necklines, nothing invented. Identical relaxed "
-              "lookbook stance for all three figures, feet visible. Above each figure, a small elegant "
-              "handwritten number in dark ink: '1.'  '2.'  '3.' — nothing else written anywhere. "
-              "Real photograph: natural skin with visible pores, true fabric texture, never a painting "
-              "or 3D render." + lecons_texte())
-    panorama = None
-    for attempt in range(1, 4):
-        _budget_guard()
-        parts = [{"text": prompt}] + [
-            {"inline_data": {"mime_type": "image/jpeg", "data": b64_of(r)}} for r in refs]
-        resp = gemini(IMAGE_MODEL, parts, key)
-        raw = None
-        for c in resp.get("candidates", []):
-            for pt in c.get("content", {}).get("parts", []):
-                dd = pt.get("inlineData") or pt.get("inline_data")
-                if dd:
-                    raw = base64.b64decode(dd["data"])
-        if not raw:
-            continue
-        pp = os.path.join(d, "panorama.jpg")
-        save_jpeg(raw, pp)
+    # 1) la muse : UNE image studio validée (robe 1) — pipeline classique fiable
+    cfg2 = json.load(open(os.path.join(ENGINE, "scenes.json")))
+    studios = [s for s in cfg2["scenes"] if s["id"].startswith("studio")]
+    scene = pick_scene(studios or cfg2["scenes"], state.get("last_scene"))
+    state["last_scene"] = scene["id"]
+    pose = ("standing full length facing the camera, feet visible, arms relaxed along the body, "
+            "centered with generous space above the head and around her — lookbook lineup framing")
+    hero = None
+    import time as _t
+    for attempt in range(1, 5):
         try:
-            save_jpeg(texture_pass(pp, key), pp)
+            raw = generate_candidate(refs[0], scene["text"], pose, cfg2["rules"], key, sample_imperfections(cfg2),
+                                     framing="vertical full-length, the figure occupies the center third")
+        except RuntimeError:
+            _t.sleep(20)  # Gemini surchargé par vagues (503) : on laisse retomber avant de réessayer
+            continue
+        cp = os.path.join(d, "fig-1.jpg")
+        save_jpeg(raw, cp)
+        try:
+            save_jpeg(texture_pass(cp, key), cp)
         except RuntimeError:
             pass
-        fideles = 0
-        for r in refs:
-            v = check_candidate(r, pp, key)
-            if v.get("dress_identical") and not v.get("invented_details"):
-                fideles += 1
-        if fideles == 3:
-            panorama = pp
+        v = check_candidate(refs[0], cp, key)
+        if v.get("verdict") != "pass":
+            v = check_candidate(refs[0], cp, key)  # le checker flanche parfois : 2e avis avant de jeter une image payée
+        if v.get("verdict") == "pass":
+            hero = cp
             break
-    if not panorama:
+    if not hero:
         _sh.move(d, os.path.join(ROOT, "queue", "rejected", os.path.basename(d)))
-        print(f"❌ carrousel lineup {noms} : panorama jamais fidèle aux 3 robes")
+        print(f"❌ carrousel lineup {noms} : muse jamais validée")
         return None
-    magnific_finalize(panorama, key)
-    img = _I.open(panorama).convert("RGB")
-    img = img.resize((max(1080, int(img.width * 1350 / img.height)), 1350))
-    n = max(2, min(4, round(img.width / 1080)))
+    # 2) la MÊME muse dans les robes 2 et 3 (swap contrôlé, pose et cadrage identiques)
+    figs = [hero]
+    for i in (1, 2):
+        ok = None
+        for essai in (1, 2):
+            try:
+                raw = swap_dress(hero, refs[i], key)
+            except RuntimeError:
+                continue
+            cp = os.path.join(d, f"fig-{i+1}.jpg")
+            save_jpeg(raw, cp)
+            v = check_candidate(refs[i], cp, key)
+            if not (v.get("dress_identical") and not v.get("invented_details")):
+                v = check_candidate(refs[i], cp, key)  # 2e avis avant de jeter une image payée
+            if v.get("dress_identical") and not v.get("invented_details"):
+                ok = cp
+                break
+            os.remove(cp)
+        if not ok:
+            _sh.move(d, os.path.join(ROOT, "queue", "rejected", os.path.basename(d)))
+            print(f"❌ carrousel lineup {noms} : robe {i+1} jamais fidèle")
+            return None
+        figs.append(ok)
+    # 3) montage du panorama : les 3 figures côte à côte, fondu doux aux jonctions
+    H = 1350
+    ims = []
+    for f in figs:
+        im = _I.open(f).convert("RGB")
+        im = im.resize((int(im.width * H / im.height), H))
+        ims.append(im)
+    fondu = 80
+    largeur = sum(im.width for im in ims) - fondu * (len(ims) - 1)
+    pano = _I.new("RGB", (largeur, H))
+    pano.paste(ims[0], (0, 0))
+    x = ims[0].width - fondu
+    grad = _I.new("L", (fondu, H))
+    for px in range(fondu):
+        grad.paste(int(255 * px / fondu), (px, 0, px + 1, H))
+    for im in ims[1:]:
+        gauche = pano.crop((x, 0, x + fondu, H))
+        pano.paste(im, (x, 0))
+        melange = _I.composite(im.crop((0, 0, fondu, H)), gauche, grad)
+        pano.paste(melange, (x, 0))
+        x += im.width - fondu
+    # 4) numérotation fine « 1. 2. 3. » au-dessus de chaque silhouette
+    from PIL import ImageDraw, ImageFont
+    police = None
+    for fp in ("/System/Library/Fonts/Supplemental/Snell Roundhand.ttc",
+               "/System/Library/Fonts/Supplemental/Times New Roman Italic.ttf",
+               "/usr/share/fonts/truetype/dejavu/DejaVuSerif-Italic.ttf"):
+        if os.path.exists(fp):
+            police = ImageFont.truetype(fp, 64)
+            break
+    if police:
+        dr = ImageDraw.Draw(pano)
+        centres = []
+        x = 0
+        for im in ims:
+            centres.append(x + im.width // 2)
+            x += im.width - fondu
+        for k, cx in enumerate(centres):
+            dr.text((cx, 70), f"{k+1}.", font=police, fill=(40, 32, 28), anchor="mm")
+    pp = os.path.join(d, "panorama.jpg")
+    pano.save(pp, quality=94)
+    magnific_finalize(pp, key)
+    pano = _I.open(pp).convert("RGB")
+    if pano.height != H:
+        pano = pano.resize((int(pano.width * H / pano.height), H))
+    # 5) découpe en slides contiguës 1080x1350 (une silhouette coupée continue sur la slide suivante)
+    n = max(2, min(4, round(pano.width / 1080)))
     total = n * 1080
-    if img.width < total:
-        img = img.resize((total, 1350))
-    x0 = (img.width - total) // 2
+    if pano.width < total:
+        pano = pano.resize((total, H))
+    x0 = (pano.width - total) // 2
     for i in range(n):
-        img.crop((x0 + i * 1080, 0, x0 + (i + 1) * 1080, 1350)).save(
+        pano.crop((x0 + i * 1080, 0, x0 + (i + 1) * 1080, H)).save(
             os.path.join(d, f"slide-{i+1}.jpg"), quality=92)
+    for f in figs:
+        os.remove(f)
     for rp in refs:
         os.remove(rp)
     names = " · ".join(core.first_name(p["title"]) for p in products3)
