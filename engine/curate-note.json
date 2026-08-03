@@ -1,3 +1,4 @@
 {
-  "erreur": "'candidates'"
+  "erreur": "Gemini indisponible (Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage) — réessaie dans une minute",
+  "raison": "Gemini est surchargé, réessaie dans une minute."
 }

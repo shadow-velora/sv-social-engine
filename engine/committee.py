@@ -71,14 +71,21 @@ def grid_montage(items, out_path):
 
 
 def ask(role_prompt, montage_path, listing, key):
+    import time
     parts = [{"text": role_prompt + "\n\nLISTE DES POSTS (ordre de publication, 1 = publié en premier):\n" + listing},
              {"inline_data": {"mime_type": "image/jpeg", "data": gai.b64_of(montage_path)}}]
-    resp = gai.gemini(gai.CHECK_MODEL, parts, key)
-    try:
-        txt = resp["candidates"][0]["content"]["parts"][0]["text"]
-        return json.loads(txt[txt.find("{"):txt.rfind("}") + 1])
-    except Exception as e:
-        return {"erreur": str(e)[:120]}
+    resp = {}
+    for essai in range(3):  # Gemini tombe par vagues (503) : on insiste avant d'abandonner
+        resp = gai.gemini(gai.CHECK_MODEL, parts, key)
+        if resp.get("candidates"):
+            try:
+                txt = resp["candidates"][0]["content"]["parts"][0]["text"]
+                return json.loads(txt[txt.find("{"):txt.rfind("}") + 1])
+            except Exception as e:
+                return {"erreur": str(e)[:120]}
+        time.sleep(10)
+    detail = str(resp.get("error", {}).get("message", resp))[:100]
+    return {"erreur": f"Gemini indisponible ({detail}) — réessaie dans une minute", "raison": "Gemini est surchargé, réessaie dans une minute."}
 
 
 def reunion():
