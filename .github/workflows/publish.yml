@@ -1,7 +1,7 @@
 name: Publier sur Instagram
 on:
   schedule:
-    - cron: "0 17 * * 1,3,5"   # règle fondatrice 03/08 : Lun/Mer/Ven 19h Paris SEULEMENT — jamais le week-end
+    - cron: "23 17 * * 1,3,5"   # Lun/Mer/Ven 19h23 Paris — heure décalée : les crons GitHub à heure pile sautent (loupés des 03/08)
   workflow_dispatch: {}
 
 permissions:
