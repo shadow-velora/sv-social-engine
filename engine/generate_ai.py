@@ -579,6 +579,82 @@ def make_muse_carousel(products3, captions, state, key):
     return _livrer(d)
 
 
+def make_carousel_lineup(products3, captions, state, key):
+    """LA recette des exemples explicites de Laurie ('Carousel 1-5.jpg') : UN panorama studio,
+    la même muse répétée 3 fois côte à côte (une robe par silhouette, numérotation manuscrite),
+    découpé en slides contiguës — une silhouette coupée au bord continue sur la slide suivante."""
+    from PIL import Image as _I
+    import shutil as _sh
+    cfg = json.load(open(os.path.join(ENGINE, "scenes.json")))
+    stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%S")
+    noms = "-".join(core.first_name(p["title"]).lower() for p in products3)
+    d = _atelier_dir(f"{stamp}_carousel_lineup-{noms}")
+    refs = []
+    for i, p in enumerate(products3):
+        rp = os.path.join(d, f"ref-{i+1}.jpg")
+        core.fetch_image(p["images"][0]["src"], 1200).save(rp, quality=92)
+        refs.append(rp)
+    prompt = ("One WIDE horizontal 16:9 studio lookbook photograph, warm sand seamless paper backdrop, "
+              "soft even light: the SAME woman standing full length THREE times side by side, generously "
+              "spaced. Each figure wears exactly one of the dresses from the three reference images, in "
+              "order — same colors, same fabrics, same necklines, nothing invented. Identical relaxed "
+              "lookbook stance for all three figures, feet visible. Above each figure, a small elegant "
+              "handwritten number in dark ink: '1.'  '2.'  '3.' — nothing else written anywhere. "
+              "Real photograph: natural skin with visible pores, true fabric texture, never a painting "
+              "or 3D render." + lecons_texte())
+    panorama = None
+    for attempt in range(1, 4):
+        _budget_guard()
+        parts = [{"text": prompt}] + [
+            {"inline_data": {"mime_type": "image/jpeg", "data": b64_of(r)}} for r in refs]
+        resp = gemini(IMAGE_MODEL, parts, key)
+        raw = None
+        for c in resp.get("candidates", []):
+            for pt in c.get("content", {}).get("parts", []):
+                dd = pt.get("inlineData") or pt.get("inline_data")
+                if dd:
+                    raw = base64.b64decode(dd["data"])
+        if not raw:
+            continue
+        pp = os.path.join(d, "panorama.jpg")
+        save_jpeg(raw, pp)
+        try:
+            save_jpeg(texture_pass(pp, key), pp)
+        except RuntimeError:
+            pass
+        fideles = 0
+        for r in refs:
+            v = check_candidate(r, pp, key)
+            if v.get("dress_identical") and not v.get("invented_details"):
+                fideles += 1
+        if fideles == 3:
+            panorama = pp
+            break
+    if not panorama:
+        _sh.move(d, os.path.join(ROOT, "queue", "rejected", os.path.basename(d)))
+        print(f"❌ carrousel lineup {noms} : panorama jamais fidèle aux 3 robes")
+        return None
+    magnific_finalize(panorama, key)
+    img = _I.open(panorama).convert("RGB")
+    img = img.resize((max(1080, int(img.width * 1350 / img.height)), 1350))
+    n = max(2, min(4, round(img.width / 1080)))
+    total = n * 1080
+    if img.width < total:
+        img = img.resize((total, 1350))
+    x0 = (img.width - total) // 2
+    for i in range(n):
+        img.crop((x0 + i * 1080, 0, x0 + (i + 1) * 1080, 1350)).save(
+            os.path.join(d, f"slide-{i+1}.jpg"), quality=92)
+    for rp in refs:
+        os.remove(rp)
+    names = " · ".join(core.first_name(p["title"]) for p in products3)
+    core.write_meta(d, "carousel", "Look 1, 2 or 3 ? ~",
+                    f"Lookbook lineup carousel: the same muse three times on one seamless studio panorama, wearing {names}, numbered looks, sliced across the slides.",
+                    "#shadowvelora #quietluxury #eveningdress")
+    print(f"✅ carrousel lineup panorama : {names} ({n} slides)")
+    return _livrer(d)
+
+
 def make_carousel_porte_pose(product, captions, state, key):
     """RECETTE FONDATRICE N°4 « porté + posé » (engine/mdv-refs/carrousels.json) :
     UNE robe, UN shooting cohérent — slide 1 portée, slide 2 posée sur le fauteuil,

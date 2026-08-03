@@ -22,5 +22,10 @@
       "High streets turn gold (sac géant)"
     ]
   },
-  "notes": "Les numéros manuscrits des lookbooks MDV = petits chiffres discrets, PAS du texte plaqué. Chez SV on peut s'en passer. La continuité d'échelle entre slides est LE détail qui fait pro."
+  "notes": "Les numéros manuscrits des lookbooks MDV = petits chiffres discrets, PAS du texte plaqué. Chez SV on peut s'en passer. La continuité d'échelle entre slides est LE détail qui fait pro.",
+  "recette_panorama_lineup": {
+    "source": "fichiers 'Carousel 1-5.jpg' déposés par Laurie (les exemples EXPLICITES, prioritaires sur tout le reste)",
+    "format": "UNE seule photo panoramique studio (fond uni sable/gris clair), la MÊME muse répétée 3-4 fois côte à côte, une tenue par silhouette, pose lookbook identique, numérotation fine manuscrite 'Look 1.' / '1.' au-dessus de chaque silhouette. Le panorama est ensuite DÉCOUPÉ en slides 1080x1350 contiguës : une silhouette coupée au bord d'une slide continue sur la suivante — c'est CE détail qui fait pro (continuité du swipe).",
+    "regle": "C'est LA recette par défaut des carrousels lookbook. Jamais des slides indépendantes disparates."
+  }
 }

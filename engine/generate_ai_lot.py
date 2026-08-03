@@ -34,6 +34,9 @@ for brief in plan[:4]:
     elif brief.get("format") in ("carrousel_muse", "carrousel_lookbook"):
         autres = [x for x in core.pick_products(products, state, 3) if x["handle"] != p["handle"]][:2]
         g.make_muse_carousel([p] + autres, captions, state, key)
+    elif brief.get("format") == "carrousel_lineup":
+        autres = [x for x in core.pick_products(products, state, 3) if x["handle"] != p["handle"]][:2]
+        g.make_carousel_lineup([p] + autres, captions, state, key)
     elif brief.get("format") == "carrousel_porte_pose":
         g.make_carousel_porte_pose(p, captions, state, key)
     else:
