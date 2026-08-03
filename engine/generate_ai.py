@@ -653,23 +653,60 @@ def make_carousel_lineup(products3, captions, state, key):
     #    (JAMAIS sur le panorama : Magnific recadre en 1080x1350 et détruirait le montage — leçon du 03/08)
     for f in figs:
         magnific_finalize(f, key)
-    # 4) tuiles standardisées 1080x1350 : figure centrée, fond étiré sur les bords si l'image est étroite
+    # 4) tuiles standardisées 1080x1350 — méthode validée par Laurie le 03/08 :
+    #    fond harmonisé (blanc chaud commun), silhouettes à échelle IDENTIQUE (84% de la hauteur,
+    #    pieds alignés), centrage sur la silhouette, remplissage par étirement des bords de la
+    #    photo elle-même (aucune couture de collage), numéro dans la bande d'air au-dessus des têtes.
     H, W = 1350, 1080
+    CIBLE_FIG = int(H * 0.84)
+    Y_PIEDS = H - 40
+    FOND_CIBLE = (246, 244, 240)
+
+    def _normalise_fond(im):
+        ech = im.resize((60, 75))
+        px = ech.load()
+        coins = [px[x, y] for x, y in ((2, 2), (57, 2), (2, 36), (57, 36))]
+        bg = tuple(sum(c[i] for c in coins) // 4 for i in range(3))
+        gains = [FOND_CIBLE[i] / max(1, bg[i]) for i in range(3)]
+        return _I.merge("RGB", [c.point(lambda v, g=gains[i]: min(255, int(v * g)))
+                                for i, c in enumerate(im.split())])
+
+    def _bornes_figure(im):
+        g = im.convert("L").resize((100, 200))
+        px = g.load()
+        lignes = [(sum((px[x, y] - sum(px[x2, y] for x2 in range(100)) / 100) ** 2
+                       for x in range(100)) / 100) ** 0.5 for y in range(200)]
+        cols = [(sum((px[x, y] - sum(px[x, y2] for y2 in range(200)) / 200) ** 2
+                     for y in range(200)) / 200) ** 0.5 for x in range(100)]
+        ys = [y for y, v in enumerate(lignes) if v > max(lignes) * 0.18]
+        xs = [x for x, v in enumerate(cols) if v > max(cols) * 0.18]
+        return (min(ys) / 200 * im.height, max(ys) / 200 * im.height,
+                min(xs) / 100 * im.width, max(xs) / 100 * im.width)
+
+    def _etire_bords(im, l, t, r, b):
+        l, t, r, b = max(0, l), max(0, t), max(0, r), max(0, b)
+        W2, H2 = im.width + l + r, im.height + t + b
+        canv = _I.new("RGB", (W2, H2))
+        canv.paste(im, (l, t))
+        if t: canv.paste(im.crop((0, 0, im.width, 1)).resize((im.width, t)), (l, 0))
+        if b: canv.paste(im.crop((0, im.height - 1, im.width, im.height)).resize((im.width, b)), (l, t + im.height))
+        if l: canv.paste(canv.crop((l, 0, l + 1, H2)).resize((l, H2)), (0, 0))
+        if r: canv.paste(canv.crop((l + im.width - 1, 0, l + im.width, H2)).resize((r, H2)), (l + im.width, 0))
+        return canv
+
     tuiles = []
     for f in figs:
-        im = _I.open(f).convert("RGB")
-        im = im.resize((max(1, int(im.width * H / im.height)), H))
-        if im.width >= W:
-            x0 = (im.width - W) // 2
-            tuiles.append(im.crop((x0, 0, x0 + W, H)))
-        else:
-            canv = _I.new("RGB", (W, H))
-            marge = (W - im.width) // 2
-            canv.paste(im.crop((0, 0, 1, H)).resize((marge, H)), (0, 0))
-            canv.paste(im.crop((im.width - 1, 0, im.width, H)).resize((W - im.width - marge, H)),
-                       (marge + im.width, 0))
-            canv.paste(im, (marge, 0))
-            tuiles.append(canv)
+        im = _normalise_fond(_I.open(f).convert("RGB"))
+        y0, y1, x0, x1 = _bornes_figure(im)
+        scale = CIBLE_FIG / max(1, (y1 - y0))
+        im = im.resize((int(im.width * scale), int(im.height * scale)))
+        y0, y1, x0, x1 = [v * scale for v in (y0, y1, x0, x1)]
+        gauche, haut = int((x0 + x1) / 2 - W / 2), int(y1 - Y_PIEDS)
+        im2 = _etire_bords(im, -gauche if gauche < 0 else 0, -haut if haut < 0 else 0,
+                           (gauche + W) - im.width if gauche + W > im.width else 0,
+                           (haut + H) - im.height if haut + H > im.height else 0)
+        g2, h2 = max(0, gauche), max(0, haut)
+        tuiles.append(im2.crop((g2, h2, g2 + W, h2 + H)))
     # 5) numérotation fine « 1. 2. 3. » + panorama continu + découpe aux jonctions exactes
     from PIL import ImageDraw, ImageFont
     police = None
