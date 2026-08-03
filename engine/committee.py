@@ -83,7 +83,7 @@ def ask(role_prompt, montage_path, listing, key):
                 return json.loads(txt[txt.find("{"):txt.rfind("}") + 1])
             except Exception as e:
                 return {"erreur": str(e)[:120]}
-        time.sleep(10)
+        time.sleep(4)
     detail = str(resp.get("error", {}).get("message", resp))[:100]
     if "depleted" in detail or "credit" in detail.lower():
         return {"erreur": detail,

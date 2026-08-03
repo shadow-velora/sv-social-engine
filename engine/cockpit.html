@@ -199,7 +199,7 @@ function orderUndo(){
 }
 function curate(){
   const b = document.getElementById("curbtn");
-  b.disabled = true; b.textContent = "🔀 La curatrice réfléchit…";
+  b.disabled = true; b.textContent = "🔀 La curatrice réfléchit… (10-30 s, elle regarde toute la grille)";
   fetch("/api/curate", {method:"POST", body:"{}"}).then(r => r.json()).then(res => {
     document.getElementById("curnote").textContent = res.raison || "";
     load().then(() => {
