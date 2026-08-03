@@ -85,7 +85,11 @@ def ask(role_prompt, montage_path, listing, key):
                 return {"erreur": str(e)[:120]}
         time.sleep(10)
     detail = str(resp.get("error", {}).get("message", resp))[:100]
-    return {"erreur": f"Gemini indisponible ({detail}) — réessaie dans une minute", "raison": "Gemini est surchargé, réessaie dans une minute."}
+    if "depleted" in detail or "credit" in detail.lower():
+        return {"erreur": detail,
+                "raison": "⛽ Crédits Google AI Studio épuisés : recharge sur ai.studio/projects, puis reclique."}
+    return {"erreur": f"Gemini indisponible ({detail})",
+            "raison": "Gemini est momentanément surchargé — réessaie dans une minute."}
 
 
 def reunion():
