@@ -735,6 +735,118 @@ def make_carousel_lineup(products3, captions, state, key):
     return _livrer(d)
 
 
+def make_carousel_tour(product, captions, state, key):
+    """RECETTE MDV N°1 « tour du produit » (distillée des 21 exemples de Laurie, 03/08) :
+    UNE muse, UNE robe, UN lieu — plein pied → close-up matière → plein pied de dos.
+    Les slides 2-3 sont des ÉDITIONS de la slide 1 : même femme et même ambiance garanties."""
+    from PIL import Image as _I
+    import shutil as _sh
+    import time as _t
+    cfg = json.load(open(os.path.join(ENGINE, "scenes.json")))
+    name = core.first_name(product["title"])
+    stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%S")
+    d = _atelier_dir(f"{stamp}_carousel_tour_{product['handle']}")
+    imgs = product["images"]
+    picks = [imgs[0]]
+    for im in imgs[1:]:
+        blob = (str(im.get("alt") or "") + " " + im.get("src", "")).lower()
+        if any(k in blob for k in ("back", "dos", "rear")) and im not in picks:
+            picks.append(im)
+    for im in imgs[1:3]:
+        if len(picks) >= 3:
+            break
+        if im not in picks:
+            picks.append(im)
+    refs = []
+    for i, im in enumerate(picks[:3]):
+        rp = os.path.join(d, f"ref-{i+1}.jpg")
+        core.fetch_image(im["src"], 1200).save(rp, quality=92)
+        refs.append(rp)
+    scene = pick_scene(cfg["scenes"], state.get("last_scene"))
+    state["last_scene"] = scene["id"]
+    rules = cfg["rules"] + lecons_texte(product["handle"])
+    # slide 1 : le plein pied héro, pipeline classique complet
+    hero = None
+    for attempt in range(1, 5):
+        try:
+            raw = generate_candidate(refs, scene["text"], random.choice(cfg["poses"]), rules, key,
+                                     sample_imperfections(cfg))
+        except RuntimeError:
+            _t.sleep(15)
+            continue
+        cp = os.path.join(d, "slide-1.jpg")
+        save_jpeg(raw, cp)
+        try:
+            save_jpeg(texture_pass(cp, key), cp)
+        except RuntimeError:
+            pass
+        v = check_candidate(refs[0], cp, key)
+        if v.get("verdict") != "pass":
+            v = check_candidate(refs[0], cp, key)
+        if v.get("verdict") == "pass":
+            hero = cp
+            break
+    if not hero:
+        _sh.move(d, os.path.join(ROOT, "queue", "rejected", os.path.basename(d)))
+        print(f"❌ tour {name} : plein pied jamais validé")
+        _fiabilite(product["handle"], False)
+        return None
+    # slides 2-3 : éditions du héro — mêmes femme/robe/lieu, cadrage différent (grammaire MDV)
+    EDITS = [
+        ("slide-2.jpg", "Edit this photograph into a CLOSE-UP from the same shoot: the SAME woman, the SAME dress, "
+                        "same setting and light — a tight crop on the bodice, neckline, straps and fabric texture, "
+                        "her face partly out of frame (cut at the lips). Every dress detail stays EXACTLY as in the "
+                        "product reference. Crisp, sharp, real photograph."),
+        ("slide-3.jpg", "Edit this photograph into a view from BEHIND, full length, from the same shoot: the SAME "
+                        "woman, the SAME dress, same setting and light, natural elegant stance. The back of the dress "
+                        "must match the product reference back view exactly (straps, lacing, zip, seams). Crisp, "
+                        "sharp, real photograph."),
+    ]
+    for fname, consigne in EDITS:
+        ok = False
+        for essai in (1, 2, 3):
+            _budget_guard()
+            parts = ([{"text": consigne + lecons_texte(product["handle"])},
+                      {"inline_data": {"mime_type": "image/jpeg", "data": b64_of(hero)}}] +
+                     [{"inline_data": {"mime_type": "image/jpeg", "data": b64_of(r)}} for r in refs])
+            resp = gemini(IMAGE_MODEL, parts, key)
+            raw = None
+            for cc in resp.get("candidates", []):
+                for pt in cc.get("content", {}).get("parts", []):
+                    dd = pt.get("inlineData") or pt.get("inline_data")
+                    if dd:
+                        raw = base64.b64decode(dd["data"])
+            if not raw:
+                _t.sleep(10)
+                continue
+            cp = os.path.join(d, fname)
+            save_jpeg(raw, cp)
+            ref_v = refs[-1] if fname == "slide-3.jpg" and len(refs) > 1 else refs[0]
+            v = check_candidate(ref_v, cp, key)
+            if not (v.get("dress_identical") and not v.get("invented_details")):
+                v = check_candidate(ref_v, cp, key)  # 2e avis avant de jeter une image payée
+            if v.get("dress_identical") and not v.get("invented_details"):
+                ok = True
+                break
+            os.rename(cp, cp.replace(".jpg", f"_essai{essai}-recale.jpg"))  # on n'efface jamais
+        if not ok:
+            _sh.move(d, os.path.join(ROOT, "queue", "rejected", os.path.basename(d)))
+            print(f"❌ tour {name} : {fname} jamais fidèle")
+            return None
+    for i, sl in enumerate(sorted(f for f in os.listdir(d)
+                                  if f.startswith("slide") and "recale" not in f), 1):
+        sp = os.path.join(d, sl)
+        core.cover(_I.open(sp).convert("RGB"), 1080, 1350).save(sp, quality=92)
+        magnific_finalize(sp, key) if i == 1 else clean_noise(sp)
+    _fiabilite(product["handle"], True)
+    cap = core.pick_caption(captions, "carousel", state, name)
+    core.write_meta(d, "carousel", cap,
+                    f"Carousel from one shoot: the {name} dress full length, then a close-up of the bodice and fabric, then seen from behind — same muse, same light throughout.",
+                    random.choice(captions["hashtags"]))
+    print(f"✅ carrousel tour du produit : {name}")
+    return _livrer(d)
+
+
 def make_carousel_porte_pose(product, captions, state, key):
     """RECETTE FONDATRICE N°4 « porté + posé » (engine/mdv-refs/carrousels.json) :
     UNE robe, UN shooting cohérent — slide 1 portée, slide 2 posée sur le fauteuil,

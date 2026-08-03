@@ -1,31 +1,51 @@
 {
-  "regle_or": "Un carrousel est UNE série cohérente d'un même shooting : même muse, même lumière, même fond/lieu. La cohérence entre slides est ce qui fait la qualité — jamais un assemblage d'images disparates.",
+  "regle_d_or": "Un carrousel = UNE unité fermée : même muse, même lieu/fond, même lumière, même palette du début à la fin. La variation vient UNIQUEMENT du cadrage et de la pose, jamais de l'ambiance. 3 slides minimum, 5 maximum (règle fondatrice 03/08).",
+  "grammaire_des_plans": "Alternance systématique des échelles : plein pied → détail matière/dos → plein pied variante. Chaque carrousel mono-look contient AU MOINS un plein pied ET un close-up produit. Le dos et la matière sont des slides à part entière. Le visage peut être coupé au cadre : le produit est le héros, la muse est un support. La dernière slide ferme la boucle (packshot, mouvement final, ou silhouette coupée au bord qui appelle le swipe).",
   "recettes": {
-    "lookbook_aligne": "Même muse debout, fond studio uni (blanc/gris/beige), une tenue différente par slide, cadrage et échelle STRICTEMENT identiques d'une slide à l'autre, bases alignées. Réf : fichiers 'Carousel 1-4' (looks 1→7 en continu).",
-    "meme_look_multi_angles": "Une seule robe : plein pied → dos → détail construction → buste. Réf : Diane Dress ×4, Covered in Chantilly ×4, Laya ×4, only corset ×3.",
-    "serie_shooting": "Même lieu et même robe, angles et poses variés, comme les pages d'un éditorial. Réf : Euro Summer ×4, фея ×6, bridal aisle ×5, Путешествуйте ×4.",
-    "porte_pose": "Slide 1 : la robe portée. Slide 2 : la même robe à plat sur draps de lin ou posée sur fauteuil. Optionnel slide 3 : détail. Réf : série 'Soft neutrals' (porté + flatlay lit).",
-    "apres_dark": "2-3 tenues de la même ambiance nocturne (intérieur soir, verre à la main, lumière chaude). Réf : série 'Romantic Glow' (Resort dressing + Satin black lace)."
+    "tour_du_produit": {
+      "priorite": 1,
+      "exemples": [
+        "1 (Diane monument)",
+        "2 (tailleur ivoire)",
+        "3 (noir flash nuit)",
+        "5 (Chantilly studio)",
+        "13 (co-ord 3 échelles)",
+        "17 (Laya maille)",
+        "18 (corset chocolat)",
+        "19 (gilet noué soleil)"
+      ],
+      "structure": "UNE muse, UNE robe, UN lieu. Slide 1 plein pied → slide 2 close-up bodice/matière (visage partiellement hors cadre) → slide 3 plein pied DE DOS. Variante 4-5 slides : + pose alternative (assise, marche) ou packshot/flatlay final.",
+      "implementation": "make_carousel_tour (héro validé puis ÉDITIONS du héro : même femme, même robe, cadrages différents)"
+    },
+    "lineup_panorama": {
+      "priorite": 2,
+      "exemples": [
+        "6, 12, 14, 15 + fichiers Carousel 1-5 historiques"
+      ],
+      "structure": "Panorama studio continu : la même muse répétée, une tenue par silhouette, numéros « 1. » ou prénoms des robes en script manuscrit fin au-dessus. Silhouette coupée au bord de slide = moteur du swipe. Fond studio identique, ligne de sol alignée, échelle constante.",
+      "implementation": "make_carousel_lineup (montage validé 03/08 : échelle 84%, pieds alignés, fond harmonisé)"
+    },
+    "fiche_produit_editorialisee": {
+      "priorite": 3,
+      "exemples": [
+        "4 (corset cargo jacquard)",
+        "17",
+        "18"
+      ],
+      "structure": "Silhouette entière → rotation autour du produit (buste, bas, dos) → macro matière pure (sans corps) → packshot buste couture ou flatlay avec accessoires.",
+      "implementation": "make_carousel_porte_pose (portée → fauteuil → à plat)"
+    },
+    "serie_lieu": {
+      "priorite": 4,
+      "exemples": [
+        "7 (beige studio 3 looks)",
+        "16 (bridal mas en pierre)"
+      ],
+      "structure": "Un seul lieu fort (mas pierre, studio caramel), 1-2 muses, 2-3 looks, chaque look = 1-2 slides (détail + plein pied). Palette verrouillée sur le lieu.",
+      "implementation": "à briefer via ambiance identique sur toutes les slides"
+    }
   },
-  "carrousels_caches_identifies": {
-    "romantic-glow": [
-      "Resort dressing, but make it after dark...",
-      "Satin, black lace, and a glass in hand..."
-    ],
-    "soft-neutrals": [
-      "Soft neutrals and delicate lace... (flatlay lit)",
-      "Soft neutrals, easy drape... (porté)"
-    ],
-    "packaging-mdv": [
-      "For the Tastemakers. (pile de sacs)",
-      "From vision to reality ~ SoHo (main)",
-      "High streets turn gold (sac géant)"
-    ]
-  },
-  "notes": "Les numéros manuscrits des lookbooks MDV = petits chiffres discrets, PAS du texte plaqué. Chez SV on peut s'en passer. La continuité d'échelle entre slides est LE détail qui fait pro.",
-  "recette_panorama_lineup": {
-    "source": "fichiers 'Carousel 1-5.jpg' déposés par Laurie (les exemples EXPLICITES, prioritaires sur tout le reste)",
-    "format": "UNE seule photo panoramique studio (fond uni sable/gris clair), la MÊME muse répétée 3-4 fois côte à côte, une tenue par silhouette, pose lookbook identique, numérotation fine manuscrite 'Look 1.' / '1.' au-dessus de chaque silhouette. Le panorama est ensuite DÉCOUPÉ en slides 1080x1350 contiguës : une silhouette coupée au bord d'une slide continue sur la suivante — c'est CE détail qui fait pro (continuité du swipe).",
-    "regle": "C'est LA recette par défaut des carrousels lookbook. Jamais des slides indépendantes disparates."
-  }
+  "regimes_de_texte": "Deux régimes, jamais mélangés : soit ZÉRO lettrage (défaut SV), soit numéros/prénoms manuscrits fins pour les lineups uniquement. Jamais de prix, jamais de CTA sur l'image. (Les systèmes 'magazine' des exemples Embody sont interdits chez SV : posts texte bannis par la fondatrice.)",
+  "direction_mannequin": "Poses statiques sculpturales ou marche lente, regard froid ou hors champ, JAMAIS de sourire commercial. Coiffure uniforme sur tout le carrousel (chignon plaqué, bob lisse ou waves — une seule signature par carrousel).",
+  "note": "Distillé le 03/08/2026 des 21 carrousels réels du dossier « EXEMPLE POST INSTA » de Laurie (engine/mdv-refs/exemples-carrousels/). Fidélité 100% à ces exemples : aucune invention hors de cette grammaire."
 }
