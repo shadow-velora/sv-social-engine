@@ -33,7 +33,7 @@ def list_state(state):
             continue
         meta = json.load(open(mp))
         media = sorted(f for f in os.listdir(d)
-                       if f.startswith(("media", "slide")) or f.startswith("cand"))
+                       if f.startswith(("media", "slide")))  # les brouillons cand-* restent sur disque mais ne s'affichent plus
         out.append({
             "id": it, "state": state, "type": meta.get("type", "?"),
             "caption": meta.get("caption", ""),
@@ -140,8 +140,7 @@ class Handler(SimpleHTTPRequestHandler):
                         rows.append({"date": date_fr, "badge": label, "quoi": "Publication automatique 19h",
                                      "thumb": thumb, "type": "post", "vide": thumb is None})
                         slot += 1
-                if wd == 6:
-                    rows.append({"date": date_fr, "badge": label, "quoi": "STORY — kit généré 9h, à poster le soir avec le sondage", "type": "toi"})
+                # story du dimanche en pause depuis le 03/08 (générations week-end coupées) — kit sur demande seulement
                 if False:
                     rows.append({"date": date_fr, "badge": "", "quoi": "8h : génération du programme de la semaine + réunion d'équipe — tu valides entre 8h et 19h", "type": "machine"})
             return self._json({"rows": rows})
