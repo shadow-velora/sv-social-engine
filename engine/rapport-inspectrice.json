@@ -1,6 +1,8 @@
 {
-  "date": "2026-08-02T11:07+00:00",
-  "alertes": [],
+  "date": "2026-08-03T16:05+00:00",
+  "alertes": [
+    "Robot en échec : « Publier sur Instagram » (08-02T20:29 UTC) — voir logs GitHub"
+  ],
   "actions_reparation": [],
-  "tout_va_bien": true
+  "tout_va_bien": false
 }
