@@ -107,7 +107,7 @@ Concepts créatifs disponibles pour les briefs (choisis-en, jamais 'mannequin en
 Catalogue disponible : {robes}.
 LEÇONS RÉCENTES DE LA FONDATRICE (à respecter absolument) :
 {lecons}
-L'image jointe = la grille actuelle. Décide le PROGRAMME DE LA SEMAINE (3 contenus images/carrousels : lundi, mercredi, vendredi — varie robes, formats et couleurs selon le flux de la grille ; un réel slideshow est généré à part automatiquement) : quelles robes mettre en avant (varie par rapport à la grille), quel format (mannequin_pipeline, buste_produit, robe_posee = respiration sans mannequin, ou carrousel_muse = la même muse dans 3 robes « 1, 2 or 3 ? » pour déclencher des commentaires — programme-en 1 par semaine environ), quelle ambiance.
+L'image jointe = la grille actuelle. Décide le PROGRAMME DE LA SEMAINE (RÈGLE FONDATRICE 03/08, non négociable : exactement 3 contenus — 1 POST SIMPLE + 2 CARROUSELS — publiés lundi, mercredi, vendredi, jamais le week-end) : quelles robes mettre en avant (varie par rapport à la grille), quel format pour le post simple (mannequin_pipeline, buste_produit ou robe_posee = respiration sans mannequin) et 2 briefs carrousel_muse = la même muse dans 3 robes « 1, 2 or 3 ? » pour déclencher des commentaires (varie muse, lieu et couleurs entre les deux carrousels), quelle ambiance.
 Réponds UNIQUEMENT en JSON: {{"strategie": "2 phrases max", "plan_prochain_lot": [{{"robe": "nom exact du catalogue", "format": "mannequin_pipeline, buste_produit, robe_posee ou carrousel_muse", "concept": "nom du concept créatif choisi", "ambiance": "brief shooting en 1-2 phrases (lieu, lumière, idée forte)"}}], "ton_legendes": "1 phrase"}}""",
               montage, listing, key)
 

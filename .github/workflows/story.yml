@@ -1,7 +1,6 @@
 name: Kit Story du dimanche
 on:
-  schedule:
-    - cron: "0 8 * * 0"   # dimanche 08:00 UTC (10h Paris) — Laurie poste le soir
+  # cron dimanche coupé le 03/08 — générations week-end EN PAUSE (ordre de Laurie). Relance manuelle seulement.
   workflow_dispatch: {}
 
 permissions:

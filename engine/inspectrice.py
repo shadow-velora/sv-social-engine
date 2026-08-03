@@ -55,12 +55,12 @@ def main():
                                cwd=ROOT, timeout=3000, capture_output=True)
             ACTIONS.append("lot de complément lancé" if r.returncode == 0 else "lot de complément ÉCHOUÉ")
 
-    # 2. un carrousel cette semaine (publié ou en file) ?
+    # 2. deux carrousels cette semaine (publiés ou en file) ? — règle fondatrice 03/08
     semaine = (now - timedelta(days=7)).strftime("%Y-%m-%d")
     caro = [p for p in pending + approved + publies
             if "carousel" in p and p[:10] >= semaine]
-    if not caro:
-        ALERTES.append("Aucun carrousel cette semaine (règle : 1/semaine)")
+    if len(caro) < 2:
+        ALERTES.append(f"{len(caro)} carrousel(s) cette semaine (règle : 2/semaine, 1 post + 2 carrousels)")
         if budget() < 128:  # le carrousel hebdo est une règle DURE, priorité sur la prudence
             r = subprocess.run([sys.executable, os.path.join(ENGINE, "make_carousel_week.py")],
                                cwd=ROOT, timeout=3000, capture_output=True)
