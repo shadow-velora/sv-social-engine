@@ -24,7 +24,7 @@ sys.path.insert(0, ENGINE)
 import generate as core  # curl, fetch_products, fetch_image, cover, captions, state
 
 IMAGE_MODEL = "gemini-2.5-flash-image"
-MAX_GEN_PER_MONTH = 135  # +15 fin juillet : ordre « 1 carrousel/semaine MINIMUM » (0,5 EUR) — retour 120 en aout
+MAX_GEN_PER_MONTH = 120  # plafond officiel (6-7 EUR/mois tout compris) — retour au normal depuis aout
 CHECK_MODEL = "gemini-flash-latest"
 API = "https://generativelanguage.googleapis.com/v1beta/models"
 
@@ -277,7 +277,7 @@ def main(n_posts=2):
         name = core.first_name(p["title"])
         scene = pick_scene(cfg["scenes"], last_scene)
         last_scene = scene["id"]
-        pose = pose_text or random.choice(cfg["poses"])
+        pose = random.choice(cfg["poses"])
 
         stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%S")
         d = os.path.join(PENDING, f"{stamp}_ai-studio_{p['handle']}")

@@ -207,6 +207,9 @@ def main():
 
     for source, item, needs_check in candidates:
         folder = os.path.join(source, item)
+        if not os.path.exists(os.path.join(folder, "meta.json")):
+            print(f"⚠️ {item} : meta.json manquant (dossier incomplet) — on passe au suivant.")
+            continue
         if needs_check:
             ok, why = final_check(folder)
             if not ok:
