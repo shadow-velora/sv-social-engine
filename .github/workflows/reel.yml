@@ -1,7 +1,6 @@
 name: Kit Réel du samedi
 on:
-  schedule:
-    - cron: "0 7 * * 6"   # samedi 07:00 UTC (9h Paris) — Laurie valide et poste le soir
+  # cron coupé le 03/08 — réels/kits week-end ARRÊTÉS sur ordre de Laurie. Relance manuelle seulement.
   workflow_dispatch: {}
 
 permissions:
