@@ -78,6 +78,24 @@ def main():
             except Exception as e:
                 ALERTES.append(f"Impossible de vérifier le lot du lundi : {str(e)[:80]}")
 
+    # 0 ter. soir de publication (lun/mer/ven après 17h UTC) : le post est-il parti ?
+    if now.weekday() in (0, 2, 4) and now.hour >= 17:
+        psp = os.path.join(ENGINE, "publish-state.json")
+        ps = json.load(open(psp)) if os.path.exists(psp) else {}
+        if ps.get("derniere_publication") != now.strftime("%Y-%m-%d"):
+            tokp = os.path.join(ROOT, ".github-token")
+            tok = open(tokp).read().strip() if os.path.exists(tokp) else os.environ.get("GH_PAT", "")
+            if tok:
+                try:
+                    subprocess.check_output(
+                        ["curl", "-s", "-X", "POST", "-H", f"Authorization: token {tok}",
+                         "https://api.github.com/repos/shadow-velora/sv-social-engine/actions/workflows/publish.yml/dispatches",
+                         "-d", '{"ref":"main"}'], timeout=30)
+                    ALERTES.append("Publication du soir jamais partie (cron sauté) — relancée automatiquement")
+                    ACTIONS.append("publish.yml déclenché par l'inspectrice")
+                except Exception as e:
+                    ALERTES.append(f"Impossible de relancer la publication : {str(e)[:80]}")
+
     # 1. la file couvre-t-elle les 3 prochains créneaux ?
     posts_dispo = [p for p in pending + approved if "_reel_" not in p]
     if len(posts_dispo) < 2:

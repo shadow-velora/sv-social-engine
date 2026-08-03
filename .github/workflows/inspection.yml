@@ -1,7 +1,8 @@
 name: Inspection quotidienne
 on:
   schedule:
-    - cron: "30 6 * * *"   # tous les jours 06:30 UTC (8h30 Paris)
+    - cron: "37 6 * * *"    # tous les jours 06:37 UTC (8h37 Paris) — heure décalée anti-saut
+    - cron: "47 18 * * 1,3,5"  # 20h47 Paris les soirs de publication : rattrape un cron publish sauté
   workflow_dispatch: {}
 
 permissions:
