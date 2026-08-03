@@ -197,8 +197,8 @@ def main():
     approved = sorted(d for d in os.listdir(APPROVED)
                       if os.path.isdir(os.path.join(APPROVED, d)))
     candidates = ([(APPROVED, it, False) for it in approved]
-                  or [(pending, it, True) for it in sorted(os.listdir(pending))
-                      if os.path.isdir(os.path.join(pending, it))])
+                  + [(pending, it, True) for it in sorted(os.listdir(pending))
+                     if os.path.isdir(os.path.join(pending, it))])
     # les réels sont des kits manuels (Laurie les poste avec un son tendance) : jamais auto-publiés
     candidates = [c for c in candidates if "_reel_" not in c[1]]
     if not candidates:
@@ -209,6 +209,10 @@ def main():
         folder = os.path.join(source, item)
         if not os.path.exists(os.path.join(folder, "meta.json")):
             print(f"⚠️ {item} : meta.json manquant (dossier incomplet) — on passe au suivant.")
+            continue
+        _m = json.load(open(os.path.join(folder, "meta.json")))
+        if _m.get("pas_avant", "") > aujourdhui:
+            print(f"⏳ {item} : réservé pour le {_m['pas_avant']} — on passe au suivant.")
             continue
         if needs_check:
             ok, why = final_check(folder)
