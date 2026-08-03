@@ -649,62 +649,45 @@ def make_carousel_lineup(products3, captions, state, key):
             print(f"❌ carrousel lineup {noms} : robe {i+1} jamais fidèle")
             return None
         figs.append(ok)
-    # 3) montage du panorama : les 3 figures côte à côte, fondu doux aux jonctions
-    H = 1350
-    ims = []
+    # 3) finition Magnific sur CHAQUE silhouette AVANT montage
+    #    (JAMAIS sur le panorama : Magnific recadre en 1080x1350 et détruirait le montage — leçon du 03/08)
+    for f in figs:
+        magnific_finalize(f, key)
+    # 4) tuiles standardisées 1080x1350 : figure centrée, fond étiré sur les bords si l'image est étroite
+    H, W = 1350, 1080
+    tuiles = []
     for f in figs:
         im = _I.open(f).convert("RGB")
-        im = im.resize((int(im.width * H / im.height), H))
-        ims.append(im)
-    fondu = 80
-    largeur = sum(im.width for im in ims) - fondu * (len(ims) - 1)
-    pano = _I.new("RGB", (largeur, H))
-    pano.paste(ims[0], (0, 0))
-    x = ims[0].width - fondu
-    grad = _I.new("L", (fondu, H))
-    for px in range(fondu):
-        grad.paste(int(255 * px / fondu), (px, 0, px + 1, H))
-    for im in ims[1:]:
-        gauche = pano.crop((x, 0, x + fondu, H))
-        pano.paste(im, (x, 0))
-        melange = _I.composite(im.crop((0, 0, fondu, H)), gauche, grad)
-        pano.paste(melange, (x, 0))
-        x += im.width - fondu
-    # 4) numérotation fine « 1. 2. 3. » au-dessus de chaque silhouette
+        im = im.resize((max(1, int(im.width * H / im.height)), H))
+        if im.width >= W:
+            x0 = (im.width - W) // 2
+            tuiles.append(im.crop((x0, 0, x0 + W, H)))
+        else:
+            canv = _I.new("RGB", (W, H))
+            marge = (W - im.width) // 2
+            canv.paste(im.crop((0, 0, 1, H)).resize((marge, H)), (0, 0))
+            canv.paste(im.crop((im.width - 1, 0, im.width, H)).resize((W - im.width - marge, H)),
+                       (marge + im.width, 0))
+            canv.paste(im, (marge, 0))
+            tuiles.append(canv)
+    # 5) numérotation fine « 1. 2. 3. » + panorama continu + découpe aux jonctions exactes
     from PIL import ImageDraw, ImageFont
     police = None
     for fp in ("/System/Library/Fonts/Supplemental/Snell Roundhand.ttc",
                "/System/Library/Fonts/Supplemental/Times New Roman Italic.ttf",
                "/usr/share/fonts/truetype/dejavu/DejaVuSerif-Italic.ttf"):
         if os.path.exists(fp):
-            police = ImageFont.truetype(fp, 64)
+            police = ImageFont.truetype(fp, 56)
             break
-    if police:
-        dr = ImageDraw.Draw(pano)
-        centres = []
-        x = 0
-        for im in ims:
-            centres.append(x + im.width // 2)
-            x += im.width - fondu
-        for k, cx in enumerate(centres):
-            dr.text((cx, 70), f"{k+1}.", font=police, fill=(40, 32, 28), anchor="mm")
-    pp = os.path.join(d, "panorama.jpg")
-    pano.save(pp, quality=94)
-    magnific_finalize(pp, key)
-    pano = _I.open(pp).convert("RGB")
-    if pano.height != H:
-        pano = pano.resize((int(pano.width * H / pano.height), H))
-    # 5) découpe en slides contiguës 1080x1350 (une silhouette coupée continue sur la slide suivante)
-    n = max(2, min(4, round(pano.width / 1080)))
-    total = n * 1080
-    if pano.width < total:
-        pano = pano.resize((total, H))
-    x0 = (pano.width - total) // 2
-    for i in range(n):
-        pano.crop((x0 + i * 1080, 0, x0 + (i + 1) * 1080, H)).save(
-            os.path.join(d, f"slide-{i+1}.jpg"), quality=92)
-    for f in figs:
-        os.remove(f)
+    pano = _I.new("RGB", (W * len(tuiles), H))
+    for k, t in enumerate(tuiles):
+        if police:
+            ImageDraw.Draw(t).text((W // 2, 84), f"{k+1}.", font=police, fill=(40, 32, 28), anchor="mm")
+        pano.paste(t, (k * W, 0))
+    pano.save(os.path.join(d, "panorama.jpg"), quality=94)
+    for i in range(len(tuiles)):
+        pano.crop((i * W, 0, (i + 1) * W, H)).save(os.path.join(d, f"slide-{i+1}.jpg"), quality=92)
+    # les figures intermédiaires restent dans le dossier : on n'efface JAMAIS une image générée (règle bibliothèque)
     for rp in refs:
         os.remove(rp)
     names = " · ".join(core.first_name(p["title"]) for p in products3)

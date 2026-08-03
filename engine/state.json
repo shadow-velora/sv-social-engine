@@ -21,13 +21,14 @@
     "{name} ~ the dress that enters the room first."
   ],
   "used_products": [
-    "bianca-draped-lace-corset-gown",
-    "estella-floral-embroidered-hourglass-gown",
-    "alia-draped-strapless-maxi",
+    "selena-the-parisian-flow-dress",
+    "rosalia-the-ombre-mermaid-midi-dress",
+    "alba-draped-corset-gown",
+    "calista-floral-sequin-mermaid-gown",
     "amara-liquid-satin-gown",
-    "selena-the-parisian-flow-dress"
+    "aurelia-corset-slit-gown"
   ],
-  "last_scene": "villa-italienne-grilles",
+  "last_scene": "studio-gris-cyclorama",
   "gen_month": "2026-07",
   "gen_calls": 2
 }
