@@ -246,7 +246,11 @@ function render(){
   if (TAB === "programme"){
     fetch("/api/programme").then(r => r.json()).then(res => {
       g.innerHTML = `<div style="grid-column:1/-1;max-width:720px;margin:0 auto">
-        <div class="ig-note" style="max-width:none">Le vrai calendrier des 7 prochains jours — mis à jour selon la file et le planning réel du robot.</div>` +
+        <div class="ig-note" style="max-width:none">Le vrai calendrier des 7 prochains jours — mis à jour selon la file et le planning réel du robot.</div>
+        <div style="display:flex;gap:10px;align-items:center;background:#1d1b1a;border:1px solid #322e2c;border-radius:10px;padding:12px 16px;margin-bottom:12px">
+          <div style="flex:1;font-size:12px;line-height:1.6;color:#a8977f">Secours : si la publication automatique du soir n'est pas partie, ce bouton la déclenche à la main (mêmes règles : max 1 post/jour).</div>
+          <button class="genbtn" id="pubnow" onclick="publishNow()">🚀 PUBLIER MAINTENANT</button>
+        </div>` +
         res.rows.map(l => `
           <div style="display:flex;gap:14px;align-items:center;background:#1d1b1a;border:1px solid ${l.badge === "AUJOURD'HUI" ? "#4B3E3C" : "#322e2c"};border-radius:10px;padding:13px 16px;margin-bottom:10px">
             <div style="min-width:130px"><b style="color:#e8d8c0;font-size:12px;letter-spacing:1px;text-transform:uppercase">${l.date}</b>
@@ -391,6 +395,21 @@ document.getElementById("genai").onclick = async () => {
   toast("Lot IA lancé — nouvelles images dans 3 à 6 min (~0,50 €)");
   setTimeout(load, 2000);
 };
+async function publishNow(){
+  if (!confirm("Publier maintenant le prochain contenu de la file sur Instagram ?")) return;
+  const b = document.getElementById("pubnow");
+  if (b){ b.disabled = true; b.textContent = "⏳ ENVOI…"; }
+  try {
+    const r = await fetch("/api/publish_now", {method: "POST", body: "{}"});
+    const res = await r.json();
+    if (res.ok) toast("🚀 Publication lancée — le post apparaît sur Instagram dans 2 à 5 min");
+    else toast("⚠️ " + (res.error || "échec du déclenchement"));
+  } catch(e) {
+    toast("⚠️ Le moteur local ne répond pas");
+  }
+  if (b){ b.disabled = false; b.textContent = "🚀 PUBLIER MAINTENANT"; }
+}
+
 async function swapItems(i, j){
   const order = publishOrder();
   const A = order[i], B = order[j];

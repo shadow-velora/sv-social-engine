@@ -198,6 +198,41 @@ class Handler(SimpleHTTPRequestHandler):
         ln = int(self.headers.get("Content-Length", 0))
         data = json.loads(self.rfile.read(ln) or b"{}")
 
+        if self.path == "/api/publish_now":
+            # secours si la publication automatique a sauté : déclenche le robot
+            # publieur sur GitHub (mêmes garde-fous : verrou 1/jour, pas_avant).
+            import re
+            import urllib.request
+            subprocess.run(["git", "pull", "--rebase", "--autostash"],
+                           cwd=ROOT, timeout=60, capture_output=True)
+            psp = os.path.join(ENGINE, "publish-state.json")
+            if os.path.exists(psp):
+                import datetime as _dt
+                if json.load(open(psp)).get("derniere_publication") == _dt.datetime.utcnow().strftime("%Y-%m-%d"):
+                    return self._json({"error": "déjà publié aujourd'hui (règle 1/jour)"}, 409)
+            items = [it for it in sorted(os.listdir(Q("approved")))
+                     if os.path.isdir(os.path.join(Q("approved"), it)) and "_reel_" not in it]
+            if not items:
+                return self._json({"error": "rien dans la file « prêts à publier »"}, 400)
+            r = subprocess.run(["git", "remote", "get-url", "origin"],
+                               cwd=ROOT, capture_output=True, text=True)
+            m = re.search(r"x-access-token:([^@]+)@github\.com/([^/]+/[^/.]+)", r.stdout.strip())
+            if not m:
+                return self._json({"error": "accès GitHub introuvable"}, 500)
+            token, repo = m.group(1), m.group(2)
+            req = urllib.request.Request(
+                f"https://api.github.com/repos/{repo}/actions/workflows/publish.yml/dispatches",
+                data=json.dumps({"ref": "main"}).encode(),
+                headers={"Authorization": f"token {token}",
+                         "Accept": "application/vnd.github+json"})
+            try:
+                urllib.request.urlopen(req, timeout=30)
+            except urllib.error.HTTPError as e:
+                return self._json({"error": f"GitHub a refusé ({e.code})"}, 502)
+            except Exception:
+                return self._json({"error": "GitHub injoignable — vérifier la connexion internet"}, 502)
+            return self._json({"ok": True})
+
         if self.path == "/api/generate":
             run_generate.ai_mode = False
             threading.Thread(target=run_generate, daemon=True).start()
