@@ -186,17 +186,37 @@ class Handler(SimpleHTTPRequestHandler):
                 for f in files]})
 
         if self.path == "/api/queue":
+            feed, feed_maj = [], ""
+            fp = os.path.join(ENGINE, "feed-instagram.json")
+            if os.path.exists(fp):
+                try:
+                    fd = json.load(open(fp))
+                    feed, feed_maj = fd.get("posts", []), fd.get("maj", "")
+                except Exception:
+                    pass
             return self._json({
                 "generating": _gen_running,
                 "pending": list_state("pending"),
                 "approved": list_state("approved"),
                 "published": list_state("published"),
+                "feed": feed, "feed_maj": feed_maj,
             })
         return super().do_GET()
 
     def do_POST(self):
         ln = int(self.headers.get("Content-Length", 0))
         data = json.loads(self.rfile.read(ln) or b"{}")
+
+        if self.path == "/api/caption":
+            demande = (data.get("texte") or "").strip()
+            if not demande:
+                return self._json({"erreur": "décris d'abord ton contenu"}, 400)
+            r = subprocess.run(["python3", os.path.join(ENGINE, "legende.py"), demande],
+                               cwd=ROOT, capture_output=True, timeout=120)
+            try:
+                return self._json(json.loads(r.stdout.decode().strip().splitlines()[-1]))
+            except Exception:
+                return self._json({"erreur": "le rédacteur n'a pas répondu — réessaie"}, 500)
 
         if self.path == "/api/publish_now":
             # secours si la publication automatique a sauté : déclenche le robot

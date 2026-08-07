@@ -21,6 +21,12 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GH_PAT: ${{ secrets.GH_PAT }}
+      - name: Photo du vrai feed Instagram (pour l'aperçu du Cockpit)
+        continue-on-error: true
+        run: python engine/feedsync.py
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
       - name: Archiver
         run: |
           git config user.name "sv-engine"

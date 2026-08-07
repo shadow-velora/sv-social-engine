@@ -77,6 +77,7 @@ button{border:0;border-radius:5px;padding:9px 0;font-size:11.5px;letter-spacing:
   <button class="tab" data-t="story">📖 À POSTER (STORY & RÉEL)</button>
   <button class="tab" data-t="equipe">🧑‍💼 ÉQUIPE</button>
   <button class="gen" id="genai">✨ LOT IA (NOUVELLES IMAGES)</button>
+  <button class="gen" id="capopen" onclick="openCap()" style="background:#4B3E3C">✍️ LÉGENDE POUR MON CONTENU</button>
 </div>
 <div id="inspectbar" style="display:none;max-width:1350px;margin:0 auto 14px;background:#3a2626;border:1px solid #6a3636;border-radius:8px;padding:11px 18px;color:#f2dcdc;font-size:12px;line-height:1.8"></div>
 <div class="genbar" id="genbar">✨ GÉNÉRATION EN COURS — LES CONTENUS ARRIVENT DANS QUELQUES MINUTES<div class="track"><div class="fill"></div></div></div>
@@ -112,6 +113,44 @@ button{border:0;border-radius:5px;padding:9px 0;font-size:11.5px;letter-spacing:
   </div>
 </div>
 
+<div class="modal-bg" id="capbg">
+  <div class="modal">
+    <h3>✍️ LÉGENDE POUR TON CONTENU</h3>
+    <div style="font-size:12px;color:#a8977f;line-height:1.6;margin-bottom:8px">Décris ce que tu vas poster (réel, essayage, coulisses…). Cite le nom de la robe et le robot utilisera ses vraies infos. La légende sort dans le style maison.</div>
+    <textarea id="capin" rows="3" style="resize:vertical" placeholder="Ex : réel essayage de la robe Rosalia, lumière du soir, ambiance miroir de chambre"></textarea>
+    <div id="capout" style="display:none;background:#141312;border-radius:6px;padding:12px 14px;font-size:13px;line-height:1.8;white-space:pre-wrap;margin-top:10px"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="sv" id="capbtn" onclick="makeCaption()">✍️ GÉNÉRER</button>
+      <button class="ok" id="capcopy" style="display:none" onclick="copyCaption()">📋 COPIER</button>
+      <button class="no" onclick="closeCap()">FERMER</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function openCap(){ document.getElementById("capbg").style.display = "flex"; }
+function closeCap(){ document.getElementById("capbg").style.display = "none"; }
+async function makeCaption(){
+  const inp = document.getElementById("capin");
+  if (!inp.value.trim()){ toast("Décris d'abord ton contenu"); return; }
+  const b = document.getElementById("capbtn");
+  b.disabled = true; b.textContent = "⏳ ÉCRITURE…";
+  try {
+    const r = await fetch("/api/caption", {method: "POST", body: JSON.stringify({texte: inp.value.trim()})});
+    const res = await r.json();
+    if (res.legende){
+      const out = document.getElementById("capout");
+      out.textContent = res.legende; out.style.display = "block";
+      document.getElementById("capcopy").style.display = "";
+    } else toast("⚠️ " + (res.erreur || "échec — réessaie"));
+  } catch(e){ toast("⚠️ Le moteur local ne répond pas"); }
+  b.disabled = false; b.textContent = "✍️ GÉNÉRER";
+}
+function copyCaption(){
+  navigator.clipboard.writeText(document.getElementById("capout").textContent);
+  toast("📋 Légende copiée — colle-la dans Instagram");
+}
+</script>
 <script>
 let DATA = {pending: [], approved: [], published: []};
 let TAB = "pending";
@@ -220,20 +259,26 @@ function publishOrder(){
 function render(){
   const g = document.getElementById("grid");
   if (TAB === "preview"){
-    const pub = DATA.published || [];          // déjà en ligne : figés
+    // vrai feed Instagram si disponible (robot + posts manuels de Laurie), sinon archives locales
+    const realFeed = (DATA.feed || []).map(p => ({
+      media: [p.thumb], type: p.type === "video" ? "reel" : "image",
+      caption: p.caption, _real: true
+    })).reverse();                             // API = plus récent d'abord → on remet plus ancien d'abord
+    const pub = realFeed.length ? realFeed : (DATA.published || []);   // déjà en ligne : figés
     const order = publishOrder();              // pas encore publiés : modifiables
     const all = [...pub, ...order];
     const grid = [...all].reverse();           // le dernier apparaît en haut à gauche, comme sur Insta
-    const archBtn = pub.length > 30 ? `<button class="genbtn" onclick="archiveOld()">🗃 Archiver les anciens (${pub.length - 30})</button>` : "";
+    const archBtn = (DATA.published || []).length > 30 ? `<button class="genbtn" onclick="archiveOld()">🗃 Archiver les anciens (${(DATA.published || []).length - 30})</button>` : "";
+    const syncNote = realFeed.length ? `<br>📲 Synchronisé avec le vrai compte (y compris tes posts mobiles) — dernière synchro : ${DATA.feed_maj || "?"}.` : "";
     g.innerHTML = `<div class="ig-note">Ta grille telle qu'elle apparaîtra sur Instagram (le n°1 part en premier, donc finit en bas).<br>
-      ✓ = déjà publié sur le vrai compte, figé. Flèches / glisser = réorganiser ce qui n'est pas encore parti.<br>
+      ✓ = déjà publié sur le vrai compte, figé. Flèches / glisser = réorganiser ce qui n'est pas encore parti.${syncNote}<br>
       <button class="genbtn" id="curbtn" onclick="curate()">🔀 Nouvelle proposition de la curatrice</button> <button class="genbtn" onclick="orderUndo()">↩ Version précédente</button> ${archBtn}
       <div id="curnote" style="color:#a8977f;margin-top:8px;font-size:12px"></div></div>
       <div class="ig">` + grid.map(it => {
         const gi = all.indexOf(it);
         const gzi = 'openZoomSet(' + JSON.stringify(it.media).replace(/"/g, "&quot;") + ', 0)';
         const caroBadge = it.media.length > 1 ? `<span class="num" style="left:auto;right:6px;top:auto;bottom:6px;background:#000a">⧉ ${it.media.length}</span>` : "";
-        const med = (it.type === "reel" ? `<video src="${it.media[0]}" muted onclick="${gzi}" style="cursor:zoom-in"></video>` : `<img src="${it.media[0]}" onclick="${gzi}" style="cursor:zoom-in">`) + caroBadge;
+        const med = (it.type === "reel" && !it._real ? `<video src="${it.media[0]}" muted onclick="${gzi}" style="cursor:zoom-in"></video>` : `<img src="${it.media[0]}" onclick="${gzi}" style="cursor:zoom-in" ${it._real && it.caption ? `title="${String(it.caption).replace(/"/g, "&quot;")}"` : ""}>`) + caroBadge;
         if (gi < pub.length)
           return `<div class="cell" style="opacity:.92">${med}<span class="num">${gi+1}</span><span class="num" style="left:auto;right:6px;background:#2e5c3f">✓ PUBLIÉ</span></div>`;
         const idx = gi - pub.length;
