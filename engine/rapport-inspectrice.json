@@ -1,8 +1,7 @@
 {
-  "date": "2026-08-08T08:22+00:00",
+  "date": "2026-08-09T08:25+00:00",
   "alertes": [
-    "File courte : 0 post(s) prêt(s) pour les prochains créneaux",
-    "Robot en échec : « Publier sur Instagram » (08-07T17:51 UTC) — voir logs GitHub"
+    "File courte : 0 post(s) prêt(s) pour les prochains créneaux"
   ],
   "actions_reparation": [
     "lot de complément ÉCHOUÉ"
