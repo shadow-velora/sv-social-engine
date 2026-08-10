@@ -62,8 +62,11 @@ def main():
     os.makedirs(KITS, exist_ok=True)
     state = json.load(open(STATE)) if os.path.exists(STATE) else {"faites": []}
     biblio = os.path.join(ROOT, "queue", "bibliotheque")
+    # une story "look" = une ROBE portée : jamais les découpes de réels (sacs, détails, boîtes)
     inedites = sorted((f for f in os.listdir(biblio)
-                       if f.lower().endswith((".jpg", ".png"))), reverse=True) if os.path.isdir(biblio) else []
+                       if f.lower().endswith((".jpg", ".png"))
+                       and "reel" not in f.lower() and "detail" not in f.lower()
+                       and "boite" not in f.lower() and "bag" not in f.lower()), reverse=True) if os.path.isdir(biblio) else []
     inedites = [f for f in inedites if f not in state["faites"]]
     posts = sorted((d for d in os.listdir(PUBLISHED)
                     if os.path.isdir(os.path.join(PUBLISHED, d))
@@ -112,7 +115,7 @@ def main():
     elif src_path and "bibliotheque" in src_path:
         alt = "unpublished Shadow Velora image, never seen by the audience"
     try:
-        c = consignes(os.path.join(d, "media.jpg"), alt, key)
+        c = consignes(os.path.join(d, "frame-2.jpg"), alt, key)
     except Exception as e:
         c = {"frame1_text": "Look closer.", "frame2_text": "The one for tonight.",
              "frame3_text": "Yours this week.", "link_label": "Shop the dress",
