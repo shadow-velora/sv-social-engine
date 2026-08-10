@@ -20,21 +20,14 @@
     "Sculpted, not styled. {name}.",
     "{name} ~ the dress that enters the room first.",
     "Evening dressing, but make it effortless. {name}.",
-    "{name} ~ quiet on the hanger, unforgettable on."
+    "{name} ~ quiet on the hanger, unforgettable on.",
+    "Warm neutrals, sculpted lines, {name}."
   ],
   "used_products": [
-    "selena-the-parisian-flow-dress",
-    "rosalia-the-ombre-mermaid-midi-dress",
-    "alba-draped-corset-gown",
-    "calista-floral-sequin-mermaid-gown",
-    "amara-liquid-satin-gown",
-    "aurelia-corset-slit-gown",
-    "estella-floral-embroidered-hourglass-gown",
-    "mira-sculpted-mini-muse-dress",
-    "bianca-draped-lace-corset-gown",
-    "alia-draped-strapless-maxi"
+    "alia-draped-strapless-maxi",
+    "selena-the-parisian-flow-dress"
   ],
-  "last_scene": "interieur-soir",
+  "last_scene": "interieur-moderne-luxe",
   "gen_month": "2026-07",
   "gen_calls": 2
 }

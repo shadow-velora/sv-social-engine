@@ -1,0 +1,19 @@
+[
+  {
+    "dress_identical": false,
+    "invented_details": [
+      "center back zipper replacing corset lace-up detail",
+      "waist darts and smooth rear construction replacing central draped gathering"
+    ],
+    "skin_natural": true,
+    "face_consistent": true,
+    "verdict": "fail"
+  },
+  {
+    "dress_identical": true,
+    "invented_details": [],
+    "skin_natural": true,
+    "face_consistent": true,
+    "verdict": "pass"
+  }
+]
