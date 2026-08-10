@@ -1,10 +1,6 @@
 {
-  "date": "2026-08-09T08:25+00:00",
-  "alertes": [
-    "File courte : 0 post(s) prêt(s) pour les prochains créneaux"
-  ],
-  "actions_reparation": [
-    "lot de complément ÉCHOUÉ"
-  ],
-  "tout_va_bien": false
+  "date": "2026-08-10T10:46+00:00",
+  "alertes": [],
+  "actions_reparation": [],
+  "tout_va_bien": true
 }
