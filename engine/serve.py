@@ -67,6 +67,36 @@ def run_generate():
         _gen_running = False
 
 
+def _dispatch_workflow(name):
+    """Déclenche un robot GitHub (workflow_dispatch). Renvoie (ok, erreur)."""
+    import re as _re
+    import urllib.request as _ur
+    r = subprocess.run(["git", "remote", "get-url", "origin"],
+                       cwd=ROOT, capture_output=True, text=True)
+    m = _re.search(r"x-access-token:([^@]+)@github\.com/([^/]+/[^/.]+)", r.stdout.strip())
+    if not m:
+        return False, "accès GitHub introuvable"
+    req = _ur.Request(
+        f"https://api.github.com/repos/{m.group(2)}/actions/workflows/{name}/dispatches",
+        data=json.dumps({"ref": "main"}).encode(),
+        headers={"Authorization": f"token {m.group(1)}",
+                 "Accept": "application/vnd.github+json"})
+    try:
+        _ur.urlopen(req, timeout=30)
+        return True, None
+    except Exception:
+        return False, "GitHub injoignable — vérifier la connexion internet"
+
+
+def _autopull():
+    """Le Cockpit reste TOUJOURS synchronisé avec le vrai état (GitHub) : pull toutes les 2 min."""
+    import time
+    while True:
+        time.sleep(120)
+        subprocess.run(["git", "pull", "--rebase", "--autostash"],
+                       cwd=ROOT, timeout=120, capture_output=True)
+
+
 class Handler(SimpleHTTPRequestHandler):
     def __init__(self, *a, **kw):
         super().__init__(*a, directory=ROOT, **kw)
@@ -206,6 +236,15 @@ class Handler(SimpleHTTPRequestHandler):
     def do_POST(self):
         ln = int(self.headers.get("Content-Length", 0))
         data = json.loads(self.rfile.read(ln) or b"{}")
+
+        if self.path == "/api/generate_week":
+            # bouton manuel de Laurie : demander au robot cloud le lot de la semaine
+            subprocess.run(["git", "pull", "--rebase", "--autostash"],
+                           cwd=ROOT, timeout=60, capture_output=True)
+            ok, err = _dispatch_workflow("generate.yml")
+            if ok:
+                return self._json({"ok": True})
+            return self._json({"error": err}, 502)
 
         if self.path == "/api/caption":
             demande = (data.get("texte") or "").strip()
@@ -411,6 +450,7 @@ class Handler(SimpleHTTPRequestHandler):
 
 if __name__ == "__main__":
     subprocess.run(["git", "pull", "--rebase", "--autostash"], cwd=ROOT, timeout=60, capture_output=True)
+    threading.Thread(target=_autopull, daemon=True).start()
     print(f"SV Cockpit → http://localhost:{PORT}")
     subprocess.Popen(["open", f"http://localhost:{PORT}"])
     HTTPServer(("127.0.0.1", PORT), Handler).serve_forever()

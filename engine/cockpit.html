@@ -78,6 +78,7 @@ button{border:0;border-radius:5px;padding:9px 0;font-size:11.5px;letter-spacing:
   <button class="tab" data-t="equipe">🧑‍💼 ÉQUIPE</button>
   <button class="gen" id="genai">✨ LOT IA (NOUVELLES IMAGES)</button>
   <button class="gen" id="capopen" onclick="openCap()" style="background:#4B3E3C">✍️ LÉGENDE POUR MON CONTENU</button>
+  <button class="gen" id="genweek" onclick="generateWeek()" style="background:#2e5c3f">📅 GÉNÉRER LES POSTS DE LA SEMAINE</button>
 </div>
 <div id="inspectbar" style="display:none;max-width:1350px;margin:0 auto 14px;background:#3a2626;border:1px solid #6a3636;border-radius:8px;padding:11px 18px;color:#f2dcdc;font-size:12px;line-height:1.8"></div>
 <div class="genbar" id="genbar">✨ GÉNÉRATION EN COURS — LES CONTENUS ARRIVENT DANS QUELQUES MINUTES<div class="track"><div class="fill"></div></div></div>
@@ -128,6 +129,18 @@ button{border:0;border-radius:5px;padding:9px 0;font-size:11.5px;letter-spacing:
 </div>
 
 <script>
+async function generateWeek(){
+  if (!confirm("Demander au robot un nouveau lot de posts pour la semaine ?\n(Les contenus arrivent dans le Cockpit en 10 à 20 min)")) return;
+  const b = document.getElementById("genweek");
+  b.disabled = true; b.textContent = "⏳ DEMANDÉ AU ROBOT…";
+  try {
+    const r = await fetch("/api/generate_week", {method: "POST", body: "{}"});
+    const res = await r.json();
+    if (res.ok) toast("📅 Génération lancée — les posts arrivent d'ici 10 à 20 min, la page se mettra à jour toute seule");
+    else toast("⚠️ " + (res.error || "échec du déclenchement"));
+  } catch(e){ toast("⚠️ Le moteur local ne répond pas"); }
+  setTimeout(() => { b.disabled = false; b.textContent = "📅 GÉNÉRER LES POSTS DE LA SEMAINE"; }, 5000);
+}
 function openCap(){ document.getElementById("capbg").style.display = "flex"; }
 function closeCap(){ document.getElementById("capbg").style.display = "none"; }
 async function makeCaption(){
