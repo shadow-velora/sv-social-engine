@@ -1,10 +1,10 @@
 {
   "type": "story",
-  "source": "2026-08-02-reel_details-img-04.jpg",
+  "source": "2026-08-03_090100_ai-studio_calista-floral-sequin-mermaid-gown",
   "frames": 3,
-  "frame1_text": "Look closer.",
-  "frame2_text": "The one for tonight.",
-  "frame3_text": "Yours this week.",
-  "link_label": "Shop the dress",
-  "conseil": "(consignes IA indisponibles : [Errno 2] No such file or directory: '/Users/lauriehernandez/Desktop/sv-social-engine — NE PAS SUPPRIMER/queue/stories/2026-08-10_story/media.jpg')"
+  "frame1_text": "Hand-strung sequins in quiet olive.",
+  "frame2_text": "Calista corset gown, tailored close.",
+  "frame3_text": "A few pieces remain online.",
+  "link_label": "Discover Calista Gown",
+  "conseil": "Placez les textes de manière minimaliste en bas au centre, avec le sticker lien positionné juste sous le texte de la frame 3."
 }
