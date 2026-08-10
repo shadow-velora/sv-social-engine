@@ -4,6 +4,10 @@ on:
     - cron: "23 17 * * 1,3,5"   # Lun/Mer/Ven 19h23 Paris — heure décalée : les crons GitHub à heure pile sautent (loupés des 03/08)
   workflow_dispatch: {}
 
+concurrency:
+  group: sv-engine-git
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
@@ -37,4 +41,11 @@ jobs:
           git config user.email "engine@shadowvelora.com"
           git add queue engine
           git commit -m "publié $(date -u +%F)" || echo "rien à committer"
-          git push
+          ok=0
+          for i in 1 2 3; do
+            if git push; then ok=1; break; fi
+            echo "push refuse (tentative $i) - rebase puis retry"
+            git pull --rebase --autostash || true
+            sleep $((i * 5))
+          done
+          [ "$ok" = "1" ] || { echo "::error::push impossible apres 3 tentatives (course git persistante)"; exit 1; }

@@ -4,6 +4,10 @@ on:
     - cron: "23 16 * * 0"   # dimanche 16:23 UTC (18h23 Paris) — généré la veille pour que le lundi matin soit TOUJOURS prêt même avec les retards GitHub (décision Laurie 10/08)
   workflow_dispatch: {}
 
+concurrency:
+  group: sv-engine-git
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
@@ -27,4 +31,11 @@ jobs:
           git config user.email "engine@shadowvelora.com"
           git add queue engine/state.json
           git commit -m "lot hebdo $(date -u +%F)" || echo "rien à committer"
-          git push
+          ok=0
+          for i in 1 2 3; do
+            if git push; then ok=1; break; fi
+            echo "push refuse (tentative $i) - rebase puis retry"
+            git pull --rebase --autostash || true
+            sleep $((i * 5))
+          done
+          [ "$ok" = "1" ] || { echo "::error::push impossible apres 3 tentatives (course git persistante)"; exit 1; }
