@@ -101,9 +101,17 @@ def main():
     if len(posts_dispo) < 2:
         ALERTES.append(f"File courte : {len(posts_dispo)} post(s) prêt(s) pour les prochains créneaux")
         if budget() < 80:  # au moins 20% du plafond 100 restant
-            r = subprocess.run([sys.executable, os.path.join(ENGINE, "generate_ai_lot.py")],
-                               cwd=ROOT, timeout=3000, capture_output=True)
-            ACTIONS.append("lot de complément lancé" if r.returncode == 0 else "lot de complément ÉCHOUÉ")
+            # relancer via le workflow generate.yml : environnement complet garanti
+            # (l'exécution inline échouait ici — clé Magnific et ffmpeg absents du job inspection)
+            tok = os.environ.get("GH_PAT", "")
+            try:
+                subprocess.check_output(
+                    ["curl", "-s", "-X", "POST", "-H", f"Authorization: token {tok}",
+                     "https://api.github.com/repos/shadow-velora/sv-social-engine/actions/workflows/generate.yml/dispatches",
+                     "-d", '{"ref":"main"}'], timeout=30)
+                ACTIONS.append("lot de complément demandé (génération complète dans ~15 min)")
+            except Exception as e:
+                ACTIONS.append(f"lot de complément ÉCHOUÉ : {str(e)[:60]}")
 
     # 2. deux carrousels cette semaine (publiés ou en file) ? — règle fondatrice 03/08
     semaine = (now - timedelta(days=7)).strftime("%Y-%m-%d")

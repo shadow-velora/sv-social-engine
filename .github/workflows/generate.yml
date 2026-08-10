@@ -1,7 +1,7 @@
 name: Générer le lot hebdo
 on:
   schedule:
-    - cron: "23 5 * * 1"   # lundi 05:23 UTC (7h23 Paris) — heure décalée : les crons GitHub à heure ronde sautent souvent (loupé du 03/08)
+    - cron: "23 16 * * 0"   # dimanche 16:23 UTC (18h23 Paris) — généré la veille pour que le lundi matin soit TOUJOURS prêt même avec les retards GitHub (décision Laurie 10/08)
   workflow_dispatch: {}
 
 permissions:
