@@ -160,9 +160,28 @@ def generate_candidate(ref_path, scene, pose, rules, key, imperfections="", fram
     if len(refs) > 1:
         prompt += f"\n\nThe first {len(refs)} reference photographs show the SAME dress from different angles (front and back). Reproduce its construction faithfully from EVERY angle: the back of the dress (straps, zip, lacing, neckline depth, seams) must match the back-view reference exactly — never invent the back."
     prompt += "\n\nThe FINAL reference photograph shows REAL unretouched human skin. This is the exact standard her skin must meet everywhere it is visible: knees and elbows slightly darker with fine creases, visible pores with natural sebum shine in places, patchy tonal variation, faint veins, real joint creases, natural marks. Study it and replicate THIS level of skin realism on her — never smoother than this real photograph."
+    # RÈGLE FONDATRICE (Laurie 10/08) : CHAQUE génération s'appuie sur une vraie image
+    # exemple du dossier mdv-refs — même décor et même pose autorisés, seule la robe change.
+    style_path = None
+    mdv_dir = os.path.join(ENGINE, "mdv-refs")
+    try:
+        pool = [f for f in os.listdir(mdv_dir) if f.lower().endswith((".jpg", ".jpeg", ".png"))]
+        if pool:
+            style_path = os.path.join(mdv_dir, random.choice(pool))
+    except OSError:
+        pass
+    if style_path:
+        prompt += ("\n\nAfter the dress reference(s) comes one STYLE reference photograph: a real Instagram post "
+                   "the founder wants emulated. Recreate ITS world as closely as possible: same type of location, "
+                   "same pose and framing, same energy — the styling (sunglasses, bag, jewelry, heels), the attitude, "
+                   "the movement, the outdoor or indoor setting, the light. You may reuse the exact same environment "
+                   "and the exact same position. ONLY the garment changes: the woman wears OUR dress from the dress "
+                   "reference(s), never the outfit shown in the style reference. Harmonize colors with our dress.")
     parts = [{"text": prompt}] + [
         {"inline_data": {"mime_type": "image/jpeg", "data": b64_of(r)}} for r in refs
     ]
+    if style_path:
+        parts.append({"inline_data": {"mime_type": "image/jpeg", "data": b64_of(style_path)}})
     sk = _skin_ref()
     if sk:
         parts.append(sk)
