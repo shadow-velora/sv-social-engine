@@ -3,6 +3,10 @@ on:
   # cron coupé le 03/08 — réels/kits week-end ARRÊTÉS sur ordre de Laurie. Relance manuelle seulement.
   workflow_dispatch: {}
 
+concurrency:
+  group: sv-engine-git
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
@@ -30,4 +34,11 @@ jobs:
           git pull --rebase --autostash
           git add queue engine/state.json engine/budget.json
           git commit -m "kit réel $(date -u +%F)" || echo "rien"
-          git push
+          ok=0
+          for i in 1 2 3; do
+            if git push; then ok=1; break; fi
+            echo "push refuse (tentative $i) - rebase puis retry"
+            git pull --rebase --autostash || true
+            sleep $((i * 5))
+          done
+          [ "$ok" = "1" ] || { echo "::error::push impossible apres 3 tentatives (course git persistante)"; exit 1; }
