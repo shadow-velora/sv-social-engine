@@ -18,7 +18,8 @@
     "{name} ~ nothing to prove, everything to remember.",
     "{name} ~ draped like candlelight.",
     "Sculpted, not styled. {name}.",
-    "{name} ~ the dress that enters the room first."
+    "{name} ~ the dress that enters the room first.",
+    "Evening dressing, but make it effortless. {name}."
   ],
   "used_products": [
     "selena-the-parisian-flow-dress",
@@ -26,9 +27,11 @@
     "alba-draped-corset-gown",
     "calista-floral-sequin-mermaid-gown",
     "amara-liquid-satin-gown",
-    "aurelia-corset-slit-gown"
+    "aurelia-corset-slit-gown",
+    "estella-floral-embroidered-hourglass-gown",
+    "mira-sculpted-mini-muse-dress"
   ],
-  "last_scene": "studio-gris-cyclorama",
+  "last_scene": "interieur-moderne-luxe",
   "gen_month": "2026-07",
   "gen_calls": 2
 }
