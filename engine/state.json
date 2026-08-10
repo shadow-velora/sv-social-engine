@@ -22,15 +22,18 @@
     "Evening dressing, but make it effortless. {name}.",
     "{name} ~ quiet on the hanger, unforgettable on.",
     "Warm neutrals, sculpted lines, {name}.",
-    "Sophistication."
+    "Sophistication.",
+    "Some dresses whisper. {name} holds the silence."
   ],
   "used_products": [
     "alia-draped-strapless-maxi",
     "selena-the-parisian-flow-dress",
     "calista-floral-sequin-mermaid-gown",
-    "estella-floral-embroidered-hourglass-gown"
+    "estella-floral-embroidered-hourglass-gown",
+    "mira-sculpted-mini-muse-dress",
+    "amara-liquid-satin-gown"
   ],
-  "last_scene": "nuit-interieure-bordeaux",
+  "last_scene": "townhouse-londonien",
   "gen_month": "2026-07",
   "gen_calls": 2
 }
