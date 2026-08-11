@@ -63,6 +63,7 @@ def run_generate():
         # l'équipe se réunit automatiquement après chaque lot
         subprocess.run(["python3", os.path.join(ENGINE, "committee.py")],
                        env=env, cwd=ROOT, timeout=600)
+        _git_sync("génération locale")
     finally:
         _gen_running = False
 
@@ -88,13 +89,42 @@ def _dispatch_workflow(name):
         return False, "GitHub injoignable — vérifier la connexion internet"
 
 
+_git_lock = threading.Lock()
+
+
+def _git_sync(message):
+    """Chaque action Cockpit (approve/reject/swap/...) est poussée sur GitHub immédiatement.
+    Sans ça, les clics de Laurie restent locaux et les workflows GitHub travaillent sur un
+    état périmé (ex: post approuvé localement mais toujours pending côté robot)."""
+    with _git_lock:
+        subprocess.run(["git", "add", "-A", "queue", "engine/feedback.jsonl",
+                        "engine/ordre-historique.json"],
+                       cwd=ROOT, timeout=60, capture_output=True)
+        diff = subprocess.run(["git", "diff", "--cached", "--quiet"], cwd=ROOT, timeout=60)
+        if diff.returncode == 0:
+            return
+        subprocess.run(["git", "commit", "-m", f"cockpit: {message}"],
+                       cwd=ROOT, timeout=60, capture_output=True)
+        for _ in range(3):
+            subprocess.run(["git", "pull", "--rebase", "--autostash"],
+                           cwd=ROOT, timeout=120, capture_output=True)
+            push = subprocess.run(["git", "push"], cwd=ROOT, timeout=120, capture_output=True)
+            if push.returncode == 0:
+                return
+
+
+def _git_sync_bg(message):
+    threading.Thread(target=_git_sync, args=(message,), daemon=True).start()
+
+
 def _autopull():
     """Le Cockpit reste TOUJOURS synchronisé avec le vrai état (GitHub) : pull toutes les 2 min."""
     import time
     while True:
         time.sleep(120)
-        subprocess.run(["git", "pull", "--rebase", "--autostash"],
-                       cwd=ROOT, timeout=120, capture_output=True)
+        with _git_lock:
+            subprocess.run(["git", "pull", "--rebase", "--autostash"],
+                           cwd=ROOT, timeout=120, capture_output=True)
 
 
 class Handler(SimpleHTTPRequestHandler):
@@ -312,6 +342,7 @@ class Handler(SimpleHTTPRequestHandler):
                 try:
                     subprocess.run(["python3", os.path.join(ENGINE, "committee.py")],
                                    cwd=ROOT, timeout=600)
+                    _git_sync("committee")
                 finally:
                     _gen_running = False
             threading.Thread(target=_run, daemon=True).start()
@@ -322,6 +353,7 @@ class Handler(SimpleHTTPRequestHandler):
             fp = os.path.join(ROOT, "queue", "bibliotheque", name)
             if name and os.path.isfile(fp):
                 os.remove(fp)
+                _git_sync_bg(f"library_delete {name}")
                 return self._json({"ok": True})
             return self._json({"error": "introuvable"}, 404)
 
@@ -332,11 +364,13 @@ class Handler(SimpleHTTPRequestHandler):
                 shutil.rmtree(kd)
             r = subprocess.run(["python3", os.path.join(ENGINE, "story.py")],
                                cwd=ROOT, timeout=180, capture_output=True)
+            _git_sync_bg("story_regen")
             return self._json({"ok": r.returncode == 0})
 
         if self.path == "/api/curate":
             r = subprocess.run(["python3", os.path.join(ENGINE, "committee.py"), "curate"],
                                cwd=ROOT, capture_output=True, timeout=180)
+            _git_sync_bg("curate")
             try:
                 out = r.stdout.decode().strip().splitlines()[-1]
                 return self._json(json.loads(out))
@@ -371,6 +405,7 @@ class Handler(SimpleHTTPRequestHandler):
                 except OSError:
                     continue
             json.dump(hist, open(hp, "w"), indent=2, ensure_ascii=False)
+            _git_sync_bg("order_undo")
             return self._json({"ok": True, "restaure": snap.get("date", ""), "restantes": len(hist)})
 
         if self.path == "/api/archive":
@@ -381,6 +416,8 @@ class Handler(SimpleHTTPRequestHandler):
             for it in items[:-30]:
                 shutil.move(os.path.join(base, it), os.path.join(ROOT, "queue", "archive", it))
                 moved += 1
+            if moved:
+                _git_sync_bg(f"archive {moved} posts")
             return self._json({"ok": True, "archives": moved})
 
         if self.path == "/api/swap":
@@ -394,6 +431,7 @@ class Handler(SimpleHTTPRequestHandler):
             os.rename(pa, tmp)
             os.rename(pb, os.path.join(Q(sb), prefa + "_" + restb))
             os.rename(tmp, os.path.join(Q(sa), prefb + "_" + resta))
+            _git_sync_bg(f"swap {resta} <-> {restb}")
             return self._json({"ok": True})
 
         if self.path == "/api/action":
@@ -443,6 +481,7 @@ class Handler(SimpleHTTPRequestHandler):
                 json.dump(meta, open(mp, "w"), indent=2, ensure_ascii=False)
             else:
                 return self._json({"error": "action inconnue"}, 400)
+            _git_sync_bg(f"{action} {item}")
             return self._json({"ok": True})
 
         return self._json({"error": "not found"}, 404)
