@@ -23,7 +23,8 @@
     "{name} ~ quiet on the hanger, unforgettable on.",
     "Warm neutrals, sculpted lines, {name}.",
     "Sophistication.",
-    "Some dresses whisper. {name} holds the silence."
+    "Some dresses whisper. {name} holds the silence.",
+    "Worn once, remembered longer. {name}."
   ],
   "used_products": [
     "alia-draped-strapless-maxi",
@@ -31,9 +32,11 @@
     "calista-floral-sequin-mermaid-gown",
     "estella-floral-embroidered-hourglass-gown",
     "mira-sculpted-mini-muse-dress",
-    "amara-liquid-satin-gown"
+    "amara-liquid-satin-gown",
+    "bianca-draped-lace-corset-gown",
+    "alba-draped-corset-gown"
   ],
-  "last_scene": "townhouse-londonien",
+  "last_scene": "nuit-interieure-bordeaux",
   "gen_month": "2026-07",
   "gen_calls": 2
 }
