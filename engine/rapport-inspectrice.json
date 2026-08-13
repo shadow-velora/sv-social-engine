@@ -1,10 +1,6 @@
 {
-  "date": "2026-08-12T21:27+00:00",
-  "alertes": [
-    "File courte : 1 post(s) prêt(s) pour les prochains créneaux"
-  ],
-  "actions_reparation": [
-    "lot de complément demandé (génération complète dans ~15 min)"
-  ],
-  "tout_va_bien": false
+  "date": "2026-08-13T10:36+00:00",
+  "alertes": [],
+  "actions_reparation": [],
+  "tout_va_bien": true
 }
