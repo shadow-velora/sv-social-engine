@@ -24,7 +24,8 @@
     "Warm neutrals, sculpted lines, {name}.",
     "Sophistication.",
     "Some dresses whisper. {name} holds the silence.",
-    "Worn once, remembered longer. {name}."
+    "Worn once, remembered longer. {name}.",
+    "{name} ~ designed for the last hour of golden light."
   ],
   "used_products": [
     "alia-draped-strapless-maxi",
@@ -34,9 +35,11 @@
     "mira-sculpted-mini-muse-dress",
     "amara-liquid-satin-gown",
     "bianca-draped-lace-corset-gown",
-    "alba-draped-corset-gown"
+    "alba-draped-corset-gown",
+    "aurelia-corset-slit-gown",
+    "camelia-blooming-petal-gown"
   ],
-  "last_scene": "nuit-interieure-bordeaux",
+  "last_scene": "interieur-soir",
   "gen_month": "2026-07",
   "gen_calls": 2
 }
