@@ -28,18 +28,10 @@
     "{name} ~ designed for the last hour of golden light."
   ],
   "used_products": [
-    "alia-draped-strapless-maxi",
-    "selena-the-parisian-flow-dress",
-    "calista-floral-sequin-mermaid-gown",
-    "estella-floral-embroidered-hourglass-gown",
-    "mira-sculpted-mini-muse-dress",
     "amara-liquid-satin-gown",
-    "bianca-draped-lace-corset-gown",
-    "alba-draped-corset-gown",
-    "aurelia-corset-slit-gown",
-    "camelia-blooming-petal-gown"
+    "alba-draped-corset-gown"
   ],
-  "last_scene": "interieur-soir",
+  "last_scene": "townhouse-londonien",
   "gen_month": "2026-07",
   "gen_calls": 2
 }
