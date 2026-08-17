@@ -1,0 +1,19 @@
+[
+  {
+    "dress_identical": false,
+    "invented_details": [
+      "zipper back closure replacing corset lace-up back",
+      "flat plain skirt back missing central gathered draping"
+    ],
+    "skin_natural": true,
+    "face_consistent": true,
+    "verdict": "fail"
+  },
+  {
+    "dress_identical": true,
+    "invented_details": [],
+    "skin_natural": true,
+    "face_consistent": true,
+    "verdict": "pass"
+  }
+]

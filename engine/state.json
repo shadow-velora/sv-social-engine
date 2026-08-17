@@ -25,13 +25,16 @@
     "Sophistication.",
     "Some dresses whisper. {name} holds the silence.",
     "Worn once, remembered longer. {name}.",
-    "{name} ~ designed for the last hour of golden light."
+    "{name} ~ designed for the last hour of golden light.",
+    "{name}. Nothing else needed."
   ],
   "used_products": [
     "amara-liquid-satin-gown",
-    "alba-draped-corset-gown"
+    "alba-draped-corset-gown",
+    "alia-draped-strapless-maxi",
+    "calista-floral-sequin-mermaid-gown"
   ],
-  "last_scene": "townhouse-londonien",
+  "last_scene": "interieur-soir",
   "gen_month": "2026-07",
   "gen_calls": 2
 }
