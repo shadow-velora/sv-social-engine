@@ -29,18 +29,11 @@
     "{name}. Nothing else needed."
   ],
   "used_products": [
-    "amara-liquid-satin-gown",
-    "alba-draped-corset-gown",
-    "alia-draped-strapless-maxi",
-    "calista-floral-sequin-mermaid-gown",
-    "camelia-blooming-petal-gown",
-    "mira-sculpted-mini-muse-dress",
-    "bianca-draped-lace-corset-gown",
     "estella-floral-embroidered-hourglass-gown",
-    "selena-the-parisian-flow-dress",
-    "aurelia-corset-slit-gown"
+    "camelia-blooming-petal-gown",
+    "bianca-draped-lace-corset-gown"
   ],
-  "last_scene": "studio-blanc",
+  "last_scene": "studio-creme",
   "gen_month": "2026-07",
   "gen_calls": 2
 }
