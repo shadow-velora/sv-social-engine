@@ -26,14 +26,17 @@
     "Some dresses whisper. {name} holds the silence.",
     "Worn once, remembered longer. {name}.",
     "{name} ~ designed for the last hour of golden light.",
-    "{name}. Nothing else needed."
+    "{name}. Nothing else needed.",
+    "Your next occasion already has a dress. {name}."
   ],
   "used_products": [
     "estella-floral-embroidered-hourglass-gown",
     "camelia-blooming-petal-gown",
-    "bianca-draped-lace-corset-gown"
+    "bianca-draped-lace-corset-gown",
+    "rosalia-the-ombre-mermaid-midi-dress",
+    "calista-floral-sequin-mermaid-gown"
   ],
-  "last_scene": "studio-creme",
+  "last_scene": "interieur-soir",
   "gen_month": "2026-07",
   "gen_calls": 2
 }
