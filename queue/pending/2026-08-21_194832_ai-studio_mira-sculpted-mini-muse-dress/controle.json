@@ -1,0 +1,17 @@
+[
+  {
+    "verdict": "fail",
+    "error": "contrôleur illisible: 'candidates'"
+  },
+  {
+    "verdict": "fail",
+    "error": "contrôleur illisible: 'candidates'"
+  },
+  {
+    "dress_identical": true,
+    "invented_details": [],
+    "skin_natural": true,
+    "face_consistent": true,
+    "verdict": "pass"
+  }
+]

@@ -27,16 +27,19 @@
     "Worn once, remembered longer. {name}.",
     "{name} ~ designed for the last hour of golden light.",
     "{name}. Nothing else needed.",
-    "Your next occasion already has a dress. {name}."
+    "Your next occasion already has a dress. {name}.",
+    "New season, new silhouettes ~ {name}, online now."
   ],
   "used_products": [
     "estella-floral-embroidered-hourglass-gown",
     "camelia-blooming-petal-gown",
     "bianca-draped-lace-corset-gown",
     "rosalia-the-ombre-mermaid-midi-dress",
-    "calista-floral-sequin-mermaid-gown"
+    "calista-floral-sequin-mermaid-gown",
+    "mira-sculpted-mini-muse-dress",
+    "alia-draped-strapless-maxi"
   ],
-  "last_scene": "interieur-soir",
+  "last_scene": "nuit-interieure-bordeaux",
   "gen_month": "2026-07",
   "gen_calls": 2
 }
