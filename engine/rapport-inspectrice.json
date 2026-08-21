@@ -1,9 +1,11 @@
 {
-  "date": "2026-08-21T08:20+00:00",
+  "date": "2026-08-21T19:44+00:00",
   "alertes": [
+    "File courte : 1 post(s) prêt(s) pour les prochains créneaux",
     "1 carrousel(s) cette semaine (règle : 2/semaine, 1 post + 2 carrousels)"
   ],
   "actions_reparation": [
+    "lot de complément demandé (génération complète dans ~15 min)",
     "carrousel tenté mais recalé (fidélité robes)"
   ],
   "tout_va_bien": false
