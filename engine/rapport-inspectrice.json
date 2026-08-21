@@ -1,12 +1,9 @@
 {
-  "date": "2026-08-20T08:18+00:00",
+  "date": "2026-08-21T08:20+00:00",
   "alertes": [
-    "File courte : 0 post(s) prêt(s) pour les prochains créneaux",
-    "0 carrousel(s) cette semaine (règle : 2/semaine, 1 post + 2 carrousels)",
-    "Robot en échec : « Générer le lot hebdo » (08-19T19:50 UTC) — voir logs GitHub"
+    "1 carrousel(s) cette semaine (règle : 2/semaine, 1 post + 2 carrousels)"
   ],
   "actions_reparation": [
-    "lot de complément demandé (génération complète dans ~15 min)",
     "carrousel tenté mais recalé (fidélité robes)"
   ],
   "tout_va_bien": false
