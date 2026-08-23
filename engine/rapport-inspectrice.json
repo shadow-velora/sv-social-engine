@@ -1,7 +1,8 @@
 {
-  "date": "2026-08-22T07:53+00:00",
+  "date": "2026-08-23T07:57+00:00",
   "alertes": [
-    "1 carrousel(s) cette semaine (règle : 2/semaine, 1 post + 2 carrousels)"
+    "1 carrousel(s) cette semaine (règle : 2/semaine, 1 post + 2 carrousels)",
+    "Budget presque épuisé : 91/100 générations ce mois (10 GBP = 2 mois minimum)"
   ],
   "actions_reparation": [
     "carrousel tenté mais recalé (fidélité robes)"
