@@ -1,10 +1,13 @@
 {
-  "date": "2026-08-23T07:57+00:00",
+  "date": "2026-08-24T09:11+00:00",
   "alertes": [
+    "Lot du lundi jamais parti (cron GitHub sauté) — relancé automatiquement",
     "1 carrousel(s) cette semaine (règle : 2/semaine, 1 post + 2 carrousels)",
-    "Budget presque épuisé : 91/100 générations ce mois (10 GBP = 2 mois minimum)"
+    "Robot en échec : « Générer le lot hebdo » (08-23T17:03 UTC) — voir logs GitHub",
+    "Budget presque épuisé : 93/100 générations ce mois (10 GBP = 2 mois minimum)"
   ],
   "actions_reparation": [
+    "generate.yml déclenché à la main par l'inspectrice",
     "carrousel tenté mais recalé (fidélité robes)"
   ],
   "tout_va_bien": false
