@@ -1,9 +1,8 @@
 {
-  "date": "2026-08-29T12:47+00:00",
+  "date": "2026-08-30T12:09+00:00",
   "alertes": [
     "File courte : 0 post(s) prêt(s) pour les prochains créneaux",
     "0 carrousel(s) cette semaine (règle : 2/semaine, 1 post + 2 carrousels)",
-    "Robot en échec : « Publier sur Instagram » (08-28T18:56 UTC) — voir logs GitHub",
     "Budget presque épuisé : 97/100 générations ce mois (10 GBP = 2 mois minimum)"
   ],
   "actions_reparation": [],
