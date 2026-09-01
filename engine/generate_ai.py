@@ -253,7 +253,7 @@ def generate_candidate(ref_path, scene, pose, rules, key, imperfections="", fram
                    "the founder wants emulated. Recreate ITS world as closely as possible: same type of location, "
                    "same pose and framing, same energy — the styling (sunglasses, bag, jewelry, heels), the attitude, "
                    "the movement, the outdoor or indoor setting, the light. You may reuse the exact same environment "
-                   "and the exact same position. ONLY the garment changes: the woman wears OUR dress from the dress "
+                   "and the exact same position. ONLY the garment changes: the woman wears OUR garment from the garment "
                    "reference(s), never the outfit shown in the style reference. Harmonize colors with our dress.")
     parts = [{"text": prompt}] + [
         {"inline_data": {"mime_type": "image/jpeg", "data": b64_of(r)}} for r in refs
