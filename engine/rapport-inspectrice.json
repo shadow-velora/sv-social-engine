@@ -1,10 +1,9 @@
 {
-  "date": "2026-09-01T15:50+00:00",
+  "date": "2026-09-01T16:38+00:00",
   "alertes": [
-    "1 carrousel(s) cette semaine (règle : 2/semaine, 1 post + 2 carrousels)"
+    "Monotonie couleur : les prochains posts sont tous dans les mêmes tons — varier les mondes couleur",
+    "Budget presque épuisé : 87/100 générations ce mois (10 GBP = 2 mois minimum)"
   ],
-  "actions_reparation": [
-    "carrousel tenté mais recalé (fidélité robes)"
-  ],
+  "actions_reparation": [],
   "tout_va_bien": false
 }
