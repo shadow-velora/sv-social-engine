@@ -1,8 +1,10 @@
 {
-  "date": "2026-09-01T11:56+00:00",
+  "date": "2026-09-01T15:50+00:00",
   "alertes": [
-    "Robot en échec : « Publier sur Instagram » (08-31T23:02 UTC) — voir logs GitHub"
+    "1 carrousel(s) cette semaine (règle : 2/semaine, 1 post + 2 carrousels)"
   ],
-  "actions_reparation": [],
+  "actions_reparation": [
+    "carrousel tenté mais recalé (fidélité robes)"
+  ],
   "tout_va_bien": false
 }

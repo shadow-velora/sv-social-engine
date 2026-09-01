@@ -1,4 +1,5 @@
 {
+<<<<<<< Updated upstream
   "used_captions": [
     "Your next occasion already has a dress. {name}."
   ],
@@ -12,6 +13,15 @@
     "mira-the-sculpted-mini-muse-dress"
   ],
   "last_scene": "interieur-soir",
+=======
+  "used_captions": [],
+  "used_products": [
+    "sweater-whity",
+    "onyx-the-art-of-seduction-dress",
+    "solvaine-the-lace-corset-maxi-gown"
+  ],
+  "last_scene": "studio-blanc",
+>>>>>>> Stashed changes
   "gen_month": "2026-07",
   "gen_calls": 2
 }
