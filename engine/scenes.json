@@ -124,6 +124,22 @@
       "id": "pilier-fer-forge",
       "palette": "pierre / noir ferronnerie",
       "text": "leaning context: a fluted stone pillar with a black wrought-iron gate behind, soft slightly golden natural light, urban Parisian mood"
+    },
+    {
+      "id": "cafe-parisien-soir",
+      "text": "a Parisian café terrace at dusk: small round marble table, rattan chair, warm string lights and the glow of the café window, a tiny espresso cup, evening street softly blurred behind"
+    },
+    {
+      "id": "bar-hotel-feutre",
+      "text": "a dim luxury hotel bar: deep leather seating, a low brass table with a coupe glass, warm amber lighting from wall sconces, dark wood panelling, intimate evening atmosphere"
+    },
+    {
+      "id": "rooftop-crepuscule",
+      "text": "a city rooftop at blue hour: stone parapet, distant Haussmann rooftops fading into dusk, one warm terrace lamp glowing, wind lifting the fabric slightly"
+    },
+    {
+      "id": "couloir-marbre-hotel",
+      "text": "a grand hotel corridor: veined marble floor, tall cream doors with brass handles, a runner of warm light from wall lamps, quiet late-evening emptiness"
     }
   ],
   "poses": [
@@ -133,7 +149,9 @@
     "standing tall while fastening an earring, elbows lifted, gaze calm past the camera",
     "rising from a seated position with a long straight back, weight on one leg, the dress settling around her",
     "looking back over her shoulder toward the camera, spine elegant, one hand gathering her hair off her neck",
-    "leaning her shoulder blades back against the wall, one knee bent, chin level, arms relaxed"
+    "leaning her shoulder blades back against the wall, one knee bent, chin level, arms relaxed",
+    "TWO women together in the frame, like close friends caught before an evening out — both wearing the SAME dress from the reference, one seen from the front and the other in three-quarter view, laughing softly between themselves, natural spacing, genuine connection",
+    "TWO women side by side leaning toward each other as real friends do, both wearing the SAME dress from the reference in the same color, one adjusting her earring while the other looks toward the camera, warm candid group-photo energy"
   ],
   "rules": "Warm desaturated palette only (sand, cream, taupe, espresso). NEVER cold grey, never loud colors. The location is REAL and lived-in: honest imperfections in the set, background rendered with true optical depth of field from a 50mm lens, never painted-looking blur. No mirrors. No smile (composed, serene). No text, no logos, no other people. SCENE-COLOR PAIRING: dark or dramatic dresses belong on the off-white studio backdrop; light cream dresses can live on warm or deep backdrops; never let every image drift into the same yellow-beige — the feed alternates COLOR WORLDS (white, chocolate, grey stone, sepia gold, pale Paris limestone, wine-dark night) with smooth transitions.",
   "imperfections": {

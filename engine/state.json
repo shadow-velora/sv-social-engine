@@ -1,7 +1,8 @@
 {
 <<<<<<< Updated upstream
   "used_captions": [
-    "Your next occasion already has a dress. {name}."
+    "Your next occasion already has a dress. {name}.",
+    "{name} ~ the dress that enters the room first."
   ],
   "used_products": [
     "cardigan-yuki",
@@ -10,7 +11,10 @@
     "pant-romy",
     "gina-the-effortless-parisian-cardigan",
     "alizee-the-airy-ruffle-mini-dres",
-    "mira-the-sculpted-mini-muse-dress"
+    "mira-the-sculpted-mini-muse-dress",
+    "pullover-kamel",
+    "lena-the-wild-elegance-dress",
+    "cardigan-victoria"
   ],
   "last_scene": "interieur-soir",
 =======

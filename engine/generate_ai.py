@@ -948,11 +948,13 @@ def make_carousel_porte_pose(product, captions, state, key):
     rules = cfg["rules"] + lecons_texte(product["handle"])
     # slide 1 : la robe portée
     porte = None
+    journal = []
     for attempt in range(1, 4):
         try:
             raw = generate_candidate(refs, scene["text"], random.choice(cfg["poses"]), rules, key,
                                      sample_imperfections(cfg))
-        except RuntimeError:
+        except RuntimeError as e:
+            journal.append({f"slide-1 essai {attempt}": f"génération échouée : {str(e)[:150]}"})
             continue
         cp = os.path.join(d, "slide-1.jpg")
         save_jpeg(raw, cp)
@@ -961,10 +963,12 @@ def make_carousel_porte_pose(product, captions, state, key):
         except RuntimeError:
             pass
         v = check_candidate(refs[0], cp, key)
+        journal.append({f"slide-1 essai {attempt}": v})
         if v.get("verdict") == "pass":
             porte = cp
             break
     if not porte:
+        json.dump(journal, open(os.path.join(d, "controle.json"), "w"), indent=2, ensure_ascii=False)
         _sh.move(d, os.path.join(ROOT, "queue", "rejected", os.path.basename(d)))
         print(f"❌ porté+posé {name} : slide portée jamais validée")
         _fiabilite(product["handle"], False)
@@ -991,11 +995,13 @@ def make_carousel_porte_pose(product, captions, state, key):
             cp = os.path.join(d, fname)
             save_jpeg(raw, cp)
             v = check_candidate(refs[0], cp, key)
+            journal.append({f"{fname} essai {attempt}": v})
             if v.get("dress_identical") and not v.get("invented_details"):
                 ok = True
                 break
             os.remove(cp)
         if not ok:
+            json.dump(journal, open(os.path.join(d, "controle.json"), "w"), indent=2, ensure_ascii=False)
             _sh.move(d, os.path.join(ROOT, "queue", "rejected", os.path.basename(d)))
             print(f"❌ porté+posé {name} : {fname} jamais fidèle")
             return None

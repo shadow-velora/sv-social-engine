@@ -38,5 +38,9 @@
   "pullover-kamel": {
     "ok": 1,
     "echec": 0
+  },
+  "cardigan-victoria": {
+    "ok": 0,
+    "echec": 1
   }
 }
