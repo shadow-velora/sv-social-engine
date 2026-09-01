@@ -993,14 +993,32 @@ def make_carousel_porte_pose(product, captions, state, key):
         print(f"❌ porté+posé {name} : slide portée jamais validée")
         _fiabilite(product["handle"], False)
         return None
-    # slides 2 et 3 : la robe posée (fauteuil puis à plat) — MÊME shooting, même lumière
-    meme_shooting = (" SAME SHOOTING as the rest of this editorial series — keep the ambiance and light "
-                     "consistent with: " + scene["text"])
-    for fname, base_prompt in (("slide-2.jpg", CHAISE_PROMPT), ("slide-3.jpg", FLATLAY_PROMPT)):
-        prompt = base_prompt + meme_shooting + lecons_texte(product["handle"])
+    # slides 2 et 3 : la robe posée. Le suffixe « SAME SHOOTING » déclenchait des refus
+    # IMAGE_OTHER systématiques (constat 01/09) : on tourne sur des variantes TESTÉES,
+    # ambiance intégrée dans la phrase, une variante différente par essai.
+    CHAISE_VARIANTES = [
+        ("Still-life fashion photograph in a dim warm evening interior with espresso tones and one "
+         "glowing table lamp: the exact garment from the reference image lies gracefully draped across "
+         "an antique gilded armchair, herringbone parquet floor. Same color, same fabric, same neckline, "
+         "same sleeves and construction as the reference, soft natural folds. True photographic rendering, "
+         "real depth of field, photorealistic, never a painting or 3D render. No person in the frame."),
+        CHAISE_PROMPT,
+        ("Still-life fashion photograph: the exact garment from the reference image lies gracefully "
+         "draped across an antique armchair, warm window light, herringbone parquet floor. Same color, "
+         "fabric and construction as the reference, soft natural folds, photorealistic, no person in the frame."),
+    ]
+    FLATLAY_VARIANTES = [
+        FLATLAY_PROMPT,
+        ("Top-down still-life photograph: the exact garment from the reference image laid flat on a warm "
+         "sand linen sheet, natural soft folds, a simple wooden hanger beside it, soft daylight, honest "
+         "shadows, photorealistic, vertical 4:5, no person, no text."),
+        FLATLAY_PROMPT,
+    ]
+    for fname, variantes in (("slide-2.jpg", CHAISE_VARIANTES), ("slide-3.jpg", FLATLAY_VARIANTES)):
         _progress(f"carrousel {name} — {fname.replace('.jpg', '')}/3")
         ok = False
         for attempt in (1, 2, 3):
+            prompt = variantes[attempt - 1] + lecons_texte(product["handle"])
             _budget_guard()
             parts = [{"text": prompt},
                      {"inline_data": {"mime_type": "image/jpeg", "data": b64_of(refs[0])}}]
