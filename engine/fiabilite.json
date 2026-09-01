@@ -18,5 +18,25 @@
   "mira-sculpted-mini-muse-dress": {
     "ok": 2,
     "echec": 0
+  },
+  "amarante-the-draped-one-shoulder-satin-gown": {
+    "ok": 0,
+    "echec": 1
+  },
+  "pant-romy": {
+    "ok": 0,
+    "echec": 1
+  },
+  "gina-the-effortless-parisian-cardigan": {
+    "ok": 0,
+    "echec": 1
+  },
+  "alizee-the-airy-ruffle-mini-dres": {
+    "ok": 1,
+    "echec": 0
+  },
+  "pullover-kamel": {
+    "ok": 1,
+    "echec": 0
   }
 }

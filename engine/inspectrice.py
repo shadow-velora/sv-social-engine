@@ -55,6 +55,10 @@ def main():
     elif _gen >= int(_MAX*0.8):
         ALERTES.append(f"⚠️ Budget génération à {_gen}/{_MAX} ce mois : le plafond approche")
 
+    # 0 bis. crédit Gemini épuisé (sentinelle posée par generate_ai.gemini au 1er échec "credits depleted")
+    if os.path.exists(os.path.join(ENGINE, "alerte-credit.json")):
+        ALERTES.append("💳 CRÉDIT GEMINI ÉPUISÉ : plus aucune image ne peut être générée — recharge ~10£ sur aistudio.google.com/apikey (compte habituel), l'alerte s'efface seule au premier succès")
+
     # 0. dossiers incomplets dans pending (sans meta.json) → écartés (cause du crash publish du 02/08)
     for it in list(pending):
         dd = os.path.join(ROOT, "queue", "pending", it)

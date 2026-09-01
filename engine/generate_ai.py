@@ -69,7 +69,19 @@ def gemini(model, parts, key):
          "-X", "POST", f"{API}/{model}:generateContent?key={key}",
          "-d", "@-"],
         input=payload.encode(), capture_output=True, check=True)
-    return json.loads(r.stdout)
+    resp = json.loads(r.stdout)
+    # sentinelle crédit : trace l'épuisement pour l'inspectrice, s'efface au premier succès
+    _flag = os.path.join(ENGINE, "alerte-credit.json")
+    try:
+        err = str(resp.get("error", {}))
+        if "deplete" in err or "RESOURCE_EXHAUSTED" in err:
+            json.dump({"date": datetime.now(timezone.utc).isoformat(timespec="minutes"),
+                       "detail": err[:150]}, open(_flag, "w"))
+        elif os.path.exists(_flag):
+            os.remove(_flag)
+    except Exception:
+        pass
+    return resp
 
 
 def save_jpeg(raw_bytes, path):

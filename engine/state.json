@@ -1,7 +1,17 @@
 {
-  "used_captions": [],
-  "used_products": [],
-  "last_scene": "townhouse-londonien",
+  "used_captions": [
+    "Your next occasion already has a dress. {name}."
+  ],
+  "used_products": [
+    "cardigan-yuki",
+    "coat-ebony",
+    "cocoon-cardigan",
+    "pant-romy",
+    "gina-the-effortless-parisian-cardigan",
+    "alizee-the-airy-ruffle-mini-dres",
+    "mira-the-sculpted-mini-muse-dress"
+  ],
+  "last_scene": "interieur-soir",
   "gen_month": "2026-07",
   "gen_calls": 2
 }

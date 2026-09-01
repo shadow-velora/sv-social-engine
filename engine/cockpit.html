@@ -76,9 +76,8 @@ button{border:0;border-radius:5px;padding:9px 0;font-size:11.5px;letter-spacing:
   <button class="tab" data-t="library">🖼 BIBLIOTHÈQUE</button>
   <button class="tab" data-t="story">📖 À POSTER (STORY & RÉEL)</button>
   <button class="tab" data-t="equipe">🧑‍💼 ÉQUIPE</button>
-  <button class="gen" id="genai">✨ LOT IA (NOUVELLES IMAGES)</button>
+  <button class="gen" id="genai">✨ GÉNÉRER DES IMAGES — 1 post + 1 carrousel (≈ 4 à 6 photos)</button>
   <button class="gen" id="capopen" onclick="openCap()" style="background:#4B3E3C">✍️ LÉGENDE POUR MON CONTENU</button>
-  <button class="gen" id="genweek" onclick="generateWeek()" style="background:#2e5c3f">📅 GÉNÉRER LES POSTS DE LA SEMAINE</button>
 </div>
 <div id="inspectbar" style="display:none;max-width:1350px;margin:0 auto 14px;background:#3a2626;border:1px solid #6a3636;border-radius:8px;padding:11px 18px;color:#f2dcdc;font-size:12px;line-height:1.8"></div>
 <div class="genbar" id="genbar">✨ GÉNÉRATION EN COURS — LES CONTENUS ARRIVENT DANS QUELQUES MINUTES<div class="track"><div class="fill"></div></div></div>
@@ -450,7 +449,7 @@ document.querySelectorAll(".tab").forEach(b => b.onclick = () => {
 document.getElementById("genai").onclick = async () => {
   await fetch("/api/generate_ai", {method: "POST", body: "{}"});
   document.getElementById("genbar").classList.add("on");
-  toast("Lot IA lancé — nouvelles images dans 3 à 6 min (~0,50 €)");
+  toast("Génération lancée — 1 post + 1 carrousel (4 à 6 photos) dans 10 à 15 min");
   setTimeout(load, 2000);
 };
 async function publishNow(){

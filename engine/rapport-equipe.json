@@ -1,76 +1,26 @@
 {
-  "date": "2026-09-01T12:54+00:00",
-  "nb_posts": 3,
+  "date": "2026-09-01T13:51+00:00",
+  "nb_posts": 2,
   "social_media_manager": {
-    "strategie": "Rupture avec la dominance de tons clairs/beige des derniers posts en introduisant des teintes plus sombres (noir, chocolat, bordeaux) et de l'énergie street-style éditoriale en extérieur pour éviter les décors d'intérieur répétitifs.",
-    "plan_prochain_lot": [
-      {
-        "robe": "Aurelia",
-        "format": "robe_posee",
-        "concept": "La robe absente",
-        "ambiance": "Respiration sans mannequin : la robe Aurelia sombre délicatement drapée sur un fauteuil vintage en bois sombre, escarpins déposés au sol sur un parquet ancien, baignée par la douce lumière pénombre du soir."
-      },
-      {
-        "robe": "Amara",
-        "format": "carrousel_tour",
-        "concept": "L'ombre portée narrative",
-        "ambiance": "Street-style éditorial à Paris devant une façade en calcaire. La muse porte la robe Amara avec lunettes de soleil et sac en cuir ; lumière d'heure dorée créant les ombres ciselées des balcons sur le tissu. Slide 1 : plein pied en mouvement. Slide 2 : close-up matière/corset. Slide 3 : plein pied de dos."
-      },
-      {
-        "robe": "Mira",
-        "format": "carrousel_lineup",
-        "concept": "Diptyque matière/silhouette",
-        "ambiance": "Décor minimaliste en pierre grise texturée. Panorama studio montrant la même muse répétée dans 3 poses sculpturales dynamiques pour mettre en valeur la structure et les lignes fluides de la robe Mira."
-      }
-    ],
-    "ton_legendes": "Élégant, confidentiel et laconique, axé sur la coupe et le détail sans en faire trop."
+    "erreur": "Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage",
+    "raison": "⛽ Crédits Google AI Studio épuisés : recharge sur ai.studio/projects, puis reclique."
   },
   "directrice_artistique": {
-    "verdicts": [
-      {
-        "numero": 1,
-        "da_ok": false,
-        "note": "Fond studio e-commerce plat sans aucune ombre directionnelle ni tension visuelle, en contradiction totale avec les piliers de la marque."
-      },
-      {
-        "numero": 2,
-        "da_ok": true,
-        "note": "Belle atmosphère chaleureuse aux tons espresso/crème avec une lumière directionnelle de lampe bien travaillée."
-      },
-      {
-        "numero": 3,
-        "da_ok": true,
-        "note": "Jeu d'ombres architecturales et texture jacquard parfaitement sculptée dans une palette taupe/sable impeccable."
-      }
-    ],
-    "avis_global": "La grille est gâchée par le visuel 1 qui casse immédiatement la narration luxe avec son éclairage studio plat et sans concept. Il faut remplacer cette image par un cadrage affirmé et des ombres portées pour préserver l'ADN Shadow Velora."
+    "erreur": "Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage",
+    "raison": "⛽ Crédits Google AI Studio épuisés : recharge sur ai.studio/projects, puis reclique."
   },
   "curatrice_grille": {
-    "ordre_ideal": [
-      1,
-      3,
-      2
-    ],
-    "raison": "Cet ordre évite d'enchaîner deux robes blanches consécutives en intercalant la création olive texturée (3) entre les modèles 1 et 2. Il assure également un flux chromatique progressif du studio épuré vers les tons chauds terreux puis l'ambiance intimiste."
+    "erreur": "Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage",
+    "raison": "⛽ Crédits Google AI Studio épuisés : recharge sur ai.studio/projects, puis reclique."
   },
   "responsable_marque": {
-    "histoire_ok": false,
-    "manque": "La séquence enchaîne trois silhouettes complètes en studio sans alterner avec un gros plan sur la matière, un détail d'atelier ou un ancrage dans l'univers londonien. Le fil conducteur ressemble davantage à un catalogue produit qu'à un récit incarné.",
-    "legendes_a_revoir": [
-      {
-        "numero": 1,
-        "suggestion": "Alba, cut for the woman who never rushes. ~"
-      },
-      {
-        "numero": 3,
-        "suggestion": "Warm neutrals and sculpted lines for moments that endure. ~"
-      }
-    ]
+    "erreur": "Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage",
+    "raison": "⛽ Crédits Google AI Studio épuisés : recharge sur ai.studio/projects, puis reclique."
   },
   "controleuse_budget": {
-    "images_gemini_ce_mois": "7/200",
-    "estimation_gemini": "~0.28 EUR",
+    "images_gemini_ce_mois": "20/200",
+    "estimation_gemini": "~0.80 EUR",
     "note": "Plafond dur actif : la machine s'arrete seule au plafond. Passes Magnific ~0,10 EUR/image en credits separes."
   },
-  "ordre_applique": true
+  "ordre_applique": false
 }
