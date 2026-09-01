@@ -14,22 +14,7 @@
     "She did not follow the season. The season followed her.",
     "{name} ~ closer, then closer again.",
     "Some women light the room. Others dim everything else.",
-    "The evening starts when {name} arrives.",
-    "{name} ~ nothing to prove, everything to remember.",
-    "{name} ~ draped like candlelight.",
-    "Sculpted, not styled. {name}.",
-    "{name} ~ the dress that enters the room first.",
-    "Evening dressing, but make it effortless. {name}.",
-    "{name} ~ quiet on the hanger, unforgettable on.",
-    "Warm neutrals, sculpted lines, {name}.",
-    "Sophistication.",
-    "Some dresses whisper. {name} holds the silence.",
-    "Worn once, remembered longer. {name}.",
-    "{name} ~ designed for the last hour of golden light.",
-    "{name}. Nothing else needed.",
-    "Your next occasion already has a dress. {name}.",
-    "New season, new silhouettes ~ {name}, online now.",
-    "{name} ~ cut for the woman who never rushes."
+    "Evening dressing, but make it effortless. {name}."
   ],
   "used_products": [
     "estella-floral-embroidered-hourglass-gown",
@@ -38,9 +23,11 @@
     "camelia-blooming-petal-gown",
     "aurelia-corset-slit-gown",
     "alba-draped-corset-gown",
-    "selena-the-parisian-flow-dress"
+    "selena-the-parisian-flow-dress",
+    "calista-floral-sequin-mermaid-gown",
+    "bianca-draped-lace-corset-gown"
   ],
-  "last_scene": "interieur-soir",
+  "last_scene": "interieur-moderne-luxe",
   "gen_month": "2026-07",
   "gen_calls": 2
 }
