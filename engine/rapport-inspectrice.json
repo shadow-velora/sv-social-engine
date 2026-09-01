@@ -1,14 +1,8 @@
 {
-  "date": "2026-08-31T23:02+00:00",
+  "date": "2026-09-01T11:56+00:00",
   "alertes": [
-    "Publication du soir jamais partie (cron sauté) — relancée automatiquement",
-    "File courte : 0 post(s) prêt(s) pour les prochains créneaux",
-    "0 carrousel(s) cette semaine (règle : 2/semaine, 1 post + 2 carrousels)",
-    "Robot en échec : « Générer le lot hebdo » (08-31T14:19 UTC) — voir logs GitHub",
-    "Budget presque épuisé : 97/100 générations ce mois (10 GBP = 2 mois minimum)"
+    "Robot en échec : « Publier sur Instagram » (08-31T23:02 UTC) — voir logs GitHub"
   ],
-  "actions_reparation": [
-    "publish.yml déclenché par l'inspectrice"
-  ],
+  "actions_reparation": [],
   "tout_va_bien": false
 }
