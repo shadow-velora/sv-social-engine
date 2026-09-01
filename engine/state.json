@@ -1,7 +1,9 @@
 {
   "used_captions": [],
-  "used_products": [],
-  "last_scene": "studio-blanc",
+  "used_products": [
+    "coat-ebony"
+  ],
+  "last_scene": "interieur-soir",
   "gen_month": "2026-07",
   "gen_calls": 2
 }

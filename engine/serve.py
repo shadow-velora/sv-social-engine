@@ -525,6 +525,6 @@ class Handler(SimpleHTTPRequestHandler):
 if __name__ == "__main__":
     subprocess.run(["git", "pull", "--rebase", "--autostash"], cwd=ROOT, timeout=60, capture_output=True)
     threading.Thread(target=_autopull, daemon=True).start()
-    print(f"SV Cockpit → http://localhost:{PORT}")
+    print(f"Inaya Paris Cockpit → http://localhost:{PORT}")
     subprocess.Popen(["open", f"http://localhost:{PORT}"])
     HTTPServer(("127.0.0.1", PORT), Handler).serve_forever()
