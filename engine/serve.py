@@ -442,12 +442,24 @@ class Handler(SimpleHTTPRequestHandler):
             pa, pb = os.path.join(Q(sa), a), os.path.join(Q(sb), b)
             if not (os.path.isdir(pa) and os.path.isdir(pb)):
                 return self._json({"error": "introuvable"}, 404)
+            if a.count("_") < 2 or b.count("_") < 2 or "swap_tmp" in a or "swap_tmp" in b:
+                return self._json({"error": "élément non échangeable — recharge la page"}, 400)
             prefa, resta = a.split("_", 2)[0] + "_" + a.split("_", 2)[1], a.split("_", 2)[2]
             prefb, restb = b.split("_", 2)[0] + "_" + b.split("_", 2)[1], b.split("_", 2)[2]
-            tmp = os.path.join(Q(sa), "__swap_tmp")
-            os.rename(pa, tmp)
-            os.rename(pb, os.path.join(Q(sb), prefa + "_" + restb))
-            os.rename(tmp, os.path.join(Q(sa), prefb + "_" + resta))
+            import uuid as _uuid
+            tmp = os.path.join(Q(sa), f"__swap_{_uuid.uuid4().hex[:8]}")
+            try:
+                os.rename(pa, tmp)
+                os.rename(pb, os.path.join(Q(sb), prefa + "_" + restb))
+                os.rename(tmp, os.path.join(Q(sa), prefb + "_" + resta))
+            except OSError as e:
+                # rollback : on remet A à sa place si possible, jamais de dossier orphelin
+                try:
+                    if os.path.isdir(tmp) and not os.path.isdir(pa):
+                        os.rename(tmp, pa)
+                except OSError:
+                    pass
+                return self._json({"error": f"échange impossible ({e.__class__.__name__}) — réessaie"}, 500)
             _git_sync_bg(f"swap {resta} <-> {restb}")
             return self._json({"ok": True})
 
