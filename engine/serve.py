@@ -58,6 +58,9 @@ def run_generate():
                     env["FFMPEG"] = cand
                     break
         script = "generate_ai_lot.py" if getattr(run_generate, "ai_mode", False) else "generate.py"
+        if getattr(run_generate, "produit", ""):
+            env["GEN_PRODUIT"] = run_generate.produit
+            run_generate.produit = ""
         subprocess.run(["python3", os.path.join(ENGINE, script)],
                        env=env, cwd=ROOT, timeout=3600)
         # l'équipe se réunit automatiquement après chaque lot
@@ -346,6 +349,7 @@ class Handler(SimpleHTTPRequestHandler):
 
         if self.path == "/api/generate_ai":
             run_generate.ai_mode = True
+            run_generate.produit = (data.get("produit") or "").strip()
             threading.Thread(target=run_generate, daemon=True).start()
             return self._json({"ok": True})
 

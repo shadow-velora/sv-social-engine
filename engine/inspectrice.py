@@ -165,8 +165,8 @@ def main():
 
     # 5. budget
     b = budget()
-    if b >= 85:
-        ALERTES.append(f"Budget presque épuisé : {b}/100 générations ce mois (10 GBP = 2 mois minimum)")
+    if b >= 170:
+        ALERTES.append(f"Budget presque épuisé : {b}/200 générations ce mois — prévoir la recharge Gemini (~10 GBP)")
 
     rapport = {"date": now.isoformat(timespec="minutes"),
                "alertes": ALERTES, "actions_reparation": ACTIONS,

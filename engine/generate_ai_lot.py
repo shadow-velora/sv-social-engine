@@ -22,6 +22,19 @@ def find_product(nom):
             return p
     return None
 
+cible = (os.environ.get("GEN_PRODUIT") or "").strip()
+if cible:
+    p = find_product(cible)
+    if p:
+        print(f"génération ciblée demandée par Laurie : {p['title']}")
+        g._progress(f"post demandé — {p['title'][:40]}")
+        g.make_model_post(p, captions, state, key)
+        core.save_state(state)
+        g._progress("")
+        print("post ciblé produit ✅")
+        raise SystemExit(0)
+    print(f"⚠️ produit « {cible} » introuvable dans le catalogue — lot normal à la place")
+
 executed = 0
 for brief in plan[:4]:
     p = find_product(brief.get("robe", ""))

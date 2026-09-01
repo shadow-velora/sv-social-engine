@@ -444,7 +444,9 @@ document.querySelectorAll(".tab").forEach(b => b.onclick = () => {
   b.classList.add("on"); TAB = b.dataset.t; render();
 });
 document.getElementById("genai").onclick = async () => {
-  await fetch("/api/generate_ai", {method: "POST", body: "{}"});
+  const produit = prompt("Un vêtement précis ?\nTape son nom (ex : Chocolat, Zoé, Ambre…) — ou laisse VIDE pour laisser le moteur choisir selon la saison.", "");
+  if (produit === null) return;
+  await fetch("/api/generate_ai", {method: "POST", body: JSON.stringify({produit: produit.trim()})});
   document.getElementById("genbar").classList.add("on");
   toast("Génération lancée — 1 post + 1 carrousel (4 à 6 photos) dans 10 à 15 min");
   setTimeout(load, 2000);
