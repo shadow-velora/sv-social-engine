@@ -58,7 +58,7 @@ def curl(url):
 
 
 def fetch_products():
-    return json.loads(curl(f"{STORE}/products.json?limit=50"))["products"]
+    return json.loads(curl(f"{STORE}/products.json?limit=250"))["products"]
 
 
 def first_name(title):
@@ -227,15 +227,46 @@ def _blacklist():
     return set()
 
 
+def _saison():
+    """Entrée du calendrier saisonnier pour le mois courant (engine/saisons.json)."""
+    import datetime as _dt
+    try:
+        table = json.load(open(os.path.join(ENGINE, "saisons.json")))
+        return table[str(_dt.date.today().month)]
+    except Exception:
+        return {"favoriser": [], "eviter": [], "couleurs": "", "ambiance": ""}
+
+
+def season_note():
+    """Phrase de contexte saison à injecter dans les briefs IA."""
+    s = _saison()
+    if not s.get("ambiance"):
+        return ""
+    return (f"CONTEXTE SAISON ({s.get('nom', '')}, marché US) : {s['ambiance']}. "
+            f"Couleurs à privilégier : {s['couleurs']}. "
+            "Ne jamais mettre en avant des pièces ou ambiances hors saison.")
+
+
+def _season_weight(p, s):
+    txt = (p.get("title", "") + " " + " ".join(p.get("tags", []))).lower()
+    if any(k in txt for k in s.get("eviter", [])):
+        return 0.15   # hors saison : quasi exclu (repêché seulement si pénurie)
+    if any(k in txt for k in s.get("favoriser", [])):
+        return 3.0    # pièce de saison : fortement prioritaire
+    return 1.0        # neutre (robes de soirée intemporelles)
+
+
 def pick_products(products, state, n):
     products = [p for p in products if p.get("handle") not in _blacklist()]
-    """Tourne sur le catalogue sans répéter avant d'avoir tout couvert."""
+    """Tourne sur le catalogue sans répéter, en privilégiant les pièces de saison."""
     eligible = [p for p in products if p.get("images")]
     fresh = [p for p in eligible if p["handle"] not in state["used_products"]]
     if len(fresh) < n:
         state["used_products"] = []
         fresh = eligible
-    random.shuffle(fresh)
+    s = _saison()
+    # tirage pondéré : poids 3 (saison) / 1 (neutre) / 0.15 (hors saison)
+    fresh = sorted(fresh, key=lambda p: random.random() / _season_weight(p, s))
     chosen = fresh[:n]
     state["used_products"] += [p["handle"] for p in chosen]
     return chosen

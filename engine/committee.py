@@ -115,14 +115,14 @@ def reunion():
     smm = ask(f"""Tu es le Social Media Manager d'Inaya Paris (robes de soirée et pièces élégantes, luxe parisien, marché US). {pb["smm"]}
 Séries signature possibles : {"; ".join(pb["series_types"][:4])}.
 Concepts créatifs disponibles pour les briefs (choisis-en, jamais 'mannequin en studio' brut) : {"; ".join(pb["concepts"][:8])}.
-Catalogue disponible : {robes}.
+Catalogue disponible : {robes}.\n{core.season_note()}
 LEÇONS RÉCENTES DE LA FONDATRICE (à respecter absolument) :
 {lecons}
 L'image jointe = la grille actuelle. Décide le PROGRAMME DE LA SEMAINE (RÈGLE FONDATRICE 03/08, non négociable : exactement 3 contenus — 1 POST SIMPLE + 2 CARROUSELS — publiés lundi, mercredi, vendredi, jamais le week-end) : quelles robes mettre en avant (varie par rapport à la grille), quel format pour le post simple (mannequin_pipeline, buste_produit ou robe_posee = respiration sans mannequin) et 2 briefs carrousel selon les RECETTES DE LA FONDATRICE (3 slides minimum, 5 maximum ; jamais d'images disparates — un carrousel = UN shooting cohérent) : les recettes (grammaire des 21 exemples MDV de la fondatrice) : carrousel_tour = PRIORITAIRE, la plus MDV — une muse, UNE robe, un lieu : plein pied → close-up matière → plein pied de dos ; carrousel_lineup = panorama studio, la même muse répétée, une robe par silhouette, numéros manuscrits, slides continues ; carrousel_porte_pose = une robe portée puis posée fauteuil puis à plat, même lumière. Choisis une recette différente pour chacun des 2 carrousels et varie robes et couleurs.
 Réponds UNIQUEMENT en JSON: {{"strategie": "2 phrases max", "plan_prochain_lot": [{{"robe": "nom exact du catalogue", "format": "mannequin_pipeline, buste_produit, robe_posee, carrousel_tour, carrousel_lineup ou carrousel_porte_pose", "concept": "nom du concept créatif choisi", "ambiance": "brief shooting en 1-2 phrases (lieu, lumière, idée forte)"}}], "ton_legendes": "1 phrase"}}""",
               montage, listing, key)
 
-    da = ask("Tu es la directrice artistique d'Inaya Paris, marque parisienne de robes de soirée. " + pb["da"] + """ DA verrouillée : élégance « Heure Bleue » — noirs profonds, ivoire, lumières chaudes du soir, touches bordeaux, jamais de gris froid, mannequins naturelles. L'image jointe est la grille Instagram prévue.
+    da = ask("Tu es la directrice artistique d'Inaya Paris, marque parisienne de robes de soirée. " + pb["da"] + """ DA verrouillée : élégance « Heure Bleue » — noirs profonds, ivoire, lumières chaudes du soir, touches bordeaux, jamais de gris froid, mannequins naturelles. L'image jointe est la grille Instagram prévue. """ + core.season_note() + """
 Réponds UNIQUEMENT en JSON: {"verdicts": [{"numero": n, "da_ok": true/false, "note": "1 phrase"}], "avis_global": "2 phrases max"}""",
              montage, listing, key)
 
