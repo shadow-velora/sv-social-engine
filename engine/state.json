@@ -28,16 +28,19 @@
     "{name} ~ designed for the last hour of golden light.",
     "{name}. Nothing else needed.",
     "Your next occasion already has a dress. {name}.",
-    "New season, new silhouettes ~ {name}, online now."
+    "New season, new silhouettes ~ {name}, online now.",
+    "{name} ~ cut for the woman who never rushes."
   ],
   "used_products": [
     "estella-floral-embroidered-hourglass-gown",
     "mira-sculpted-mini-muse-dress",
     "rosalia-the-ombre-mermaid-midi-dress",
     "camelia-blooming-petal-gown",
-    "aurelia-corset-slit-gown"
+    "aurelia-corset-slit-gown",
+    "alba-draped-corset-gown",
+    "selena-the-parisian-flow-dress"
   ],
-  "last_scene": "townhouse-londonien",
+  "last_scene": "interieur-soir",
   "gen_month": "2026-07",
   "gen_calls": 2
 }
