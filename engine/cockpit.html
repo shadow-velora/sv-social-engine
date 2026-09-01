@@ -473,11 +473,20 @@ async function publishNow(){
   if (b){ b.disabled = false; b.textContent = "🚀 PUBLIER MAINTENANT"; }
 }
 
+let SWAPPING = false;
 async function swapItems(i, j){
+  if (SWAPPING) return;                     // un échange à la fois — les clics rapides ne se perdent plus en silence
   const order = publishOrder();
   const A = order[i], B = order[j];
-  await fetch("/api/swap", {method: "POST", body: JSON.stringify({a: A.id, stateA: A.state, b: B.id, stateB: B.state})});
-  load();
+  if (!A || !B){ toast("⚠️ La grille vient de changer — réessaie"); load(); return; }
+  SWAPPING = true;
+  try {
+    const r = await fetch("/api/swap", {method: "POST", body: JSON.stringify({a: A.id, stateA: A.state, b: B.id, stateB: B.state})});
+    const res = await r.json().catch(() => ({}));
+    if (!r.ok || res.error){ toast("⚠️ Échange refusé : " + (res.error || r.status) + " — réessaie"); }
+  } catch(e){ toast("⚠️ Le moteur local ne répond pas"); }
+  await load();
+  SWAPPING = false;
 }
 
 load();
