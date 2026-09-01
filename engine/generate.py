@@ -256,7 +256,7 @@ def _season_weight(p, s):
     return 1.0        # neutre (robes de soirée intemporelles)
 
 
-NON_PORTABLE = ("bag", "tote", "clutch", "belt", "scarf", "jewel", "necklace", "earring",
+NON_PORTABLE = ("bag", "tote", "clutch", "jewel", "necklace", "earring",
                 "bracelet", "shoe", "heel", "sandal", "boot", "hat", "accessor", "candle", "sunglass")
 
 
