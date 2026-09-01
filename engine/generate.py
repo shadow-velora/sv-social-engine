@@ -256,8 +256,16 @@ def _season_weight(p, s):
     return 1.0        # neutre (robes de soirée intemporelles)
 
 
+NON_PORTABLE = ("bag", "tote", "clutch", "belt", "scarf", "jewel", "necklace", "earring",
+                "bracelet", "shoe", "heel", "sandal", "boot", "hat", "accessor", "candle", "sunglass")
+
+
 def pick_products(products, state, n):
     products = [p for p in products if p.get("handle") not in _blacklist()]
+    # le pipeline image met en scène des vêtements portés : jamais d'accessoires
+    products = [p for p in products
+                if not any(k in (p.get("title", "") + " " + p.get("product_type", "")).lower()
+                           for k in NON_PORTABLE)]
     """Tourne sur le catalogue sans répéter, en privilégiant les pièces de saison."""
     eligible = [p for p in products if p.get("images")]
     fresh = [p for p in eligible if p["handle"] not in state["used_products"]]
