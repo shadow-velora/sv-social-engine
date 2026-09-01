@@ -107,13 +107,13 @@ def b64_of(img_path):
 
 PROMPT_TEMPLATE = """E-commerce fashion editorial photograph of a NEW fictional model — a DIFFERENT woman from the one in the reference image (do not copy the reference model's face), with similar hair color and skin tone family, but her own real face. A REAL woman, not a supermodel render. Her face is pretty in an ordinary, believable way: distinctly asymmetric features as real faces are, a natural nose, slightly uneven brows, faint expression lines, lips gently closed. Her body is a real woman's body: soft natural arms, a gentle waist, realistic proportions, one shoulder carried a touch higher than the other, posture slightly uneven the way real people stand. Her hair has lived through the day: waves losing their shape, light frizz at the crown, flyaways, a few strands tucked behind one ear, an uneven parting. Minimal barely-there makeup.
 
-The dress is EXACTLY the one in the reference: same color, fabric, neckline, straps, construction and sheen — every detail from the reference only. If the reference fabric carries a pattern (floral jacquard, lace, appliqué, embroidery), that pattern MUST appear with the same density and in the same areas — bodice, hips AND skirt — never a plain smooth version of a patterned dress. The dress stays impeccable, with natural fabric tension and creases where the body moves.
+The garment (dress, coat, knitwear or set) is EXACTLY the one in the reference: same color, fabric, neckline, sleeves, closures, construction and sheen — every detail from the reference only. If the reference fabric carries a pattern (floral jacquard, lace, appliqué, embroidery), that pattern MUST appear with the same density and in the same areas — bodice, hips AND skirt — never a plain smooth version of a patterned garment. The garment stays impeccable, with natural fabric tension and creases where the body moves.
 
 Her skin reads as real, unretouched skin: soft directional window light skims across it at a low angle, revealing pores with varied density (coarser on the nose, finer on the temples). Natural sheen only on the T-zone, matte cheeks, highlights broken by skin micro-relief. Fine vellus hair catches the light on her forearms; real knuckle creases; slight natural redness at nose, elbows and knuckles; subtle tonal transitions between face, neck and chest. Baby hairs soften the hairline. Today specifically: {imperfections}.
 
 An honest outtake caught mid-movement — her body is loose and alive, never stiff, never posed like a statue; weight shifting, a gesture in progress. Her posture stays ELEGANT and open at all times: back long, chin level or slightly lifted, shoulders open — never hunched, never bent forward, never head hanging down. Pose: {pose}
 
-Setting: {scene}. The place is elegant but genuinely inhabited: subtle real-world wear in the decor only, never on the dress.
+Setting: {scene}. The place is elegant but genuinely inhabited: subtle real-world wear in the decor only, never on the garment.
 
 {framing}
 
@@ -236,7 +236,7 @@ def generate_candidate(ref_path, scene, pose, rules, key, imperfections="", fram
     prompt = PROMPT_TEMPLATE.format(pose=pose, scene=scene, rules=rules, framing=framing,
                                     imperfections=imperfections or "visible pores and natural uneven skin tone")
     if len(refs) > 1:
-        prompt += f"\n\nThe first {len(refs)} reference photographs show the SAME dress from different angles (front and back). Reproduce its construction faithfully from EVERY angle: the back of the dress (straps, zip, lacing, neckline depth, seams) must match the back-view reference exactly — never invent the back."
+        prompt += f"\n\nThe first {len(refs)} reference photographs show the SAME garment from different angles (front and back). Reproduce its construction faithfully from EVERY angle: the back of the garment (straps, zip, lacing, buttons, neckline depth, seams) must match the back-view reference exactly — never invent the back."
     prompt += "\n\nThe FINAL reference photograph shows REAL unretouched human skin. This is the exact standard her skin must meet everywhere it is visible: knees and elbows slightly darker with fine creases, visible pores with natural sebum shine in places, patchy tonal variation, faint veins, real joint creases, natural marks. Study it and replicate THIS level of skin realism on her — never smoother than this real photograph."
     # RÈGLE FONDATRICE (Laurie 10/08) : CHAQUE génération s'appuie sur une vraie image
     # exemple du dossier mdv-refs — même décor et même pose autorisés, seule la robe change.
@@ -570,15 +570,15 @@ def make_ai_set(key=None, ffmpeg=None, product=None):
 
 # ---------- FORMATS SANS VISAGE (grille finale, verdict Laurie 26/07) ----------
 
-CHAISE_PROMPT = """Real photograph taken on a full-frame camera with a 50mm lens: this exact dress, empty (no one wearing it), gracefully draped over an antique gilded armchair in a château room with herringbone parquet, warm window light. Reproduce the dress exactly as in the reference: same color, same fabric, same neckline. The empty fabric lies limp with soft natural folds, and the room has a lived-in patina: rubbed gilding, worn parquet, faded upholstery. True photographic rendering — real optical depth of field, accurate fabric weight and weave, natural light falloff — like an unstaged photo from a fashion shoot, never a painting, illustration or 3D render."""
+CHAISE_PROMPT = """Real photograph taken on a full-frame camera with a 50mm lens: this exact garment, empty (no one wearing it), gracefully draped over an antique gilded armchair in a château room with herringbone parquet, warm window light. Reproduce the garment exactly as in the reference: same color, same fabric, same neckline, same sleeves. The empty fabric lies limp with soft natural folds, and the room has a lived-in patina: rubbed gilding, worn parquet, faded upholstery. True photographic rendering — real optical depth of field, accurate fabric weight and weave, natural light falloff — like an unstaged photo from a fashion shoot, never a painting, illustration or 3D render."""
 
-BUST_PROMPT = """Professional e-commerce product photograph. The EXACT dress from the reference image — same color, same fabric, same neckline, same straps, same construction, same sheen, every detail from the reference only — displayed on a cream linen tailor's dress form (a sewing mannequin bust, NO person, no head, no limbs).
+BUST_PROMPT = """Professional e-commerce product photograph. The EXACT garment from the reference image — same color, same fabric, same neckline, same sleeves or straps, same construction, same sheen, every detail from the reference only — displayed on a cream linen tailor's dress form (a sewing mannequin bust, NO person, no head, no limbs).
 
 Setting: a real working studio — warm sand seamless paper backdrop with a soft wrinkle, the dress form standing on a worn wooden floor, soft window light from the left casting honest shadows. The dress shows natural fabric behaviour: gentle creases from handling, the hem falling naturally. Real-world subtlety: the backdrop slightly uneven in tone, one faint tape mark on the floor.
 
 Quiet luxury product photography, crisp and sharp, natural true-to-life muted colors, vertical 4:5 composition, the entire garment visible with generous margin. No text, no logos, no person."""
 
-FLATLAY_PROMPT = """Top-down flat-lay editorial photograph. The EXACT dress from the reference image — same color, same fabric, same neckline, same construction, every detail from the reference only — laid carefully on a warm sand linen sheet, artfully but naturally arranged with soft real fabric folds and creases, one strap casually off-line as if just placed there. A simple wooden hanger rests beside it.
+FLATLAY_PROMPT = """Top-down flat-lay editorial photograph. The EXACT garment from the reference image — same color, same fabric, same neckline, same sleeves, same construction, every detail from the reference only — laid carefully on a warm sand linen sheet, artfully but naturally arranged with soft real fabric folds and creases, one sleeve or strap casually off-line as if just placed there. A simple wooden hanger rests beside it.
 
 Soft daylight from one side casting honest shadows in the fabric folds. The linen underneath shows natural wrinkles. Quiet luxury flat-lay, crisp and sharp, natural muted colors, vertical 4:5 composition. No text, no logos, no person, no other products."""
 
@@ -1012,6 +1012,7 @@ def make_carousel_porte_pose(product, captions, state, key):
                     if dd:
                         raw = base64.b64decode(dd["data"])
             if not raw:
+                journal.append({f"{fname} essai {attempt}": f"pas d'image générée : {str(resp.get('error') or resp.get('candidates', [{}])[0].get('finishReason', '?'))[:120]}"})
                 continue
             cp = os.path.join(d, fname)
             save_jpeg(raw, cp)
