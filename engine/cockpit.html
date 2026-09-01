@@ -212,7 +212,13 @@ async function load(){
 
 function mediaHtml(it){
   if (it.type === "reel") return `<video src="${it.media[0]}" controls muted loop playsinline></video>`;
-  if (it.media.length > 1) return `<div class="caro">` + it.media.map(m => `<img src="${m}" onclick="openZoom('${m}')" style="cursor:zoom-in">`).join("") + `</div>`;
+  if (it.media.length > 1){
+    const gz = i => 'openZoomSet(' + JSON.stringify(it.media).replace(/"/g, "&quot;") + ', ' + i + ')';
+    return `<img src="${it.media[0]}" onclick="${gz(0)}" style="cursor:zoom-in">
+      <div style="display:flex;gap:4px;margin-top:4px">` +
+      it.media.map((m, i) => `<img src="${m}" onclick="${gz(i)}" style="width:${(100/it.media.length).toFixed(1)}%;aspect-ratio:4/5;object-fit:cover;border-radius:5px;cursor:zoom-in;border:1px solid #322e2c">`).join("") +
+      `</div>`;
+  }
   return `<img src="${it.media[0]}" onclick="openZoom('${it.media[0]}')" style="cursor:zoom-in">`;
 }
 let ZOOMSET = [], ZOOMIDX = 0;
