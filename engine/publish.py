@@ -152,8 +152,8 @@ def final_check(folder):
         media = os.path.join(folder, slides[0])
     import base64
     img = base64.b64encode(open(media, "rb").read()).decode()
-    prompt = ("Tu es le contrôle qualité FINAL de Shadow Velora (robes luxe discret, palette sable/crème/"
-              "taupe/espresso). Cette image va être publiée sur Instagram SANS validation humaine. "
+    prompt = ("Tu es le contrôle qualité FINAL d'Inaya Paris (robes de soirée, élégance parisienne, "
+              "tons profonds et lumières chaudes). Cette image va être publiée sur Instagram SANS validation humaine. "
               "Bloque UNIQUEMENT en cas de défaut grave : rendu peinture/illustration/3D évident, peau "
               "plastique de poupée, anomalie anatomique (mains, membres), gros texte plaqué au centre de "
               "l'image, image floue ou granuleuse, robe visiblement déformée ou incohérente. Un style "

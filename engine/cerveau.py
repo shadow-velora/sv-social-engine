@@ -65,7 +65,7 @@ def contexte(role="", handle="", pour_texte=False):
     if rej:
         parties.append("CE QU'ELLE A REFUSÉ RÉCEMMENT, DANS SES MOTS : " + " · ".join(rej))
     if pour_texte:
-        parties.append("TON DE MARQUE : Shadow Velora, luxe discret, « Designed in London ». "
+        parties.append("TON DE MARQUE : Inaya Paris, élégance parisienne, robes de soirée et pièces fortes. "
                        "Anglais, phrases courtes, aucun emoji, jamais de superlatif creux, "
                        "jamais de promesse invérifiable. Signature possible : ~")
     return "\n".join(parties)

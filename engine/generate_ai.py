@@ -2,7 +2,7 @@
 """
 SV Social Engine — Génération de NOUVELLES images (Nano Banana / Gemini API).
 Part des vraies photos produits (référence), applique les recettes verrouillées
-DA Shadow (anti-Barbie, robe à l'identique), fait tourner scènes et poses,
+DA Inaya Paris (anti-Barbie, robe à l'identique), fait tourner scènes et poses,
 puis passe chaque image au CONTRÔLEUR anti-fake (2e IA) avant de la déposer
 dans queue/pending/ (Cockpit).
 
@@ -592,8 +592,8 @@ def make_muse_carousel(products3, captions, state, key):
         os.remove(rp)
     names = " · ".join(core.first_name(p["title"]) for p in products3)
     core.write_meta(d, "carousel", "Look 1, 2 or 3 ? ~",
-                    f"Lookbook carousel: the same muse in an aligned studio series wearing three Shadow Velora dresses: {names}.",
-                    "#shadowvelora #quietluxury #eveningdress")
+                    f"Lookbook carousel: the same muse in an aligned studio series wearing three Inaya Paris dresses: {names}.",
+                    "#inayaparis #quietluxury #eveningdress")
     print(f"✅ carrousel lookbook aligné : {names}")
     return _livrer(d)
 
@@ -749,7 +749,7 @@ def make_carousel_lineup(products3, captions, state, key):
     names = " · ".join(core.first_name(p["title"]) for p in products3)
     core.write_meta(d, "carousel", "Look 1, 2 or 3 ? ~",
                     f"Lookbook lineup carousel: the same muse three times on one seamless studio panorama, wearing {names}, numbered looks, sliced across the slides.",
-                    "#shadowvelora #quietluxury #eveningdress")
+                    "#inayaparis #quietluxury #eveningdress")
     print(f"✅ carrousel lineup panorama : {names} ({n} slides)")
     return _livrer(d)
 
@@ -948,7 +948,7 @@ def make_carousel_porte_pose(product, captions, state, key):
     _fiabilite(product["handle"], True)
     core.write_meta(d, "carousel", f"Worn, then at rest. The {name}. ~",
                     f"Carousel from one shooting: the {name} dress worn by the muse, then draped over an antique armchair, then laid flat — same warm light throughout.",
-                    "#shadowvelora #quietluxury #eveningdress")
+                    "#inayaparis #quietluxury #eveningdress")
     print(f"✅ carrousel porté+posé : {name}")
     return _livrer(d)
 

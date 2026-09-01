@@ -28,8 +28,8 @@ def main():
                           for p in core.fetch_products()[:40])
     except Exception:
         pass
-    prompt = f"""Tu écris les légendes Instagram de Shadow Velora (robes luxe discret type Manière De Voir, "Designed in London").
-STYLE MAISON (non négociable) : anglais, phrases courtes staccato, le signe ~ comme respiration, minimal et élégant, jamais de vente agressive, jamais d'emojis, jamais de tirets. Option : finir par une question d'engagement discrète. Dernière ligne séparée : #shadowvelora + 2 à 4 hashtags max parmi #eveningdress #quietluxury #parisianstyle #dresslover #londonstyle.
+    prompt = f"""Tu écris les légendes Instagram d'Inaya Paris (robes de soirée et pièces élégantes, luxe parisien, marché US).
+STYLE MAISON (non négociable) : anglais, phrases courtes staccato, le signe ~ comme respiration, minimal et élégant, jamais de vente agressive, jamais d'emojis, jamais de tirets. Option : finir par une question d'engagement discrète. Dernière ligne séparée : #inayaparis + 2 à 4 hashtags max parmi #eveningdress #quietluxury #parisianstyle #dresslover #occasionwear.
 EXEMPLES DU STYLE MAISON : {json.dumps(exemples, ensure_ascii=False)}
 CATALOGUE RÉEL (si un nom de robe est cité dans la demande, appuie-toi sur son vrai nom complet — n'invente JAMAIS de détails produit non fournis) :
 {robes}

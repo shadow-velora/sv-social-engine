@@ -23,7 +23,7 @@ import cerveau
 PHRASES = [
     "for the moments that matter.",
     "quietly unforgettable.",
-    "designed in London.",
+    "designed in Paris.",
     "the art of the evening.",
     "some dresses speak softly.",
 ]
@@ -82,7 +82,7 @@ def main():
     phrase = random.choice(PHRASES)
     reel_slideshow.build(os.path.join(d, "media.mp4"), phrase, keepers)
     names = " & ".join(core.first_name(p["title"]) for p in duo)
-    legende = f"Blink and you miss it. {names}, designed in London. ~"
+    legende = f"Blink and you miss it. {names}, designed in Paris. ~"
     try:
         import urllib.request as _u
         q = (cerveau.contexte(role="cm", pour_texte=True) + "\n\nWrite ONE Instagram caption (max 12 words) "
@@ -98,7 +98,7 @@ def main():
     json.dump({
         "type": "reel",
         "legende": legende,
-        "hashtags": "#shadowvelora #quietluxury #eveningdress #fashionreels #dressinspo #oldmoneystyle",
+        "hashtags": "#inayaparis #quietluxury #eveningdress #fashionreels #dressinspo #parisianstyle",
         "consigne_musique": "Poste avec un son TENDANCE Instagram (onglet sons > tendances, style mode/élégant, rythme rapide).",
         "images": len(keepers),
     }, open(os.path.join(d, "kit.json"), "w"), indent=2, ensure_ascii=False)

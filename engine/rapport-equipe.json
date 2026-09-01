@@ -1,111 +1,75 @@
 {
-  "date": "2026-07-27T11:40+00:00",
-  "nb_posts": 8,
+  "date": "2026-09-01T12:54+00:00",
+  "nb_posts": 3,
   "social_media_manager": {
-    "strategie": "Rupture visuelle immédiate après la dominance de blancs et de jaunes avec l'introduction de teintes sombres et de nouveaux visages pour dynamiser la grille. Accent mis sur le réalisme de la peau sans retouche AI et sur les formats à haut potentiel de sauvegarde.",
+    "strategie": "Rupture avec la dominance de tons clairs/beige des derniers posts en introduisant des teintes plus sombres (noir, chocolat, bordeaux) et de l'énergie street-style éditoriale en extérieur pour éviter les décors d'intérieur répétitifs.",
     "plan_prochain_lot": [
       {
-        "robe": "Nerina",
-        "format": "mannequin_pipeline",
-        "concept": "L'heure dorée",
-        "ambiance": "Intérieur londonien feutré en fin de journée, une unique lumière chaude rasante sculpte le satin noir et laisse apparaître la texture naturelle du grain de peau."
+        "robe": "Aurelia",
+        "format": "robe_posee",
+        "concept": "La robe absente",
+        "ambiance": "Respiration sans mannequin : la robe Aurelia sombre délicatement drapée sur un fauteuil vintage en bois sombre, escarpins déposés au sol sur un parquet ancien, baignée par la douce lumière pénombre du soir."
       },
       {
-        "robe": "Calista",
-        "format": "buste_produit",
+        "robe": "Amara",
+        "format": "carrousel_tour",
         "concept": "L'ombre portée narrative",
-        "ambiance": "Cadrage serré sur la découpe du décolleté, ombres de feuillages projetées sur le tissu structurel dans une cour intérieure en pierre."
+        "ambiance": "Street-style éditorial à Paris devant une façade en calcaire. La muse porte la robe Amara avec lunettes de soleil et sac en cuir ; lumière d'heure dorée créant les ombres ciselées des balcons sur le tissu. Slide 1 : plein pied en mouvement. Slide 2 : close-up matière/corset. Slide 3 : plein pied de dos."
+      },
+      {
+        "robe": "Mira",
+        "format": "carrousel_lineup",
+        "concept": "Diptyque matière/silhouette",
+        "ambiance": "Décor minimaliste en pierre grise texturée. Panorama studio montrant la même muse répétée dans 3 poses sculpturales dynamiques pour mettre en valeur la structure et les lignes fluides de la robe Mira."
       }
     ],
-    "ton_legendes": "Épuré, concis et empreint d'une élégance discrète londonienne, incitant à l'imagination plutôt qu'à la vente directe."
+    "ton_legendes": "Élégant, confidentiel et laconique, axé sur la coupe et le détail sans en faire trop."
   },
   "directrice_artistique": {
     "verdicts": [
       {
         "numero": 1,
-        "da_ok": true,
-        "note": "Présentation du logo minimale et cohérente avec l'univers de la marque."
+        "da_ok": false,
+        "note": "Fond studio e-commerce plat sans aucune ombre directionnelle ni tension visuelle, en contradiction totale avec les piliers de la marque."
       },
       {
         "numero": 2,
         "da_ok": true,
-        "note": "Lumière directionnelle réussie mettant bien en valeur le drapé et l'ombre."
+        "note": "Belle atmosphère chaleureuse aux tons espresso/crème avec une lumière directionnelle de lampe bien travaillée."
       },
       {
         "numero": 3,
-        "da_ok": false,
-        "note": "Éclairage trop diffus et fond urbain manquant de chaleur."
-      },
-      {
-        "numero": 4,
         "da_ok": true,
-        "note": "Bonne tension avec la pierre et relief du tissu bien visible."
-      },
-      {
-        "numero": 5,
-        "da_ok": true,
-        "note": "Notion d'échelle intéressante dans l'escalier malgré une lumière un peu douce."
-      },
-      {
-        "numero": 6,
-        "da_ok": false,
-        "note": "Fond gris froid non conforme et manque d'ombres marquées."
-      },
-      {
-        "numero": 7,
-        "da_ok": true,
-        "note": "Palette espresso respectée et ombre portée bien définie."
-      },
-      {
-        "numero": 8,
-        "da_ok": true,
-        "note": "Concept d'absence efficace soutenu par une belle lumière rasante."
+        "note": "Jeu d'ombres architecturales et texture jacquard parfaitement sculptée dans une palette taupe/sable impeccable."
       }
     ],
-    "avis_global": "L'ensemble de la grille conserve une belle unité visuelle autour des tons chauds et des matières. Quelques ajustements sont nécessaires sur les fonds froids et les lumières trop plates."
+    "avis_global": "La grille est gâchée par le visuel 1 qui casse immédiatement la narration luxe avec son éclairage studio plat et sans concept. Il faut remplacer cette image par un cadrage affirmé et des ombres portées pour préserver l'ADN Shadow Velora."
   },
   "curatrice_grille": {
     "ordre_ideal": [
       1,
-      7,
-      2,
-      8,
       3,
-      6,
-      4,
-      5
+      2
     ],
-    "raison": "Le logo ouvre le récit de marque, suivi d'une alternance fluide entre silhouettes jaunes et ivoires sans jamais juxtaposer deux plans mannequins similaires. La robe posée sur le fauteuil sert de respiration centrale pour équilibrer la grille visuellement et chromatiquement."
+    "raison": "Cet ordre évite d'enchaîner deux robes blanches consécutives en intercalant la création olive texturée (3) entre les modèles 1 et 2. Il assure également un flux chromatique progressif du studio épuré vers les tons chauds terreux puis l'ambiance intimiste."
   },
   "responsable_marque": {
     "histoire_ok": false,
-    "manque": "La séquence s'apparente davantage à un catalogue de produits qu'à un récit de marque. Il manque des zooms sur les matières, des détails d'atelier et un ancrage londonien pour incarner pleinement l'univers de Shadow Velora.",
+    "manque": "La séquence enchaîne trois silhouettes complètes en studio sans alterner avec un gros plan sur la matière, un détail d'atelier ou un ancrage dans l'univers londonien. Le fil conducteur ressemble davantage à un catalogue produit qu'à un récit incarné.",
     "legendes_a_revoir": [
       {
+        "numero": 1,
+        "suggestion": "Alba, cut for the woman who never rushes. ~"
+      },
+      {
         "numero": 3,
-        "suggestion": "Mira, the dress that enters the room first ~"
-      },
-      {
-        "numero": 4,
-        "suggestion": "Alia, designed for the last hour of golden light ~"
-      },
-      {
-        "numero": 5,
-        "suggestion": "Sculpted, not styled. Selena ~"
-      },
-      {
-        "numero": 6,
-        "suggestion": "Bianca, nothing to prove, everything to remember ~"
-      },
-      {
-        "numero": 7,
-        "suggestion": "Amara, draped like candlelight ~"
+        "suggestion": "Warm neutrals and sculpted lines for moments that endure. ~"
       }
     ]
   },
   "controleuse_budget": {
-    "images_gemini_ce_mois": "69/120",
-    "estimation_gemini": "~2.76 EUR",
+    "images_gemini_ce_mois": "7/200",
+    "estimation_gemini": "~0.28 EUR",
     "note": "Plafond dur actif : la machine s'arrete seule au plafond. Passes Magnific ~0,10 EUR/image en credits separes."
   },
   "ordre_applique": true

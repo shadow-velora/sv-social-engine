@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Recréation des références DA (dossier mdv-refs) avec les robes Shadow Velora.
+Recréation des références DA (dossier mdv-refs) avec les robes de la boutique (source Inaya désormais).
 Chaque brief = décor + lumière + styling + pose + cadrage copiés d'une vraie
 image de campagne validée par Laurie. Usage : python3 engine/recreate_mdv.py [n1 n2 ...]
 """

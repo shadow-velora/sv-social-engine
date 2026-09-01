@@ -23,7 +23,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 QUEUE = os.path.join(ROOT, "queue", "pending")
 ENGINE = os.path.dirname(os.path.abspath(__file__))
 
-STORE = "https://shadowvelora.com"
+STORE = "https://www.inaya-paris.com"
 ESPRESSO = (75, 62, 60)
 CREAM = (255, 249, 232)
 GOLD = (168, 151, 127)
@@ -171,7 +171,7 @@ def make_band(captions, state):
         wpx = dr.textbbox((0, 0), ln, font=f)[2]
         dr.text(((W - wpx) // 2, y), ln, font=f, fill=CREAM)
         y += 88
-    sig = "SHADOW VELORA"
+    sig = "INAYA PARIS"
     fs = F_REG(28)
     wpx = dr.textbbox((0, 0), sig, font=fs)[2]
     dr.text(((W - wpx) // 2, y + 55), sig, font=fs, fill=GOLD)

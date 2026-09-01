@@ -29,7 +29,7 @@ def consignes(media_path, alt, key):
     """Demande au stratège IA le texte + le sondage de la story (en anglais)."""
     img = base64.b64encode(open(media_path, "rb").read()).decode()
     prompt = (cerveau.contexte(role="cm", pour_texte=True) + "\n\n"
-              "You are the social media manager of Shadow Velora, writing this week's Instagram STORY "
+              "You are the social media manager of Inaya Paris, writing this week's Instagram STORY "
               "SEQUENCE. Context of the image: " + (alt or "brand visual") + ". "
               "A story sequence is three frames that build: (1) a tight detail that creates curiosity, "
               "(2) the full look revealed, (3) the same look with a link sticker to shop. "
@@ -113,7 +113,7 @@ def main():
     if os.path.exists(mp):
         alt = json.load(open(mp)).get("alt", "")
     elif src_path and "bibliotheque" in src_path:
-        alt = "unpublished Shadow Velora image, never seen by the audience"
+        alt = "unpublished Inaya Paris image, never seen by the audience"
     try:
         c = consignes(os.path.join(d, "frame-2.jpg"), alt, key)
     except Exception as e:
@@ -126,7 +126,7 @@ def main():
     state["faites"].append(cible)
     json.dump(state, open(STATE, "w"), indent=2)
     sh("git", "config", "user.name", "sv-engine")
-    sh("git", "config", "user.email", "engine@shadowvelora.com")
+    sh("git", "config", "user.email", "engine@inaya-paris.com")
     sh("git", "add", "queue/stories", "engine/story-state.json")
     sh("git", "commit", "-m", f"kit story {stamp}")
     sh("git", "push")

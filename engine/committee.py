@@ -112,7 +112,7 @@ def reunion():
         lecons = "\n".join("- " + json.loads(l).get("raison", "") for l in lines)
     robes = ", ".join(sorted({core.first_name(x["title"]) for x in core.fetch_products() if x.get("images")}))
 
-    smm = ask(f"""Tu es le Social Media Manager de Shadow Velora (robes luxe discret type Manière De Voir, "Designed in London"). {pb["smm"]}
+    smm = ask(f"""Tu es le Social Media Manager d'Inaya Paris (robes de soirée et pièces élégantes, luxe parisien, marché US). {pb["smm"]}
 Séries signature possibles : {"; ".join(pb["series_types"][:4])}.
 Concepts créatifs disponibles pour les briefs (choisis-en, jamais 'mannequin en studio' brut) : {"; ".join(pb["concepts"][:8])}.
 Catalogue disponible : {robes}.
@@ -122,15 +122,15 @@ L'image jointe = la grille actuelle. Décide le PROGRAMME DE LA SEMAINE (RÈGLE 
 Réponds UNIQUEMENT en JSON: {{"strategie": "2 phrases max", "plan_prochain_lot": [{{"robe": "nom exact du catalogue", "format": "mannequin_pipeline, buste_produit, robe_posee, carrousel_tour, carrousel_lineup ou carrousel_porte_pose", "concept": "nom du concept créatif choisi", "ambiance": "brief shooting en 1-2 phrases (lieu, lumière, idée forte)"}}], "ton_legendes": "1 phrase"}}""",
               montage, listing, key)
 
-    da = ask("Tu es la directrice artistique de Shadow Velora, marque de robes luxe discret inspirée de Manière De Voir. " + pb["da"] + """ DA verrouillée : palette sable/crème/taupe/espresso, jamais de gris froid, mannequins naturelles. L'image jointe est la grille Instagram prévue.
+    da = ask("Tu es la directrice artistique d'Inaya Paris, marque parisienne de robes de soirée. " + pb["da"] + """ DA verrouillée : élégance « Heure Bleue » — noirs profonds, ivoire, lumières chaudes du soir, touches bordeaux, jamais de gris froid, mannequins naturelles. L'image jointe est la grille Instagram prévue.
 Réponds UNIQUEMENT en JSON: {"verdicts": [{"numero": n, "da_ok": true/false, "note": "1 phrase"}], "avis_global": "2 phrases max"}""",
              montage, listing, key)
 
-    cura = ask("Tu es la curatrice de grille Instagram de Shadow Velora (luxe discret type Manière De Voir). " + pb["curatrice"] + """ L'image jointe = la grille prévue (3 colonnes, le dernier publié en haut à gauche).
+    cura = ask("Tu es la curatrice de grille Instagram d'Inaya Paris (luxe parisien, robes de soirée). " + pb["curatrice"] + """ L'image jointe = la grille prévue (3 colonnes, le dernier publié en haut à gauche).
 Réponds UNIQUEMENT en JSON: {"ordre_ideal": [liste des numéros actuels dans le NOUVEL ordre de publication souhaité, ex [1,3,2,4,5,6]], "raison": "2 phrases max"}""",
               montage, listing, key)
 
-    marque = ask("""Tu es la responsable de la marque Shadow Velora ("Designed in London", robes pour les moments qui comptent, ton sobre sans emoji, légendes 1 ligne + signature ~). Évalue si cette séquence de posts RACONTE la marque (présentation, matière, produit, femme) ou si c'est un simple empilement. Vérifie les légendes listées.
+    marque = ask("""Tu es la responsable de la marque Inaya Paris (robes pour les moments qui comptent, ton sobre sans emoji, légendes 1 ligne + signature ~). Évalue si cette séquence de posts RACONTE la marque (présentation, matière, produit, femme) ou si c'est un simple empilement. Vérifie les légendes listées.
 Réponds UNIQUEMENT en JSON: {"histoire_ok": true/false, "manque": "ce qui manque au récit, 1-2 phrases", "legendes_a_revoir": [{"numero": n, "suggestion": "nouvelle légende EN"}]}""",
                montage, listing, key)
 
@@ -235,7 +235,7 @@ def curate_only():
         f"{i+1}. [{'PUBLIÉ - FIGÉ' if i < len(frozen) else 'libre'}] {it['id']}"
         for i, it in enumerate(items))
     seed = random.randint(1000, 9999)
-    cura = ask("Tu es la curatrice de grille Instagram de Shadow Velora (luxe discret type Manière De Voir). " + pb["curatrice"] + f""" L'image jointe = la grille prévue (3 colonnes, dernier publié en haut à gauche). Les posts marqués PUBLIÉ - FIGÉ sont déjà en ligne : ils ne bougent JAMAIS. Propose un NOUVEL agencement UNIQUEMENT pour les posts 'libres'. Variation créative n°{seed} : propose un parti pris DIFFÉRENT des propositions précédentes (autre rythme, autre logique de respiration), tout en respectant l'alternance types/couleurs.
+    cura = ask("Tu es la curatrice de grille Instagram d'Inaya Paris (luxe parisien, robes de soirée). " + pb["curatrice"] + f""" L'image jointe = la grille prévue (3 colonnes, dernier publié en haut à gauche). Les posts marqués PUBLIÉ - FIGÉ sont déjà en ligne : ils ne bougent JAMAIS. Propose un NOUVEL agencement UNIQUEMENT pour les posts 'libres'. Variation créative n°{seed} : propose un parti pris DIFFÉRENT des propositions précédentes (autre rythme, autre logique de respiration), tout en respectant l'alternance types/couleurs.
 Réponds UNIQUEMENT en JSON: {{"ordre_libres": [numéros actuels des posts libres dans le NOUVEL ordre de publication, ex [{len(frozen)+2}, {len(frozen)+1}]], "raison": "2 phrases max"}}""",
                montage, listing, key)
     os.remove(montage)
