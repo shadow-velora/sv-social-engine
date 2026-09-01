@@ -149,6 +149,54 @@ def _skin_ref():
     return {"inline_data": {"mime_type": mime, "data": b64_of(p)}}
 
 
+
+
+def saison_verdict(p, key):
+    """Raisonneur saison : regarde la PHOTO du vêtement et juge si c'est de saison.
+    Fail-open : au moindre pépin technique on laisse passer (ne jamais bloquer la prod)."""
+    try:
+        s = core._saison()
+        if not s.get("ambiance"):
+            return True
+        import tempfile
+        ref = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
+        core.fetch_image(p["images"][0]["src"], 500).save(ref.name, quality=85)
+        prompt = (f"Nous sommes en {s.get('nom','')} (marché US). Saison : {s['ambiance']}. "
+                  "Regarde la photo de ce vêtement. Peut-on le porter et le publier sur Instagram "
+                  "ce mois-ci sans paraître hors saison ? Les robes de soirée élégantes restent valables "
+                  "toute l'année ; les pièces clairement estivales (robe légère de plein été, lin, plage, "
+                  "imprimés très solaires) ne le sont pas en automne/hiver. "
+                  'Réponds UNIQUEMENT en JSON : {"de_saison": true/false, "raison": "3 mots"}')
+        parts = [{"text": prompt},
+                 {"inline_data": {"mime_type": "image/jpeg", "data": b64_of(ref.name)}}]
+        resp = gemini(CHECK_MODEL, parts, key)
+        txt = resp["candidates"][0]["content"]["parts"][0]["text"]
+        v = json.loads(txt[txt.find("{"):txt.rfind("}") + 1])
+        ok = bool(v.get("de_saison", True))
+        if not ok:
+            print(f"🍂 hors saison écarté : {p['title'][:50]} ({v.get('raison','')})")
+        return ok
+    except Exception:
+        return True
+
+
+def pick_products_saison(products, state, n, key):
+    """Tirage pondéré PUIS validation visuelle par le raisonneur saison."""
+    chosen, tries = [], 0
+    while len(chosen) < n and tries < n * 4:
+        cand = core.pick_products(products, state, 1)[0]
+        tries += 1
+        if any(c["handle"] == cand["handle"] for c in chosen):
+            continue
+        if saison_verdict(cand, key):
+            chosen.append(cand)
+    while len(chosen) < n:  # pénurie : on complète sans juger plutôt que bloquer
+        cand = core.pick_products(products, state, 1)[0]
+        if not any(c["handle"] == cand["handle"] for c in chosen):
+            chosen.append(cand)
+    return chosen
+
+
 def generate_candidate(ref_path, scene, pose, rules, key, imperfections="", framing=None):
     _budget_guard()
     refs = ref_path if isinstance(ref_path, (list, tuple)) else [ref_path]
@@ -305,7 +353,7 @@ def main(n_posts=2):
     captions = core.load_captions()
     state = core.load_state()
     products = [p for p in core.fetch_products() if p.get("images")]
-    chosen = core.pick_products(products, state, n_posts)
+    chosen = pick_products_saison(products, state, n_posts, key)
     last_scene = state.get("last_scene")
 
     os.makedirs(PENDING, exist_ok=True)
@@ -406,7 +454,7 @@ def make_ai_set(key=None, ffmpeg=None, product=None):
     captions = core.load_captions()
     state = core.load_state()
     products = [p for p in core.fetch_products() if p.get("images")]
-    p = product or core.pick_products(products, state, 1)[0]
+    p = product or pick_products_saison(products, state, 1, key)[0]
     name = core.first_name(p["title"])
     scene = pick_scene(cfg["scenes"], state.get("last_scene"))
     state["last_scene"] = scene["id"]
