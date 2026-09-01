@@ -1018,7 +1018,7 @@ def make_carousel_porte_pose(product, captions, state, key):
         _progress(f"carrousel {name} — {fname.replace('.jpg', '')}/3")
         ok = False
         for attempt in (1, 2, 3):
-            prompt = variantes[attempt - 1] + lecons_texte(product["handle"])
+            prompt = variantes[attempt - 1]  # JAMAIS de leçons mannequin sur un shot sans personne (refus IMAGE_OTHER)
             _budget_guard()
             parts = [{"text": prompt},
                      {"inline_data": {"mime_type": "image/jpeg", "data": b64_of(refs[0])}}]
@@ -1067,7 +1067,7 @@ def make_no_face(kind, product, captions, state, key, correction=""):
     d = _atelier_dir(f"{stamp}_ai-{kind}_{product['handle']}")
     ref = os.path.join(d, "reference.jpg")
     core.fetch_image(product["images"][0]["src"], 1200).save(ref, quality=92)
-    prompt = {"bust": BUST_PROMPT, "chaise": CHAISE_PROMPT}.get(kind, FLATLAY_PROMPT) + lecons_texte(product["handle"])
+    prompt = {"bust": BUST_PROMPT, "chaise": CHAISE_PROMPT}.get(kind, FLATLAY_PROMPT)  # sans leçons mannequin (shot sans personne)
     if correction:
         prompt += " CRITICAL correction requested by the brand founder after a rejected attempt: " + correction + ". Address this point precisely."
     kept, verdicts = None, []
