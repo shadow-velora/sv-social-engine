@@ -44,7 +44,7 @@ import generate as core  # curl, fetch_products, fetch_image, cover, captions, s
 
 IMAGE_MODEL = "gemini-2.5-flash-image"
 MAX_GEN_PER_MONTH = 200  # relevé 01/09 (demande Laurie : le moteur ne doit JAMAIS s'arrêter) — prévoir recharge ~10 GBP/mois du crédit Gemini
-CHECK_MODEL = "gemini-flash-latest"
+CHECK_MODEL = "gemini-3.6-flash"
 API = "https://generativelanguage.googleapis.com/v1beta/models"
 
 

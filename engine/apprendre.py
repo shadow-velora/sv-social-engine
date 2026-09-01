@@ -36,7 +36,7 @@ def main(item, raison):
               'Answer ONLY in JSON: {"rule": "... or SKIP", "scope": "GLOBAL or DRESS"}')
     body = json.dumps({"contents": [{"parts": [{"text": prompt}]}]}).encode()
     req = urllib.request.Request(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" + cle_api(),
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=" + cle_api(),
         data=body, headers={"Content-Type": "application/json"})
     r = json.loads(urllib.request.urlopen(req, timeout=60).read())
     txt = r["candidates"][0]["content"]["parts"][0]["text"]

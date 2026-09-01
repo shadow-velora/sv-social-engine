@@ -41,7 +41,7 @@ def consignes(media_path, alt, key):
     body = json.dumps({"contents": [{"parts": [
         {"text": prompt}, {"inline_data": {"mime_type": "image/jpeg", "data": img}}]}]}).encode()
     req = urllib.request.Request(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" + key,
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=" + key,
         data=body, headers={"Content-Type": "application/json"})
     r = json.loads(urllib.request.urlopen(req, timeout=90).read())
     txt = r["candidates"][0]["content"]["parts"][0]["text"]

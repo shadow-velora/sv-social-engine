@@ -88,7 +88,7 @@ def main():
         q = (cerveau.contexte(role="cm", pour_texte=True) + "\n\nWrite ONE Instagram caption (max 12 words) "
              f"for a fast-cut reel showing the {names} dress. Answer with the caption only, no quotes.")
         body = json.dumps({"contents": [{"parts": [{"text": q}]}]}).encode()
-        rq = _u.Request("https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" + key,
+        rq = _u.Request("https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=" + key,
                         data=body, headers={"Content-Type": "application/json"})
         txt = json.loads(_u.urlopen(rq, timeout=60).read())["candidates"][0]["content"]["parts"][0]["text"].strip()
         if txt:
