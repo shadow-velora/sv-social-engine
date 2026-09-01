@@ -205,12 +205,40 @@ def main():
         print("File vide — rien à publier.")
         sys.exit(0)
 
+    # ---- horaires : heure de Paris, personnalisés prioritaires, défauts sur créneau lun/mer/ven 19h ----
+    from zoneinfo import ZoneInfo as _ZI
+    _now_paris = _dt.now(_ZI("Europe/Paris"))
+    maintenant = _now_paris.strftime("%Y-%m-%d %H:%M")
+    _manuel = os.environ.get("GITHUB_EVENT_NAME", "") != "schedule"
+    _creneau_defaut = _manuel or (_now_paris.weekday() in (0, 2, 4) and _now_paris.hour == 19)
+
+    def _prog(c):
+        try:
+            return json.load(open(os.path.join(c[0], c[1], "meta.json"))).get("programme", "")
+        except Exception:
+            return ""
+    _dus = [c for c in candidates if _prog(c) and _prog(c) <= maintenant]
+    _defauts = [c for c in candidates if not _prog(c)]
+    if _dus:
+        candidates = sorted(_dus, key=_prog) + (_defauts if _creneau_defaut else [])
+    elif _creneau_defaut:
+        candidates = _defauts
+    else:
+        print(f"Hors créneau ({maintenant} Paris) et aucun horaire personnalisé dû — on ne publie pas.")
+        sys.exit(0)
+    if not candidates:
+        print("Rien d'éligible sur ce créneau.")
+        sys.exit(0)
+
     for source, item, needs_check in candidates:
         folder = os.path.join(source, item)
         if not os.path.exists(os.path.join(folder, "meta.json")):
             print(f"⚠️ {item} : meta.json manquant (dossier incomplet) — on passe au suivant.")
             continue
         _m = json.load(open(os.path.join(folder, "meta.json")))
+        if _m.get("programme", "") and _m["programme"] > maintenant:
+            print(f"🕐 {item} : programmé par Laurie pour le {_m['programme']} — on passe au suivant.")
+            continue
         if _m.get("pas_avant", "") > aujourdhui:
             print(f"⏳ {item} : réservé pour le {_m['pas_avant']} — on passe au suivant.")
             continue

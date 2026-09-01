@@ -153,19 +153,11 @@ class Handler(SimpleHTTPRequestHandler):
             self.path = "/engine/cockpit.html"
             return super().do_GET()
         if self.path == "/api/programme":
-            import re as _re
             from datetime import datetime as _dt, timedelta as _td
-            wf = os.path.join(ROOT, ".github", "workflows", "publish.yml")
-            jours_posts = {1, 3, 5}
-            try:
-                m = _re.search(r'cron:\s*"0 17 \* \* ([0-9,]+)"', open(wf).read())
-                if m:
-                    jours_posts = {int(x) % 7 for x in m.group(1).split(",")}
-            except OSError:
-                pass
             NOMS = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"]
             MOIS = ["", "janvier", "février", "mars", "avril", "mai", "juin", "juillet",
                     "août", "septembre", "octobre", "novembre", "décembre"]
+            # la file complète (approved puis pending), avec vignette + horaire personnalisé éventuel
             file_posts = []
             for st in ("approved", "pending"):
                 for it in sorted(os.listdir(Q(st))):
@@ -176,33 +168,47 @@ class Handler(SimpleHTTPRequestHandler):
                             sl = sorted(f for f in os.listdir(d) if f.startswith("slide"))
                             media = os.path.join(d, sl[0]) if sl else None
                         if media:
-                            file_posts.append(f"/queue/{st}/{urllib.parse.quote(it)}/{os.path.basename(media)}?v={int(os.path.getmtime(media))}")
-            rows, slot = [], 0
+                            meta = json.load(open(os.path.join(d, "meta.json")))
+                            file_posts.append({
+                                "state": st, "id": it,
+                                "thumb": f"/queue/{st}/{urllib.parse.quote(it)}/{os.path.basename(media)}?v={int(os.path.getmtime(media))}",
+                                "programme": meta.get("programme", ""),
+                                "attente": st == "pending"})
             today = _dt.now().date()
-            # une seule semaine : d'aujourd'hui jusqu'au dimanche inclus
-            jours_restants = 7 - today.weekday()   # lundi=0 → 7 jours, dimanche=6 → 1 jour
-            for i in range(jours_restants):
+            programmes = [p for p in file_posts if p["programme"]]
+            defauts = [p for p in file_posts if not p["programme"]]
+            rows, slot = [], 0
+            psp = os.path.join(ENGINE, "publish-state.json")
+            deja_pub = ""
+            if os.path.exists(psp):
+                deja_pub = json.load(open(psp)).get("derniere_publication", "")
+            for i in range(14):
                 day = today + _td(days=i)
-                wd = day.weekday()  # 0 = lundi
+                wd = day.weekday()
                 label = ("AUJOURD'HUI" if i == 0 else "demain" if i == 1 else "")
                 date_fr = f"{NOMS[wd]} {day.day} {MOIS[day.month]}"
-                cron_wd = (wd + 1) % 7  # cron : 0 = dimanche
-                if cron_wd in jours_posts:
-                    deja = False
-                    if i == 0:
-                        psp = os.path.join(ENGINE, "publish-state.json")
-                        if os.path.exists(psp):
-                            deja = json.load(open(psp)).get("derniere_publication") == day.strftime("%Y-%m-%d")
-                    if deja:
+                # posts avec horaire choisi par Laurie ce jour-là
+                for p in sorted(programmes, key=lambda x: x["programme"]):
+                    if p["programme"][:10] == day.strftime("%Y-%m-%d"):
+                        rows.append({"date": date_fr, "badge": label,
+                                     "quoi": f"Publication à {p['programme'][11:16]} — horaire choisi par toi" + (" (à valider !)" if p["attente"] else ""),
+                                     "thumb": p["thumb"], "type": "post", "state": p["state"], "id": p["id"],
+                                     "heure": p["programme"][11:16], "custom": True})
+                if wd in (0, 2, 4):  # créneau auto lun/mer/ven 19h23
+                    if i == 0 and deja_pub == day.strftime("%Y-%m-%d"):
                         rows.append({"date": date_fr, "badge": label, "quoi": "✅ Publication du jour déjà partie", "type": "machine"})
                     else:
-                        thumb = file_posts[slot] if slot < len(file_posts) else None
-                        rows.append({"date": date_fr, "badge": label, "quoi": "Publication automatique 19h",
-                                     "thumb": thumb, "type": "post", "vide": thumb is None})
+                        p = defauts[slot] if slot < len(defauts) else None
+                        rows.append({"date": date_fr, "badge": label,
+                                     "quoi": "Publication automatique 19h23" + ((" (à valider !)" if p["attente"] else "") if p else ""),
+                                     "thumb": p["thumb"] if p else None, "type": "post",
+                                     "state": p["state"] if p else "", "id": p["id"] if p else "",
+                                     "heure": "19h23", "custom": False, "vide": p is None})
                         slot += 1
-                # story du dimanche en pause depuis le 03/08 (générations week-end coupées) — kit sur demande seulement
-                if False:
-                    rows.append({"date": date_fr, "badge": "", "quoi": "8h : génération du programme de la semaine + réunion d'équipe — tu valides entre 8h et 19h", "type": "machine"})
+            restants = defauts[slot:]
+            if restants:
+                rows.append({"date": "ensuite", "badge": "", "type": "machine",
+                             "quoi": f"+ {len(restants)} contenu(s) en réserve pour les créneaux suivants"})
             return self._json({"rows": rows})
 
         if self.path == "/api/inspection":
@@ -443,6 +449,24 @@ class Handler(SimpleHTTPRequestHandler):
             os.rename(pb, os.path.join(Q(sb), prefa + "_" + restb))
             os.rename(tmp, os.path.join(Q(sa), prefb + "_" + resta))
             _git_sync_bg(f"swap {resta} <-> {restb}")
+            return self._json({"ok": True})
+
+        if self.path == "/api/programmer":
+            state, item = data.get("state"), os.path.basename(data.get("id", ""))
+            quand = (data.get("quand") or "").strip()
+            mp = os.path.join(Q(state), item, "meta.json")
+            if not os.path.exists(mp):
+                return self._json({"error": "introuvable"}, 404)
+            import re as _re
+            if quand and not _re.match(r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$", quand):
+                return self._json({"error": "format attendu : AAAA-MM-JJ HH:MM"}, 400)
+            meta = json.load(open(mp))
+            if quand:
+                meta["programme"] = quand
+            else:
+                meta.pop("programme", None)
+            json.dump(meta, open(mp, "w"), indent=2, ensure_ascii=False)
+            _git_sync_bg(f"programme {item} -> {quand or 'auto'}")
             return self._json({"ok": True})
 
         if self.path == "/api/action":

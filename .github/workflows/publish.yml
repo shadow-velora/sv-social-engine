@@ -1,7 +1,7 @@
 name: Publier sur Instagram
 on:
   schedule:
-    - cron: "23 17 * * 1,3,5"   # Lun/Mer/Ven 19h23 Paris — heure décalée : les crons GitHub à heure pile sautent (loupés des 03/08)
+    - cron: "23 * * * *"   # toutes les heures à :23 — publish.py décide : horaires personnalisés de Laurie, sinon créneau auto lun/mer/ven 19h Paris (DST géré via zoneinfo)
   workflow_dispatch: {}
 
 concurrency:

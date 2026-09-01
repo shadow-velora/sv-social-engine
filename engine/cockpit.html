@@ -323,7 +323,8 @@ function render(){
             ${l.type === "post" ? (l.thumb ? `<img src="${l.thumb}" style="width:54px;height:68px;object-fit:cover;border-radius:6px;aspect-ratio:auto" onclick="openZoom('${l.thumb}')">`
               : `<div style="width:54px;height:68px;border:1px dashed #6a3636;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#c77;font-size:9px;text-align:center">rien de prêt !</div>`) : ""}
             <div style="flex:1;font-size:12.5px;line-height:1.6">${l.quoi}</div>
-            <span style="color:${l.type === "toi" ? "#e8d8c0" : "#7fc79a"};font-size:10px;letter-spacing:1px">${l.type === "toi" ? "TOI" : "AUTO"}</span>
+            ${l.type === "post" && l.id ? `<button class="btn" style="font-size:10px" onclick="progItem('${l.state}','${l.id}','${l.custom ? "" : ""}')">🕐 ${l.custom ? l.heure + " · TOI" : "Modifier"}</button>` : ""}
+            <span style="color:${l.custom ? "#e8d8c0" : "#7fc79a"};font-size:10px;letter-spacing:1px">${l.custom ? "TOI" : "AUTO"}</span>
           </div>`).join("") + `</div>`;
     });
     return;
@@ -460,6 +461,15 @@ document.getElementById("genai").onclick = async () => {
   toast("Génération lancée — 1 post + 1 carrousel (4 à 6 photos) dans 10 à 15 min");
   setTimeout(load, 2000);
 };
+
+async function progItem(state, id){
+  const quand = prompt("Quand publier ce post ?\nFormat : AAAA-MM-JJ HH:MM (heure de Paris)\nLaisse VIDE et valide pour revenir en automatique.", "");
+  if (quand === null) return;
+  const r = await fetch("/api/programmer", {method: "POST", body: JSON.stringify({state, id, quand: quand.trim()})});
+  const res = await r.json();
+  if (res.ok){ toast(quand.trim() ? "🕐 Horaire enregistré : " + quand : "↩ Retour en automatique"); render(); }
+  else toast("⚠️ " + (res.error || "échec"));
+}
 async function publishNow(){
   if (!confirm("Publier maintenant le prochain contenu de la file sur Instagram ?")) return;
   const b = document.getElementById("pubnow");
