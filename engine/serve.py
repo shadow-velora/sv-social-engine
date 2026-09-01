@@ -254,8 +254,19 @@ class Handler(SimpleHTTPRequestHandler):
                     feed, feed_maj = fd.get("posts", []), fd.get("maj", "")
                 except Exception:
                     pass
+            prog = None
+            try:
+                import time as _tm
+                pp = os.path.join(ENGINE, "progression.json")
+                if os.path.exists(pp):
+                    _p = json.load(open(pp))
+                    if _p.get("texte") and _tm.time() - _p.get("ts", 0) < 180:
+                        prog = _p
+            except Exception:
+                pass
             return self._json({
                 "generating": _gen_running,
+                "progression": prog,
                 "pending": list_state("pending"),
                 "approved": list_state("approved"),
                 "published": list_state("published"),

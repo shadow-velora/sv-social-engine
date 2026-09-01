@@ -55,4 +55,5 @@ if executed == 0:
 core.save_state(state)
 if os.path.exists(plan_path):
     os.remove(plan_path)
+g._progress("")
 print(f"lot produit ({executed} briefs du plan exécutés)")

@@ -60,6 +60,16 @@ def api_key():
     raise SystemExit("GEMINI_API_KEY manquante (.env ou variable d'environnement)")
 
 
+def _progress(txt):
+    """Étape en cours, lue par le Cockpit (bandeau de progression)."""
+    try:
+        import time as _tm
+        json.dump({"texte": txt, "ts": _tm.time()},
+                  open(os.path.join(ENGINE, "progression.json"), "w"))
+    except Exception:
+        pass
+
+
 def gemini(model, parts, key):
     """Appel Gemini via curl (urllib bloqué par certains proxies)."""
     payload = json.dumps({"contents": [{"parts": parts}]})
@@ -385,6 +395,7 @@ def main(n_posts=2):
         ref = os.path.join(d, "reference.jpg")
         core.fetch_image(p["images"][0]["src"], 1200).save(ref, quality=92)
 
+        _progress(f"post {name} — création de l'image (jusqu'à 3 essais + contrôle qualité)")
         verdicts = []
         kept = None
         for attempt in range(1, 4):  # max 3 tentatives pour 1 image qui passe
@@ -946,6 +957,7 @@ def make_carousel_porte_pose(product, captions, state, key):
     scene = pick_scene(interieurs or cfg["scenes"], state.get("last_scene"))
     state["last_scene"] = scene["id"]
     rules = cfg["rules"] + lecons_texte(product["handle"])
+    _progress(f"carrousel {name} — slide 1/3 (la pièce portée)")
     # slide 1 : la robe portée
     porte = None
     journal = []
@@ -978,6 +990,7 @@ def make_carousel_porte_pose(product, captions, state, key):
                      "consistent with: " + scene["text"])
     for fname, base_prompt in (("slide-2.jpg", CHAISE_PROMPT), ("slide-3.jpg", FLATLAY_PROMPT)):
         prompt = base_prompt + meme_shooting + lecons_texte(product["handle"])
+        _progress(f"carrousel {name} — {fname.replace('.jpg', '')}/3")
         ok = False
         for attempt in (1, 2, 3):
             _budget_guard()
