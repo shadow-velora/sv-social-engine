@@ -47,6 +47,14 @@ def main():
     approved = contenus("approved")
     publies = contenus("published")
 
+    # 0 pré. budget génération : ne JAMAIS s'arrêter en silence (incident 21/08→01/09)
+    _gen = budget()
+    _MAX = 200
+    if _gen >= _MAX:
+        ALERTES.append(f"🔴 PLAFOND BUDGET ATTEINT ({_gen}/{_MAX} générations) : la génération est BLOQUÉE jusqu'au 1er du mois — prévenir Laurie (recharge crédit Gemini ou attendre le reset)")
+    elif _gen >= int(_MAX*0.8):
+        ALERTES.append(f"⚠️ Budget génération à {_gen}/{_MAX} ce mois : le plafond approche")
+
     # 0. dossiers incomplets dans pending (sans meta.json) → écartés (cause du crash publish du 02/08)
     for it in list(pending):
         dd = os.path.join(ROOT, "queue", "pending", it)
