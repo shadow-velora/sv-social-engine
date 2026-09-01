@@ -297,7 +297,7 @@ function render(){
     const syncNote = realFeed.length ? `<br>📲 Synchronisé avec le vrai compte (y compris tes posts mobiles) — dernière synchro : ${DATA.feed_maj || "?"}.` : "";
     g.innerHTML = `<div class="ig-note">Ta grille telle qu'elle apparaîtra sur Instagram (le n°1 part en premier, donc finit en bas).<br>
       ✓ = déjà publié sur le vrai compte, figé. Flèches / glisser = réorganiser ce qui n'est pas encore parti.${syncNote}<br>
-      <button class="genbtn" id="curbtn" onclick="curate()">🔀 Nouvelle proposition de la curatrice</button> <button class="genbtn" onclick="orderUndo()">↩ Version précédente</button> ${archBtn}
+      <button class="genbtn" id="curbtn" onclick="curate()">🔀 Nouvelle proposition de la curatrice</button> <button class="genbtn" onclick="orderUndo()">↩ Version précédente</button> <button class="genbtn" id="feedrefbtn" onclick="feedRefresh()">🔄 Actualiser depuis Instagram</button> ${archBtn}
       <div id="curnote" style="color:#a8977f;margin-top:8px;font-size:12px"></div></div>
       <div class="ig">` + grid.map(it => {
         const gi = all.indexOf(it);
@@ -457,6 +457,17 @@ async function progItem(state, id){
   const res = await r.json();
   if (res.ok){ toast(quand.trim() ? "🕐 Horaire enregistré : " + quand : "↩ Retour en automatique"); render(); }
   else toast("⚠️ " + (res.error || "échec"));
+}
+async function feedRefresh(){
+  const b = document.getElementById("feedrefbtn");
+  b.disabled = true; b.textContent = "⏳ SYNCHRO DEMANDÉE…";
+  try {
+    const r = await fetch("/api/feed_refresh", {method: "POST", body: "{}"});
+    const res = await r.json();
+    if (res.ok) toast("📲 Synchro lancée — ton vrai feed (avec ton réel) apparaît ici d'ici 2 à 3 min, la page se met à jour toute seule");
+    else toast("⚠️ " + (res.error || "échec de la demande"));
+  } catch(e){ toast("⚠️ Le moteur local ne répond pas"); }
+  setTimeout(() => { b.disabled = false; b.textContent = "🔄 Actualiser depuis Instagram"; }, 8000);
 }
 async function publishNow(){
   if (!confirm("Publier maintenant le prochain contenu de la file sur Instagram ?")) return;

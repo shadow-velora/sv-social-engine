@@ -463,6 +463,14 @@ class Handler(SimpleHTTPRequestHandler):
             _git_sync_bg(f"swap {resta} <-> {restb}")
             return self._json({"ok": True})
 
+        if self.path == "/api/feed_refresh":
+            # Laurie vient de poster depuis son mobile : on demande au robot cloud
+            # (feedsync) une photo fraîche du vrai compte ; l'autopull la ramènera.
+            ok, err = _dispatch_workflow("inspection.yml")
+            if ok:
+                return self._json({"ok": True})
+            return self._json({"error": err}, 502)
+
         if self.path == "/api/programmer":
             state, item = data.get("state"), os.path.basename(data.get("id", ""))
             quand = (data.get("quand") or "").strip()
