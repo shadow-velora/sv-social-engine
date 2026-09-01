@@ -1,0 +1,29 @@
+[
+  {
+    "slide-1 essai 1": {
+      "dress_identical": true,
+      "invented_details": [],
+      "skin_natural": true,
+      "face_consistent": true,
+      "verdict": "pass"
+    }
+  },
+  {
+    "slide-2.jpg essai 1": {
+      "dress_identical": true,
+      "invented_details": [],
+      "skin_natural": true,
+      "face_consistent": true,
+      "verdict": "pass"
+    }
+  },
+  {
+    "slide-3.jpg essai 1": "pas d'image générée : IMAGE_OTHER"
+  },
+  {
+    "slide-3.jpg essai 2": "pas d'image générée : IMAGE_OTHER"
+  },
+  {
+    "slide-3.jpg essai 3": "pas d'image générée : IMAGE_OTHER"
+  }
+]
