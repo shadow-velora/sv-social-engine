@@ -84,12 +84,33 @@ def load_captions():
         return json.load(f)
 
 
+def load_json_safe(path, default):
+    """json.load qui survit aux marqueurs de conflit git (autostash) : on retire
+    les lignes <<<<<<< / ======= / >>>>>>> et on retente ; en dernier recours,
+    on réécrit le fichier avec le défaut plutôt que de planter la production."""
+    if not os.path.exists(path):
+        return default
+    try:
+        with open(path) as f:
+            return json.load(f)
+    except Exception:
+        pass
+    try:
+        lignes = [l for l in open(path)
+                  if not l.lstrip().startswith(("<<<<<<<", "=======", ">>>>>>>"))]
+        data = json.loads("".join(lignes))
+        json.dump(data, open(path, "w"), indent=2, ensure_ascii=False)
+        print(f"⚠️ {os.path.basename(path)} : conflit git auto-réparé")
+        return data
+    except Exception:
+        json.dump(default, open(path, "w"), indent=2, ensure_ascii=False)
+        print(f"⚠️ {os.path.basename(path)} : illisible, réinitialisé au défaut")
+        return default
+
+
 def load_state():
     p = os.path.join(ENGINE, "state.json")
-    if os.path.exists(p):
-        with open(p) as f:
-            return json.load(f)
-    return {"used_captions": [], "used_products": []}
+    return load_json_safe(p, {"used_captions": [], "used_products": []})
 
 
 def save_state(state):

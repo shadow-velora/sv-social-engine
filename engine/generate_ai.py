@@ -150,7 +150,15 @@ skin_natural = false ONLY if the skin is clearly artificial: waxy, plastic, pore
 def _budget_guard():
     from datetime import datetime, timezone
     bp = os.path.join(ENGINE, "budget.json")
-    b = json.load(open(bp)) if os.path.exists(bp) else {}
+    try:
+        b = json.load(open(bp)) if os.path.exists(bp) else {}
+    except Exception:
+        # conflit git dans budget.json : on repart du compteur le plus élevé lisible
+        import re as _re
+        raw = open(bp).read()
+        vals = [int(x) for x in _re.findall(r'"gen_calls":\s*(\d+)', raw)] or [0]
+        b = {"gen_month": datetime.now(timezone.utc).strftime("%Y-%m"), "gen_calls": max(vals)}
+        print("⚠️ budget.json : conflit git auto-réparé (compteur =", max(vals), ")")
     month = datetime.now(timezone.utc).strftime("%Y-%m")
     if b.get("gen_month") != month:
         b = {"gen_month": month, "gen_calls": 0}
