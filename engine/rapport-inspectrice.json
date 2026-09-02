@@ -1,8 +1,7 @@
 {
-  "date": "2026-09-01T16:38+00:00",
+  "date": "2026-09-02T11:37+00:00",
   "alertes": [
-    "Monotonie couleur : les prochains posts sont tous dans les mêmes tons — varier les mondes couleur",
-    "Budget presque épuisé : 87/100 générations ce mois (10 GBP = 2 mois minimum)"
+    "Monotonie couleur : les prochains posts sont tous dans les mêmes tons — varier les mondes couleur"
   ],
   "actions_reparation": [],
   "tout_va_bien": false
