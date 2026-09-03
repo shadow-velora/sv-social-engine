@@ -123,11 +123,25 @@ def _git_sync_bg(message):
 def _autopull():
     """Le Cockpit reste TOUJOURS synchronisé avec le vrai état (GitHub) : pull toutes les 2 min."""
     import time
+    # 03/09/2026 : sans try/except, un seul timeout réseau tuait ce thread en silence et le Cockpit
+    # restait des jours en retard (feed Instagram non actualisé après un post). Désormais : on
+    # journalise et on continue, quoi qu'il arrive.
+    log_path = os.path.join(ROOT, "engine", "autopull.log")
     while True:
         time.sleep(120)
-        with _git_lock:
-            subprocess.run(["git", "pull", "--rebase", "--autostash"],
-                           cwd=ROOT, timeout=120, capture_output=True)
+        try:
+            with _git_lock:
+                r = subprocess.run(["git", "pull", "--rebase", "--autostash"],
+                                   cwd=ROOT, timeout=120, capture_output=True, text=True)
+            if r.returncode != 0:
+                with open(log_path, "a") as lf:
+                    lf.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} pull rc={r.returncode} {(r.stderr or '')[-300:].strip()}\n")
+        except Exception as e:
+            try:
+                with open(log_path, "a") as lf:
+                    lf.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} autopull exception: {type(e).__name__}: {e}\n")
+            except Exception:
+                pass
 
 
 class Handler(SimpleHTTPRequestHandler):
