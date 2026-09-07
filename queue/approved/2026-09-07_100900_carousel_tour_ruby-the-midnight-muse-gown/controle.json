@@ -1,23 +1,6 @@
 [
   {
-    "slide-1 essai 1": "pas d'image dans la réponse: {'candidates': [{'finishReason': 'IMAGE_OTHER', 'index': 0, 'finishMessage': 'Unable to show the generated image. The mod"
-  },
-  {
-    "slide-1 essai 2": "pas d'image dans la réponse: {'candidates': [{'finishReason': 'IMAGE_OTHER', 'index': 0, 'finishMessage': 'Unable to show the generated image. The mod"
-  },
-  {
-    "slide-1 essai 3": {
-      "dress_identical": false,
-      "invented_details": [
-        "slight sweetheart neckline dip at bust center"
-      ],
-      "skin_natural": true,
-      "face_consistent": true,
-      "verdict": "fail"
-    }
-  },
-  {
-    "slide-1 essai 4": {
+    "slide-1 essai 1": {
       "dress_identical": true,
       "invented_details": [],
       "skin_natural": true,
@@ -26,29 +9,94 @@
     }
   },
   {
-    "slide-2.jpg essai 1 (trois_quarts)": {
+    "slide-2.jpg essai 1 (closeup_matiere)": {
       "controle": {
         "dress_identical": true,
         "invented_details": [],
-        "skin_natural": true,
+        "skin_natural": false,
         "face_consistent": true,
-        "verdict": "pass"
+        "verdict": "fail"
       },
       "portee": true,
-      "ref_cadrage": "Lora Mini — воздушная юбка, акцентные детали и настроение самого красивого лета 🤍 (2).jpg"
+      "plan_ok": true,
+      "meme_lieu": true,
+      "doublon_slide1": false,
+      "lu": {
+        "type": "closeup_matiere",
+        "same_location": true,
+        "near_duplicate": false
+      }
     }
   },
   {
     "slide-3.jpg essai 1 (dos)": {
       "controle": {
-        "dress_identical": true,
-        "invented_details": [],
+        "dress_identical": false,
+        "invented_details": [
+          "spaghetti straps",
+          "corset lacing on back",
+          "exposed back zipper"
+        ],
         "skin_natural": true,
         "face_consistent": true,
-        "verdict": "pass"
+        "verdict": "fail"
       },
       "portee": true,
-      "ref_cadrage": "The aisle is calling. Shop Bridal styles now. (4).jpg"
+      "plan_ok": true,
+      "meme_lieu": true,
+      "doublon_slide1": false,
+      "lu": {
+        "type": "dos",
+        "same_location": true,
+        "near_duplicate": false
+      }
+    }
+  },
+  {
+    "slide-3.jpg essai 2 (dos)": {
+      "controle": {
+        "dress_identical": false,
+        "invented_details": [
+          "thin shoulder straps",
+          "exposed back zipper"
+        ],
+        "skin_natural": true,
+        "face_consistent": true,
+        "verdict": "fail"
+      },
+      "portee": true,
+      "plan_ok": true,
+      "meme_lieu": true,
+      "doublon_slide1": false,
+      "lu": {
+        "type": "dos",
+        "same_location": true,
+        "near_duplicate": false
+      }
+    }
+  },
+  {
+    "slide-3.jpg essai 3 (dos)": {
+      "controle": {
+        "dress_identical": false,
+        "invented_details": [
+          "spaghetti straps",
+          "corset back lacing",
+          "exposed back zipper"
+        ],
+        "skin_natural": true,
+        "face_consistent": true,
+        "verdict": "fail"
+      },
+      "portee": true,
+      "plan_ok": true,
+      "meme_lieu": true,
+      "doublon_slide1": false,
+      "lu": {
+        "type": "dos",
+        "same_location": true,
+        "near_duplicate": false
+      }
     }
   }
 ]
