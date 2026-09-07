@@ -1,0 +1,276 @@
+[
+  {
+    "slide-1 essai 1": {
+      "dress_identical": false,
+      "invented_details": [
+        "high side slit"
+      ],
+      "skin_natural": true,
+      "face_consistent": true,
+      "verdict": "fail"
+    }
+  },
+  {
+    "slide-1 essai 2": {
+      "dress_identical": false,
+      "invented_details": [
+        "sleeveless design replacing long sheer mesh sleeves"
+      ],
+      "skin_natural": true,
+      "face_consistent": true,
+      "verdict": "fail"
+    }
+  },
+  {
+    "slide-1 essai 3": {
+      "dress_identical": true,
+      "invented_details": [],
+      "skin_natural": true,
+      "face_consistent": true,
+      "verdict": "pass"
+    }
+  },
+  {
+    "slide-2.jpg essai 1 (assise)": {
+      "controle": {
+        "dress_identical": true,
+        "invented_details": [],
+        "skin_natural": true,
+        "face_consistent": true,
+        "verdict": "pass"
+      },
+      "portee": true,
+      "plan_ok": true,
+      "meme_lieu": false,
+      "doublon_slide1": false,
+      "lu": {
+        "type": "assise",
+        "same_location": false,
+        "near_duplicate": false
+      }
+    }
+  },
+  {
+    "slide-2.jpg essai 2 (assise)": {
+      "controle": {
+        "dress_identical": true,
+        "invented_details": [],
+        "skin_natural": true,
+        "face_consistent": true,
+        "verdict": "pass"
+      },
+      "portee": true,
+      "plan_ok": true,
+      "meme_lieu": false,
+      "doublon_slide1": false,
+      "lu": {
+        "type": "assise",
+        "same_location": false,
+        "near_duplicate": false
+      }
+    }
+  },
+  {
+    "slide-2.jpg essai 3 (assise)": {
+      "controle": {
+        "dress_identical": true,
+        "invented_details": [],
+        "skin_natural": true,
+        "face_consistent": true,
+        "verdict": "pass"
+      },
+      "portee": true,
+      "plan_ok": true,
+      "meme_lieu": false,
+      "doublon_slide1": false,
+      "lu": {
+        "type": "assise",
+        "same_location": false,
+        "near_duplicate": false
+      }
+    }
+  },
+  {
+    "slide-2.jpg essai 1 (marche)": {
+      "controle": {
+        "dress_identical": true,
+        "invented_details": [],
+        "skin_natural": true,
+        "face_consistent": true,
+        "verdict": "pass"
+      },
+      "portee": true,
+      "plan_ok": true,
+      "meme_lieu": false,
+      "doublon_slide1": false,
+      "lu": {
+        "type": "marche",
+        "same_location": false,
+        "near_duplicate": false
+      }
+    }
+  },
+  {
+    "slide-2.jpg essai 2 (marche)": {
+      "controle": {
+        "dress_identical": true,
+        "invented_details": [],
+        "skin_natural": false,
+        "face_consistent": true,
+        "verdict": "fail"
+      },
+      "portee": true,
+      "plan_ok": true,
+      "meme_lieu": false,
+      "doublon_slide1": false,
+      "lu": {
+        "type": "plein_pied",
+        "same_location": false,
+        "near_duplicate": false
+      }
+    }
+  },
+  {
+    "slide-2.jpg essai 3 (marche)": {
+      "controle": {
+        "dress_identical": true,
+        "invented_details": [],
+        "skin_natural": true,
+        "face_consistent": true,
+        "verdict": "pass"
+      },
+      "portee": true,
+      "plan_ok": true,
+      "meme_lieu": false,
+      "doublon_slide1": false,
+      "lu": {
+        "type": "marche",
+        "same_location": false,
+        "near_duplicate": false
+      }
+    }
+  },
+  {
+    "slide-2.jpg essai 1 (closeup_matiere)": {
+      "controle": {
+        "dress_identical": true,
+        "invented_details": [],
+        "skin_natural": false,
+        "face_consistent": true,
+        "verdict": "fail"
+      },
+      "portee": true,
+      "plan_ok": true,
+      "meme_lieu": false,
+      "doublon_slide1": false,
+      "lu": {
+        "type": "closeup_matiere",
+        "same_location": false,
+        "near_duplicate": false
+      }
+    }
+  },
+  {
+    "slide-2.jpg essai 2 (closeup_matiere)": {
+      "controle": {
+        "dress_identical": true,
+        "invented_details": [],
+        "skin_natural": true,
+        "face_consistent": true,
+        "verdict": "pass"
+      },
+      "portee": true,
+      "plan_ok": true,
+      "meme_lieu": false,
+      "doublon_slide1": false,
+      "lu": {
+        "type": "closeup_matiere",
+        "same_location": false,
+        "near_duplicate": false
+      }
+    }
+  },
+  {
+    "slide-2.jpg essai 3 (closeup_matiere)": {
+      "controle": {
+        "dress_identical": false,
+        "invented_details": [
+          "sweetheart inner neckline",
+          "diagonal sheer mesh seams across chest"
+        ],
+        "skin_natural": false,
+        "face_consistent": true,
+        "verdict": "fail"
+      },
+      "portee": true,
+      "plan_ok": true,
+      "meme_lieu": false,
+      "doublon_slide1": false,
+      "lu": {
+        "type": "closeup_matiere",
+        "same_location": false,
+        "near_duplicate": false
+      }
+    }
+  },
+  {
+    "slide-2.jpg essai 1 (plein_pied)": {
+      "controle": {
+        "dress_identical": true,
+        "invented_details": [],
+        "skin_natural": true,
+        "face_consistent": true,
+        "verdict": "pass"
+      },
+      "portee": true,
+      "plan_ok": false,
+      "meme_lieu": false,
+      "doublon_slide1": false,
+      "lu": {
+        "type": "assise",
+        "same_location": false,
+        "near_duplicate": false
+      }
+    }
+  },
+  {
+    "slide-2.jpg essai 2 (plein_pied)": {
+      "controle": {
+        "dress_identical": true,
+        "invented_details": [],
+        "skin_natural": true,
+        "face_consistent": true,
+        "verdict": "pass"
+      },
+      "portee": true,
+      "plan_ok": true,
+      "meme_lieu": false,
+      "doublon_slide1": false,
+      "lu": {
+        "type": "plein_pied",
+        "same_location": false,
+        "near_duplicate": false
+      }
+    }
+  },
+  {
+    "slide-2.jpg essai 3 (plein_pied)": {
+      "controle": {
+        "dress_identical": true,
+        "invented_details": [],
+        "skin_natural": true,
+        "face_consistent": true,
+        "verdict": "pass"
+      },
+      "portee": true,
+      "plan_ok": true,
+      "meme_lieu": false,
+      "doublon_slide1": false,
+      "lu": {
+        "type": "plein_pied",
+        "same_location": false,
+        "near_duplicate": false
+      }
+    }
+  }
+]
