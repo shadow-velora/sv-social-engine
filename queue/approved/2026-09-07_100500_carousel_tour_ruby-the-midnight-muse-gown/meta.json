@@ -1,8 +1,11 @@
 {
   "type": "carousel",
-  "caption": "Ruby ~ The Midnight Muse Gown.\nSculpted for the dark ~ effortless in motion.\nSwipe through every detail.\n\n#inayaparis #quietluxury #eveningdress #parisianstyle",
-  "alt": "Recette tour du produit (modèle 3.1) : the Ruby — same muse, same place, garment always worn.",
+  "caption": "Sculpted for the dark ~ made to illuminate.\n\nRuby ~ The Midnight Muse Gown.\n\nPure elegance ~ frame by frame.\n\nWhere would you wear her first?\n\n#inayaparis #quietluxury #parisianstyle #occasionwear",
+  "alt": "Recette « tour du produit » (séquence 1) : the Ruby, full length → fabric close-up — same muse, same place, same light, garment always worn.",
   "recette": "tour_du_produit",
-  "modele": "gemini-3.1-flash-image",
-  "caption_precedente": "[TEST 6, modèle gemini-3.1-flash-image — à regarder] Ruby ~ The Midnight Muse Gown. Frame by frame. #inayaparis #quietluxury #eveningdress\n\n#satindress #occasiondress #quietluxury"
+  "plans": [
+    "plein_pied",
+    "closeup_matiere"
+  ],
+  "caption_precedente": "Deep midnight ~ captured in movement.\n\ntour_ruby the midnight muse gown.\n\nA silhouette that speaks without a word.\n\nWhich slide reveals her essence best?\n\n#inayaparis #quietluxury #parisianstyle #eveningdress"
 }

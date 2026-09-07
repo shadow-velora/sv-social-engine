@@ -1,0 +1,93 @@
+[
+  {
+    "slide-1 essai 1": {
+      "dress_identical": true,
+      "invented_details": [],
+      "skin_natural": true,
+      "face_consistent": true,
+      "verdict": "pass"
+    }
+  },
+  {
+    "slide-2.jpg essai 1 (closeup_matiere)": {
+      "controle": {
+        "dress_identical": true,
+        "invented_details": [],
+        "skin_natural": true,
+        "face_consistent": true,
+        "verdict": "pass"
+      },
+      "portee": true,
+      "plan_ok": true,
+      "meme_lieu": true,
+      "doublon_slide1": false,
+      "lu": {
+        "type": "closeup_matiere",
+        "same_location": true,
+        "near_duplicate": false
+      }
+    }
+  },
+  {
+    "slide-3.jpg essai 1 (dos)": {
+      "controle": {
+        "dress_identical": false,
+        "invented_details": [
+          "prominent center-back vertical ruched seam"
+        ],
+        "skin_natural": true,
+        "face_consistent": true,
+        "verdict": "fail"
+      },
+      "portee": true,
+      "plan_ok": true,
+      "meme_lieu": true,
+      "doublon_slide1": false,
+      "lu": {
+        "type": "dos",
+        "same_location": true,
+        "near_duplicate": false
+      }
+    }
+  },
+  {
+    "slide-3.jpg essai 2 (dos)": {
+      "controle": {
+        "dress_identical": true,
+        "invented_details": [],
+        "skin_natural": true,
+        "face_consistent": true,
+        "verdict": "pass"
+      },
+      "portee": true,
+      "plan_ok": true,
+      "meme_lieu": true,
+      "doublon_slide1": false,
+      "lu": {
+        "type": "dos",
+        "same_location": true,
+        "near_duplicate": false
+      }
+    }
+  },
+  {
+    "slide-4.jpg essai 1 (marche)": {
+      "controle": {
+        "dress_identical": true,
+        "invented_details": [],
+        "skin_natural": true,
+        "face_consistent": true,
+        "verdict": "pass"
+      },
+      "portee": true,
+      "plan_ok": true,
+      "meme_lieu": true,
+      "doublon_slide1": false,
+      "lu": {
+        "type": "marche",
+        "same_location": true,
+        "near_duplicate": false
+      }
+    }
+  }
+]
