@@ -148,7 +148,7 @@ def _git_sync(message):
     Sans ça, les clics de Laurie restent locaux et les workflows GitHub travaillent sur un
     état périmé (ex: post approuvé localement mais toujours pending côté robot)."""
     with _git_lock:
-        subprocess.run(["git", "add", "-A", "queue", "engine/feedback.jsonl",
+        subprocess.run(["git", "add", "-A", "queue", "engine/feedback.jsonl", "engine/plan-semaine.json",
                         "engine/ordre-historique.json"],
                        cwd=ROOT, timeout=60, capture_output=True)
         diff = subprocess.run(["git", "diff", "--cached", "--quiet"], cwd=ROOT, timeout=60)

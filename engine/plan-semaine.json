@@ -1,0 +1,20 @@
+[
+  {
+    "robe": "Vespera",
+    "format": "carrousel_tour",
+    "concept": "L'heure dorée",
+    "ambiance": "Cour intérieure en calcaire parisien au soleil couchant. Une muse portant la robe Vespera vert olive : vue trois-quarts chic, focus matière sur le drapé, puis départ de dos."
+  },
+  {
+    "robe": "Ambre",
+    "format": "mannequin_pipeline",
+    "concept": "Le geste figé",
+    "ambiance": "Duo complice de mannequins devant les arcades du Palais-Royal en fin d'après-midi. Teintes ambre et bronze satinées, mouvement capturé en pleine marche."
+  },
+  {
+    "robe": "Nocturne",
+    "format": "carrousel_lineup",
+    "concept": "L'ombre portée narrative",
+    "ambiance": "Salon privé parisien aux murs chocolat. Même muse en robe Nocturne bleu nuit répétée sur fond studio continu avec ombre portée de persiennes et numérotation manuscrite."
+  }
+]

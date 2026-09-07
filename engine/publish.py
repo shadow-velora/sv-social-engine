@@ -283,8 +283,10 @@ def main():
             import generate as core
             h = core.handle_du_dossier(item, prods) or core.handle_du_dossier(item)
             if h and h not in handles:
-                _alerte_publication(item, f"produit « {h} » absent du catalogue inaya-paris.com — on ne publie pas une pièce introuvable en boutique")
-                continue
+                # 07/09/2026 (Laurie/Claude) : le handle vient du NOM DU DOSSIER, qui date de la génération ; un produit
+                # renommé sur Shopify (Bianca -> Héloïse) serait écarté à tort. On PRÉVIENT sans bloquer, tant que
+                # meta.json ne porte pas l'id produit.
+                _alerte_publication(item, f"produit « {h} » introuvable sous ce nom sur inaya-paris.com (renommé ou retiré ?) — publié quand même, à vérifier")
         if _m.get("programme", "") and _m["programme"] > maintenant:
             print(f"🕐 {item} : programmé par Laurie pour le {_m['programme']} — on passe au suivant.")
             continue

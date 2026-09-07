@@ -34,9 +34,20 @@ def autre_robe_citee(raison, handle, products):
     r = " " + core.norm_nom(raison) + " "
     mienne = next((p for p in products if p.get("handle") == handle), None)
     mon_nom = core.norm_nom(core.first_name(mienne["title"])) if mienne else ""
+    if not mon_nom:
+        # 07/09/2026 (Laurie/Claude) : dossier dont le handle a disparu du catalogue (produit renommé) —
+        # on ne sait pas quelle robe c'est, donc on ne bloque pas l'apprentissage.
+        return None
+    # prénoms du catalogue qui sont aussi des mots courants : exigés précédés d'un article pour compter comme citation
+    GENERIQUES = {"muse", "rouge", "petite", "paris", "jolie", "luxury", "madame", "ivory", "charm", "fleur",
+                  "dune", "berry", "cerise", "opale", "aura", "essence", "angels", "breeze", "cocoon", "celestial"}
+    ARTICLE = r"(?:la|le|les|une|un|the|a|robe|dress|gown|de|du|ma|sa) "
     for p in products:
         n = core.norm_nom(core.first_name(p.get("title", "")))
-        if n and len(n) >= 3 and n != mon_nom and re.search(r"(?<![a-z0-9])" + re.escape(n) + r"(?![a-z0-9])", r):
+        if not n or len(n) < 3 or n == mon_nom:
+            continue
+        motif = (ARTICLE if n in GENERIQUES else r"(?<![a-z0-9])") + re.escape(n) + r"(?![a-z0-9])"
+        if re.search(motif, r):
             return core.first_name(p["title"])
     return None
 
