@@ -1,13 +1,7 @@
 {
   "type": "carousel",
-  "caption": "Ruby ~ The Midnight Muse Gown.\n\nDesigned for the dark.\nSculpted silences ~ golden hour to midnight.\nA quiet statement ~ made to linger.\n\nWhich detail caught your eye?\n\n#inayaparis #eveningdress #quietluxury #parisianstyle",
-  "alt": "Recette « tour du produit » (séquence 1) : the Ruby, full length → three-quarter → from behind — same muse, same place, same light, garment always worn.",
-  "recette": "tour_du_produit",
-  "plans": [
-    "plein_pied",
-    "trois_quarts",
-    "dos"
-  ],
-  "rejet": "Test refonte v1 (07/09) : slide 2 = doublon de la 1, slide 3 assise de face dans un autre lieu au lieu de « dos » — corrigé (vérification du plan + même lieu + anti-doublon)",
-  "caption_precedente": "[TEST refonte 07/09 — à regarder, ne pas publier] Test refonte v1 (07/09) : slide 2 = doublon de la 1, slide 3 assise de face dans un autre lieu au lieu de « dos » — corr"
+  "caption": "Frame by frame ~ capturing the light.\nRuby ~ The Midnight Muse Gown.\nUnfiltered. Unhurried. Every angle remembered.\n\nWhich frame catches your eye?\n\n#inayaparis #quietluxury #parisianstyle #eveningdress",
+  "description": "Test technique, toutes les tentatives conservées",
+  "hashtags": "",
+  "caption_precedente": "[TEST refonte 07/09 — à regarder, ne pas publier] essais recalés (escalier / doublon)"
 }
