@@ -1,0 +1,11 @@
+{
+  "type": "carousel",
+  "caption": "Vespera, from every angle that matters.\n\n#corsetdress #eveninggown #inayaparis",
+  "alt": "Recette « tour du produit » (séquence 3) : the Vespera, full length → three-quarter → walking — same muse, same place, same light, garment always worn.",
+  "recette": "tour_du_produit",
+  "plans": [
+    "plein_pied",
+    "trois_quarts",
+    "marche"
+  ]
+}

@@ -6,7 +6,9 @@
     "{name}, but make it after dark.",
     "Swipe for the full story. {name}.",
     "{name} ~ quiet on the hanger, unforgettable on.",
-    "Which look are you? ~"
+    "Which look are you? ~",
+    "{name}, from every angle that matters.",
+    "{name} ~ nothing to prove, everything to remember."
   ],
   "used_products": [
     "coat-ebony",
@@ -18,10 +20,15 @@
     "sweater-calyss",
     "wide-leg-tailored-pants-divinea",
     "bourgeoise-dress",
-    "luxury-dress"
+    "luxury-dress",
+    "troya-the-3-in-1-bow-dress-of-your-dreams",
+    "anais-the-french-muse-cami",
+    "paris-the-sculptural-elegance-coat",
+    "top-lora",
+    "the-dahlia-draped-strapless-evening-gown"
   ],
-  "last_scene": "studio-blanc",
+  "last_scene": "studio-chocolat-persiennes",
   "gen_month": "2026-07",
   "gen_calls": 2,
-  "last_plan_seq": 1
+  "last_plan_seq": 2
 }
