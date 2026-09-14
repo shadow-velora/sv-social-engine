@@ -1,15 +1,5 @@
 [
   {
-    "date": "2026-09-01T16:41+00:00",
-    "order": [
-      "ai-studio_pullover-kamel",
-      "carousel_porte-pose_chocolat-the-chic-espresso-drape-dress",
-      "ai-studio_calista-floral-sequin-mermaid-gown",
-      "ai-studio_alizee-the-airy-ruffle-mini-dres",
-      "carousel_porte-pose_bianca-draped-lace-corset-gown"
-    ]
-  },
-  {
     "date": "2026-09-01T16:46+00:00",
     "order": [
       "ai-studio_pullover-kamel",
@@ -114,6 +104,21 @@
       "carousel_tour_vespera-the-corset-lace-satin-gown",
       "carousel_porte-pose_sweater-zoe",
       "carousel_tour_ruby-the-midnight-muse-gown",
+      "carousel_tour_ruby-the-midnight-muse-gown",
+      "ai-studio_bretonne-the-cozy-striped-knit"
+    ]
+  },
+  {
+    "date": "2026-09-14T12:20+00:00",
+    "order": [
+      "carousel_tour_vespera-the-corset-lace-satin-gown",
+      "carousel_tour_ruby-the-midnight-muse-gown",
+      "ai-studio_ambre-the-iconic-belted-leather-look",
+      "carousel_tour_ruby-the-midnight-muse-gown",
+      "ai-studio_alizee-the-airy-ruffle-mini-dres",
+      "carousel_tour_ruby-the-midnight-muse-gown",
+      "carousel_porte-pose_chocolat-the-chic-espresso-drape-dress",
+      "carousel_porte-pose_sweater-zoe",
       "carousel_tour_ruby-the-midnight-muse-gown",
       "ai-studio_bretonne-the-cozy-striped-knit"
     ]
