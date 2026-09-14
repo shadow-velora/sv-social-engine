@@ -879,7 +879,7 @@ def make_carousel_lineup(products3, captions, state, key):
     core.write_meta(d, "carousel", "Look 1, 2 or 3 ? ~",
                     f"Lookbook lineup carousel: the same muse three times on one seamless studio panorama, wearing {names}, numbered looks, sliced across the slides.",
                     "#inayaparis #quietluxury #eveningdress")
-    print(f"✅ carrousel lineup panorama : {names} ({n} slides)")
+    print(f"✅ carrousel lineup panorama : {names} ({len(tuiles)} slides)")
     return _livrer(d)
 
 
