@@ -1,7 +1,16 @@
 {
-  "type": "carousel",
-  "caption": "Frame by frame ~ capturing the light.\nRuby ~ The Midnight Muse Gown.\nUnfiltered. Unhurried. Every angle remembered.\n\nWhich frame catches your eye?\n\n#inayaparis #quietluxury #parisianstyle #eveningdress",
-  "description": "Test technique, toutes les tentatives conservées",
-  "hashtags": "",
-  "caption_precedente": "[TEST refonte 07/09 — à regarder, ne pas publier] essais recalés (escalier / doublon)"
+ "type": "carousel",
+ "caption": "Ruby ~ The Midnight Muse Gown.\n\nDesigned for the dark.\nSculpted silences ~ golden hour to midnight.\nA quiet statement ~ made to linger.\n\nWhich detail caught your eye?\n\n#inayaparis #eveningdress #quietluxury #parisianstyle",
+ "alt": "Recette « tour du produit » (séquence 1) : the Ruby, full length → three-quarter → from behind — same muse, same place, same light, garment always worn.",
+ "recette": "tour_du_produit",
+ "plans": [
+  "face_portail",
+  "assise_escalier",
+  "cafe_debout",
+  "cafe_profil",
+  "closeup_matiere"
+ ],
+ "caption_precedente": "[TEST refonte 07/09 — à regarder, ne pas publier] Test refonte v1 (07/09) : slide 2 = doublon de la 1, slide 3 assise de face dans un autre lieu au lieu de « dos » — corr",
+ "fusion": "14/09/2026 (demande Laurie) : fusion des 3 carrousels Ruby du 07/09 — ex n°27 (face + escalier) puis ex n°28 (café debout) puis ex n°26 (café profil + gros plan) ; gros plan de l'ex n°28 écarté (doublon) ; dossiers 26 et 28 déplacés dans queue/archive",
+ "description": "Carrousel Ruby fusionné : 5 vues, 3 lieux (portail, escalier, café)."
 }
