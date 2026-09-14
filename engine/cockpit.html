@@ -280,6 +280,20 @@ function orderUndo(){
       if (n) n.textContent = "↩ Version du " + (res.restaure || "?") + " restaurée (" + res.restantes + " retours encore possibles)"; });
   });
 }
+function grille(){
+  const b = document.getElementById("grillebtn");
+  b.disabled = true; b.textContent = "🧩 Placement en cours…";
+  fetch("/api/grille", {method:"POST", body:"{}"}).then(r => r.json()).then(res => {
+    load().then(() => {
+      const note = document.getElementById("curnote");
+      if (note) note.textContent = "🧩 " + (res.raison || "") + (res.fautes_restantes && res.fautes_restantes.length ? " — voisinages imparfaits : " + res.fautes_restantes.map(f => f[2] + " (" + f[0].split("_").slice(-1)[0].replace(/-the-.*$/, "") + " / " + f[1].split("_").slice(-1)[0].replace(/-the-.*$/, "") + ")").join(" · ") : "");
+      const cb = document.getElementById("grilleauto"); if (cb && typeof res.auto !== "undefined") cb.checked = !!res.auto;
+    });
+  }).catch(() => { b.disabled = false; b.textContent = "🧩 Placer selon la règle du damier"; });
+}
+function grilleAuto(on){
+  fetch("/api/grille_auto", {method:"POST", body:JSON.stringify({auto: on})});
+}
 function curate(){
   const b = document.getElementById("curbtn");
   b.disabled = true; b.textContent = "🔀 La curatrice réfléchit… (10-30 s, elle regarde toute la grille)";
@@ -316,7 +330,7 @@ function render(){
     const syncNote = realFeed.length ? `<br>📲 Synchronisé avec le vrai compte (y compris tes posts mobiles) — dernière synchro : ${DATA.feed_maj || "?"}.` : "";
     g.innerHTML = `<div class="ig-note">Ta grille telle qu'elle apparaîtra sur Instagram (le n°1 part en premier, donc finit en bas).<br>
       ✓ = déjà publié sur le vrai compte, figé. Flèches / glisser = réorganiser ce qui n'est pas encore parti.${syncNote}<br>
-      <button class="genbtn" id="curbtn" onclick="curate()">🔀 Nouvelle proposition de la curatrice</button> <button class="genbtn" onclick="orderUndo()">↩ Version précédente</button> ${feedBtn()} ${archBtn}
+      <button class="genbtn" id="grillebtn" onclick="grille()" title="Règle du damier : jamais la même robe voisine, jamais deux sombres côte à côte ni l'un au-dessus de l'autre, plans et types alternés. Gratuit, instantané.">🧩 Placer selon la règle du damier</button> <label style="font-size:12px;color:#a8977f;margin-right:6px"><input type="checkbox" id="grilleauto" onchange="grilleAuto(this.checked)" checked> auto au clic ✓ valider</label> <button class="genbtn" id="curbtn" onclick="curate()">🔀 Nouvelle proposition de la curatrice</button> <button class="genbtn" onclick="orderUndo()">↩ Version précédente</button> ${feedBtn()} ${archBtn}
       <div id="curnote" style="color:#a8977f;margin-top:8px;font-size:12px"></div></div>
       <div class="ig">` + grid.map(it => {
         const gi = all.indexOf(it);

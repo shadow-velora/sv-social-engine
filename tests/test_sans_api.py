@@ -154,5 +154,80 @@ class Purge(unittest.TestCase):
             self.assertTrue(all(os.path.exists(p) for p, _, _ in items), "simulation : rien supprimé")
 
 
+class GrilleDamier(unittest.TestCase):
+    """Règle du damier (14/09/2026) : placement déterministe et gratuit de la file approved."""
+
+    def _bac(self):
+        from PIL import Image
+        root = tempfile.mkdtemp()
+        os.makedirs(os.path.join(root, "queue", "approved")); os.makedirs(os.path.join(root, "engine"))
+        json.dump({"maj": "", "posts": []}, open(os.path.join(root, "engine", "feed-instagram.json"), "w"))
+        def post(i, nom, gris, plans=None):
+            d = os.path.join(root, "queue", "approved", f"2026-09-14_{100000 + i * 100:06d}_{nom}")
+            os.makedirs(d)
+            Image.new("RGB", (120, 150), (gris, gris, gris)).save(os.path.join(d, "media.jpg"))
+            json.dump({"type": "studio", "caption": "x", **({"plans": plans} if plans else {})}, open(os.path.join(d, "meta.json"), "w"))
+            return os.path.basename(d)
+        return root, post
+
+    def _grille(self, root):
+        os.environ["SV_ROOT"] = root; os.environ["SV_GRILLE_HORS_LIGNE"] = "1"
+        import importlib, grille
+        importlib.reload(grille)
+        return grille
+
+    def test_meme_robe_jamais_voisine_et_sombres_alternes(self):
+        root, post = self._bac()
+        post(1, "ai-studio_ruby-the-midnight-muse-gown", 30)
+        post(2, "ai-studio_ruby-the-midnight-muse-gown", 35)
+        post(3, "ai-studio_alba-the-white-gown", 200)
+        post(4, "ai-studio_zoe-the-knit", 210)
+        post(5, "ai-studio_ambre-the-leather", 40)
+        post(6, "ai-studio_clotilde-the-lace", 190)
+        g = self._grille(root)
+        res = g.placer(dry=True)
+        seq = res["ordre_lisible"]
+        n = len(seq)
+        # les deux Ruby ne sont ni côte à côte (même rangée) ni l'une au-dessus de l'autre
+        i, j = [k for k, x in enumerate(seq) if "ruby" in x]
+        rang = lambda k: (n - 1 - k) // 3
+        self.assertFalse(abs(i - j) == 1 and rang(i) == rang(j), "Ruby côte à côte")
+        self.assertNotEqual(abs(i - j), 3, "Ruby l'une au-dessus de l'autre")
+        self.assertLess(res["score_apres"], res["score_avant"])
+
+    def test_meme_photo_eloignee(self):
+        root, post = self._bac()
+        a = post(1, "carousel_tour_ruby-the-gown", 60)
+        b = post(2, "carousel_tour_ruby-the-gown", 60)   # même image → doublon
+        post(3, "ai-studio_alba-the-white", 220); post(4, "ai-studio_zoe-the-knit", 120)
+        post(5, "ai-studio_ambre-the-leather", 90); post(6, "ai-studio_clotilde-the-lace", 180)
+        post(7, "ai-studio_vespera-the-satin", 150); post(8, "ai-studio_bretonne-the-knit", 30)
+        g = self._grille(root)
+        res = g.placer(dry=True)
+        seq = res["ordre_lisible"]
+        i, j = [k for k, x in enumerate(seq) if "ruby" in x]
+        self.assertGreaterEqual(abs(i - j), 6, f"même photo trop proche : {seq}")
+
+    def test_application_renomme_et_garde_l_historique(self):
+        root, post = self._bac()
+        post(1, "ai-studio_ruby-the-gown", 30); post(2, "ai-studio_ruby-the-gown", 35); post(3, "ai-studio_alba-the-white", 200)
+        g = self._grille(root)
+        res = g.placer(dry=False)
+        self.assertTrue(res["applique"])
+        noms = sorted(os.listdir(os.path.join(root, "queue", "approved")))
+        self.assertEqual(len(noms), 3)
+        self.assertTrue(all(n.split("_")[1].isdigit() for n in noms))
+        self.assertEqual([n.split("_", 2)[2] for n in noms], [x.split("_", 2)[2] for x in res["ordre"]])
+        self.assertTrue(os.path.exists(os.path.join(root, "engine", "ordre-historique.json")), "version précédente sauvegardée")
+        self.assertTrue(os.path.exists(os.path.join(root, "engine", "grille-note.json")))
+
+    def test_auto_desactivable(self):
+        root, post = self._bac()
+        g = self._grille(root)
+        self.assertTrue(g.auto_actif())
+        json.dump({"auto": False}, open(os.path.join(root, "engine", "grille-auto.json"), "w"))
+        self.assertFalse(g.auto_actif())
+
+
 if __name__ == "__main__":
     unittest.main()

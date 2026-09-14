@@ -185,6 +185,23 @@ def _renumeroter(state):
     return ren
 
 
+def _grille(dry=False):
+    """Règle du damier (14/09/2026, Laurie) : place les posts validés pour une grille fluide — engine/grille.py."""
+    try:
+        r = subprocess.run(["python3", os.path.join(ENGINE, "grille.py")] + (["--dry"] if dry else []),
+                           cwd=ROOT, capture_output=True, timeout=120)
+        return json.loads(r.stdout.decode().strip().splitlines()[-1])
+    except Exception as e:
+        return {"applique": False, "raison": f"placement impossible : {e}"}
+
+
+def _grille_auto_active():
+    try:
+        return bool(json.load(open(os.path.join(ENGINE, "grille-auto.json"))).get("auto", True))
+    except Exception:
+        return True
+
+
 def _git_sync_bg(message):
     threading.Thread(target=_git_sync, args=(message,), daemon=True).start()
 
@@ -484,6 +501,19 @@ class Handler(SimpleHTTPRequestHandler):
             _git_sync_bg("story_regen")
             return self._json({"ok": r.returncode == 0})
 
+        if self.path == "/api/grille":
+            # 14/09/2026 (Laurie) : placement déterministe et gratuit de la file « approved » (règle du damier)
+            with _git_lock:
+                res = _grille(dry=bool(data.get("dry")))
+            if res.get("applique"):
+                _git_sync_bg("grille damier")
+            return self._json(res)
+
+        if self.path == "/api/grille_auto":
+            os.makedirs(ENGINE, exist_ok=True)
+            json.dump({"auto": bool(data.get("auto", True))}, open(os.path.join(ENGINE, "grille-auto.json"), "w"))
+            return self._json({"ok": True, "auto": bool(data.get("auto", True))})
+
         if self.path == "/api/curate":
             r = subprocess.run(["python3", os.path.join(ENGINE, "committee.py"), "curate"],
                                cwd=ROOT, capture_output=True, timeout=180)
@@ -676,6 +706,9 @@ class Handler(SimpleHTTPRequestHandler):
                 return self._json({"ok": True})
             if action == "approve":
                 shutil.move(src, os.path.join(Q("approved"), item))
+                if _grille_auto_active():   # 14/09/2026 : le post validé prend sa place selon la règle du damier
+                    with _git_lock:
+                        _grille()
             elif action == "reject":
                 reason = (data.get("reason") or "").strip()
                 mp = os.path.join(src, "meta.json")
