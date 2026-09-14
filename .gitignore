@@ -9,3 +9,4 @@ engine/mdv-refs/*.jpg
 queue/_atelier/
 engine/progression.json
 *.bak-*
+engine/feed-cache/
