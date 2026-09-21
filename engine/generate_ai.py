@@ -44,7 +44,7 @@ sys.path.insert(0, ENGINE)
 import generate as core  # curl, fetch_products, fetch_image, cover, captions, state
 
 IMAGE_MODEL = "gemini-3.1-flash-image"  # bascule 07/09/2026 (GO Laurie) — 2.5 dérivait de décor et inventait les dos
-MAX_GEN_PER_MONTH = 100  # ramené de 200 à 100 le 17/09/2026 (demande Laurie : diviser le coût par deux ; ~10 GBP de crédit Gemini avaient tenu 14 jours à 200/mois)
+MAX_GEN_PER_MONTH = 40  # 21/09/2026 : 2 carrousels de 2 images/semaine ≈ 25-35 générations ; à 0,067 $ l'image = 2,70 $ max. (Historique : 200 → 100 le 17/09/2026 (demande Laurie : diviser le coût par deux ; ~10 GBP de crédit Gemini avaient tenu 14 jours à 200/mois)
 CHECK_MODEL = "gemini-3.6-flash"
 API = "https://generativelanguage.googleapis.com/v1beta/models"
 
