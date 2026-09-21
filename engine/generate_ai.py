@@ -883,6 +883,8 @@ def make_carousel_lineup(products3, captions, state, key):
     return _livrer(d)
 
 
+CAROUSEL_SLIDES = 2  # Laurie 21/09/2026 : carrousels Inaya à 2 images (héro + 1 plan) — était 3 min / 4 max
+
 PLAN_INSTRUCTIONS = {
     # Grammaire des 21 carrousels exemples de Laurie (mdv-refs/plans.json) : le vêtement est TOUJOURS porté.
     "trois_quarts": "a three-quarter view from the hips up, the bodice and neckline of the garment filling the frame, her face partly out of frame or looking away, hands relaxed",
@@ -1114,21 +1116,21 @@ def make_carousel_tour(product, captions, state, key):
                 a_faire.insert(0, sub)
                 idx -= 1
                 continue
-            if len(plans_faits) >= 3:
+            if len(plans_faits) >= CAROUSEL_SLIDES:
                 break
             json.dump(journal, open(os.path.join(d, "controle.json"), "w"), indent=2, ensure_ascii=False)
             _sh.move(d, os.path.join(ROOT, "queue", "rejected", os.path.basename(d)))
             print(f"❌ tour {name} : {len(plans_faits)} slide(s) seulement, aucun plan restant")
             return None
         plans_faits.append(plan)
-        if len(plans_faits) >= 4:
+        if len(plans_faits) >= CAROUSEL_SLIDES:
             break
-        if not a_faire and len(plans_faits) < 3 and replis:
+        if not a_faire and len(plans_faits) < CAROUSEL_SLIDES and replis:
             a_faire.append(replis.pop(0))  # règle fondatrice : 3 slides minimum (test v5 07/09 livrait 2 slides)
-    if len(plans_faits) < 3:
+    if len(plans_faits) < CAROUSEL_SLIDES:
         json.dump(journal, open(os.path.join(d, "controle.json"), "w"), indent=2, ensure_ascii=False)
         _sh.move(d, os.path.join(ROOT, "queue", "rejected", os.path.basename(d)))
-        print(f"❌ tour {name} : {len(plans_faits)} slides seulement (minimum 3)")
+        print(f"❌ tour {name} : {len(plans_faits)} slides seulement (minimum {CAROUSEL_SLIDES})")
         return None
     json.dump(journal, open(os.path.join(d, "controle.json"), "w"), indent=2, ensure_ascii=False)
     for i, sl in enumerate(sorted(f for f in os.listdir(d)

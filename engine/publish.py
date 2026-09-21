@@ -241,11 +241,11 @@ def main():
         print("File vide — rien à publier.")
         sys.exit(0)
 
-    # ---- horaires : heure de Paris, personnalisés prioritaires, défauts sur créneau lun/mer/ven 19h ----
+    # ---- horaires : heure de Paris, personnalisés prioritaires, défauts sur créneau lundi/vendredi 19h (21/09/2026) ----
     _now_paris = _dt.now(_ZI("Europe/Paris"))
     maintenant = _now_paris.strftime("%Y-%m-%d %H:%M")
     _manuel = os.environ.get("GITHUB_EVENT_NAME", "") != "schedule"
-    _creneau_defaut = _manuel or (_now_paris.weekday() in (0, 2, 4) and _now_paris.hour == 19)
+    _creneau_defaut = _manuel or (_now_paris.weekday() in (0, 4) and _now_paris.hour == 19)  # 21/09/2026 : lundi et vendredi
 
     def _prog(c):
         try:

@@ -56,13 +56,15 @@ def _alertes(sautes, executed):
 executed = 0
 sautes = []
 en_file = core.handles_en_file(products=products)
-for brief in plan[:4]:
+for brief in plan[:2]:  # 21/09/2026 (Laurie) : 2 contenus/semaine
     nom = brief.get("robe", "")
     p = find_product(nom)
     if not p:
         sautes.append(f"brief « {nom} » ({brief.get('format', '?')}) ignoré : robe introuvable dans le catalogue")
         print("⚠️ " + sautes[-1])
         continue
+    if not str(brief.get("format", "")).startswith("carrousel"):
+        brief["format"] = "carrousel_tour"  # 21/09/2026 (Laurie) : plus de post simple, uniquement des carrousels de 2 images
     kind = "carousel" if str(brief.get("format", "")).startswith("carrousel") else "post"
     if kind in en_file.get(p["handle"], set()):
         sautes.append(f"brief « {nom} » ({brief.get('format', '?')}) ignoré : un {kind} de cette robe est déjà en file (règle d'alternance)")
@@ -89,11 +91,11 @@ for brief in plan[:4]:
     executed += 1
 
 if executed == 0:
-    # secours : la règle fondatrice 03/08 reste respectée — 1 post simple + au moins 1 carrousel
+    # secours : règle du 21/09/2026 — 2 carrousels de 2 images
     if plan:
         sautes.append(f"aucun des {len(plan[:4])} briefs du plan n'a pu être exécuté → lot de secours (2 robes tirées au sort)")
     chosen = g.pick_products_saison(products, state, 2, key)
-    g.make_model_post(chosen[0], captions, state, key)
+    g.make_carousel_tour(chosen[0], captions, state, key)  # 21/09/2026 : 2 carrousels de 2 images, aucun post simple
     g.make_carousel_tour(chosen[1], captions, state, key)
 
 core.save_state(state)
