@@ -1,7 +1,8 @@
 name: Publier sur Instagram
 on:
-  schedule:
-    - cron: "23 * * * *"   # toutes les heures à :23 — publish.py décide : horaires personnalisés de Laurie, sinon créneau auto lun/mer/ven 19h Paris (DST géré via zoneinfo)
+  # schedule en PAUSE depuis le 21/09/2026 (décision Laurie) — réactiver sur sa demande
+  # schedule:
+    #- cron: "23 * * * *"   # toutes les heures à :23 — publish.py décide : horaires personnalisés de Laurie, sinon créneau auto lun/mer/ven 19h Paris (DST géré via zoneinfo)
   workflow_dispatch: {}
 
 concurrency:

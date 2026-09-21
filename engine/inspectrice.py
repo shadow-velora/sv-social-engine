@@ -12,6 +12,21 @@ import subprocess
 import sys
 from datetime import datetime, timedelta, timezone
 
+# ---- PAUSE GLOBALE (Laurie 21/09/2026) : engine/pause.json {"pause": true} → rien ne tourne, même déclenché à la main ----
+def _pause_globale():
+    try:
+        import json as _j, os as _o
+        _p = _j.load(open(_o.path.join(_o.path.dirname(_o.path.abspath(__file__)), "pause.json")))
+        if _p.get("pause"):
+            print(f"EN PAUSE depuis le {_p.get('depuis')} — {_p.get('raison','')[:90]}")
+            return True
+    except Exception:
+        pass
+    return False
+
+if __name__ == "__main__" and _pause_globale():
+    raise SystemExit(0)
+
 ENGINE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(ENGINE)
 ALERTES, ACTIONS = [], []

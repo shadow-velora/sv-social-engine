@@ -209,7 +209,22 @@ def _alerte_publication(item, motif):
     print(f"⚠️ {item} : {motif}")
 
 
+
+# ---- PAUSE GLOBALE (Laurie 21/09/2026) : engine/pause.json {"pause": true} → rien ne tourne, même déclenché à la main ----
+def _pause_globale():
+    try:
+        import json as _j, os as _o
+        _p = _j.load(open(_o.path.join(_o.path.dirname(_o.path.abspath(__file__)), "pause.json")))
+        if _p.get("pause"):
+            print(f"EN PAUSE depuis le {_p.get('depuis')} — {_p.get('raison','')[:90]}")
+            return True
+    except Exception:
+        pass
+    return False
+
 def main():
+    if _pause_globale():
+        sys.exit(0)
     os.makedirs(PUBLISHED, exist_ok=True)
     # RÈGLE DURE : maximum 1 publication par jour (védé du 29/07 — double post évité)
     from datetime import datetime as _dt

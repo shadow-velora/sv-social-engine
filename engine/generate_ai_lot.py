@@ -1,6 +1,21 @@
 #!/usr/bin/env python3
 """Creative Producer : exécute le plan du Social Media Manager (concepts créatifs inclus)."""
 import sys, os, json
+
+# ---- PAUSE GLOBALE (Laurie 21/09/2026) : engine/pause.json {"pause": true} → rien ne tourne, même déclenché à la main ----
+def _pause_globale():
+    try:
+        import json as _j, os as _o
+        _p = _j.load(open(_o.path.join(_o.path.dirname(_o.path.abspath(__file__)), "pause.json")))
+        if _p.get("pause"):
+            print(f"EN PAUSE depuis le {_p.get('depuis')} — {_p.get('raison','')[:90]}")
+            return True
+    except Exception:
+        pass
+    return False
+
+if __name__ == "__main__" and _pause_globale():
+    raise SystemExit(0)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import generate_ai as g
 import cerveau

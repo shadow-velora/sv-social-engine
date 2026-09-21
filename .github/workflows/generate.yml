@@ -1,7 +1,8 @@
 name: Générer le lot hebdo
 on:
-  schedule:
-    - cron: "23 16 * * 0"   # dimanche 16:23 UTC (18h23 Paris) — généré la veille pour que le lundi matin soit TOUJOURS prêt même avec les retards GitHub (décision Laurie 10/08)
+  # schedule en PAUSE depuis le 21/09/2026 (décision Laurie) — réactiver sur sa demande
+  # schedule:
+    #- cron: "23 16 * * 0"   # dimanche 16:23 UTC (18h23 Paris) — généré la veille pour que le lundi matin soit TOUJOURS prêt même avec les retards GitHub (décision Laurie 10/08)
   workflow_dispatch: {}
 
 concurrency:

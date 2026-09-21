@@ -1,8 +1,9 @@
 name: Inspection quotidienne
 on:
-  schedule:
-    - cron: "37 6 * * *"    # tous les jours 06:37 UTC (8h37 Paris) — heure décalée anti-saut
-    - cron: "47 18 * * 3,6"  # 20h47 Paris les soirs de publication (mercredi/samedi depuis le 21/09) : rattrape un cron publish sauté
+  # schedule en PAUSE depuis le 21/09/2026 (décision Laurie) — réactiver sur sa demande
+  # schedule:
+    #- cron: "37 6 * * *"    # tous les jours 06:37 UTC (8h37 Paris) — heure décalée anti-saut
+    #- cron: "47 18 * * 3,6"  # 20h47 Paris les soirs de publication (mercredi/samedi depuis le 21/09) : rattrape un cron publish sauté
   workflow_dispatch: {}
 
 concurrency:
