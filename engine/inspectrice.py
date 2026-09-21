@@ -143,8 +143,8 @@ def main():
     except Exception:
         pass
 
-    # 0 ter. soir de publication (lundi/vendredi après 17h UTC) : le post est-il parti ?
-    if now.weekday() in (0, 4) and now.hour >= 17:  # 21/09/2026 : lundi et vendredi
+    # 0 ter. soir de publication (mercredi/samedi après 17h UTC) : le post est-il parti ?
+    if now.weekday() in (2, 5) and now.hour >= 17:  # 21/09/2026 : mercredi et samedi
         psp = os.path.join(ENGINE, "publish-state.json")
         ps = json.load(open(psp)) if os.path.exists(psp) else {}
         if ps.get("derniere_publication") != now.strftime("%Y-%m-%d"):

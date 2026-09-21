@@ -118,7 +118,7 @@ Concepts créatifs disponibles pour les briefs (choisis-en, jamais 'mannequin en
 Catalogue disponible : {robes}.\n{core.season_note()}\nVARIÉTÉ (règle fondatrice 01/09) : varie fortement les environnements d'un post à l'autre (25+ décors disponibles) ; les images à DEUX mannequins (duo complice, preuve sociale) sont bienvenues environ 1 fois par lot.
 LEÇONS RÉCENTES DE LA FONDATRICE (à respecter absolument) :
 {lecons}
-L'image jointe = la grille actuelle. Décide le PROGRAMME DE LA SEMAINE (RÈGLE FONDATRICE 21/09/2026, non négociable : exactement 2 contenus — 2 CARROUSELS de 2 images chacun, AUCUN post simple — publiés lundi et vendredi, jamais le week-end) : quelles robes mettre en avant (varie par rapport à la grille), quel concept créatif et quelle ambiance pour chaque carrousel (recette carrousel_tour : héro plein pied + un second plan du même shooting).
+L'image jointe = la grille actuelle. Décide le PROGRAMME DE LA SEMAINE (RÈGLE FONDATRICE 21/09/2026, non négociable : exactement 2 contenus — 2 CARROUSELS de 2 images chacun, AUCUN post simple — publiés mercredi et samedi) : quelles robes mettre en avant (varie par rapport à la grille), quel concept créatif et quelle ambiance pour chaque carrousel (recette carrousel_tour : héro plein pied + un second plan du même shooting).
 Réponds UNIQUEMENT en JSON: {{"strategie": "2 phrases max", "plan_prochain_lot": [{{"robe": "nom exact du catalogue", "format": "carrousel_tour", "concept": "nom du concept créatif choisi", "ambiance": "brief shooting en 1-2 phrases (lieu, lumière, idée forte)"}}], "ton_legendes": "1 phrase"}}""",
               montage, listing, key)
 
